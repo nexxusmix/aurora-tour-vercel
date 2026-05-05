@@ -522,17 +522,17 @@
 
   // ─── Scene Data ───────────────────────────────────────────────────────────
   var SCENES = [
-    { id: 'pano_01', label: 'Vista de Apresentação', number: '01', description: 'Panorâmica geral · 10:01' },
-    { id: 'pano_02', label: 'Drone Norte',           number: '02', description: 'Vista norte · 10:27' },
-    { id: 'pano_03', label: 'Drone Lago',            number: '03', description: 'Sobre o lago · 10:33' },
-    { id: 'pano_04', label: 'Drone Pôr do Sol',      number: '04', description: 'Última hora · 10:37' }
+    { id: 'pano_01', label: 'Apresentação',  number: '01', description: 'Panorâmica geral' },
+    { id: 'pano_02', label: 'Vista do Lago', number: '02', description: 'Frente lago · Lago Corumbá IV' },
+    { id: 'pano_03', label: 'Margem',        number: '03', description: 'Margem do lago' },
+    { id: 'pano_04', label: 'Hora Dourada',  number: '04', description: 'Cerrado ao entardecer' }
   ];
 
   // ─── Region Data ──────────────────────────────────────────────────────────
   var REGIONS = [];
 
   // ─── State ────────────────────────────────────────────────────────────────
-  var currentSceneIdx = 0;
+  var currentSceneIdx = 1;
   var viewer = null;
   var marzipanoScenes = [];
   var flatScenes = [];
@@ -549,7 +549,7 @@
   var DRIFT_PERIOD_YAW = 24000;
   var DRIFT_PERIOD_PITCH = 18000;
   var driftStart = performance.now();
-  var basePose = { yaw: 0, pitch: -0.30 };
+  var basePose = { yaw: 0, pitch: -0.05 };
   var userInteracting = false;
 
   // Zoom
@@ -654,63 +654,25 @@
   function conceitoHTML() {
     return '<div class="modal-section">' +
       '<div class="section-num">Manifesto</div>' +
-      '<p class="section-lead">Não é um tour. É um filme esférico onde o investidor decide o roteiro, em AURORA Track &amp; Field.</p>' +
+      '<p class="section-lead">Aurora Oasis — um endereço para quem entendeu que o tempo é o verdadeiro luxo.</p>' +
       '<hr class="section-divider">' +
     '</div>' +
 
     '<div class="modal-section">' +
-      '<div class="section-num">01 · Por que</div>' +
-      '<h3 class="section-title">O loteamento de luxo vende mal porque se mostra mal.</h3>' +
-      '<p class="section-body">99% dos empreendimentos premium continuam apresentando o produto com fotos aéreas estáticas, planta em PDF e visita presencial obrigatória. O investidor de Goiânia que quer entender Lago Corumbá IV em uma quinta à noite não tem para onde olhar. A decisão fica congelada por dias até a próxima viagem.</p>' +
-      '<div class="compare-grid">' +
-        '<div class="compare-col">' +
-          '<div class="compare-mini">Hoje · Apresentação convencional</div>' +
-          '<ul class="compare-list">' +
-            '<li>Fotos aéreas estáticas, sem contexto humano</li>' +
-            '<li>Planta técnica que ninguém entende sozinho</li>' +
-            '<li>Visita presencial obrigatória para fechar venda</li>' +
-            '<li>Material que o investidor não consegue compartilhar</li>' +
-            '<li>Produto idêntico ao concorrente nos olhos do cliente</li>' +
-            '<li>Janela de decisão limitada ao horário comercial</li>' +
-          '</ul>' +
-        '</div>' +
-        '<div class="compare-col col-future">' +
-          '<div class="compare-mini">Com o tour AURORA · Filme esférico interativo</div>' +
-          '<ul class="compare-list">' +
-            '<li>Cenas cinematográficas em 8K esférico, com áudio real do local</li>' +
-            '<li>Dados do produto (m², preço, ROI) embutidos em cada hotspot</li>' +
-            '<li>Pré-qualificação do lead antes da visita presencial</li>' +
-            '<li>Compartilhável por link, com snapshot do ponto de vista</li>' +
-            '<li>Diferencial premium percebido em 6 segundos</li>' +
-            '<li>Disponível 24/7, no celular, com gyro e fullscreen</li>' +
-          '</ul>' +
-        '</div>' +
-      '</div>' +
-      '<hr class="section-divider">' +
-    '</div>' +
-
-    '<div class="modal-section">' +
-      '<div class="section-num">02 · Conceito</div>' +
-      '<h3 class="section-title">Cinema esférico com camada de dados e gatilho de venda.</h3>' +
-      '<p class="section-body">Não é Matterport. Não é Google Street View. É captura cinematográfica em 360, narrativa guiada por sete paradas, dados ao vivo do produto sobre cada cena e CTA de reserva embutido. O lead entra pelo Instagram, sai com lote favorito marcado e horário de visita agendado.</p>' +
-      '<div class="metrics-row">' +
-        '<div class="metric"><div class="metric-num">8K</div><div class="metric-label">Captura esférica cinematográfica</div></div>' +
-        '<div class="metric"><div class="metric-num">07</div><div class="metric-label">Cenas narrativas com hotspots</div></div>' +
-        '<div class="metric"><div class="metric-num">24/7</div><div class="metric-label">Acessível do sofá às 23h, no celular</div></div>' +
-        '<div class="metric"><div class="metric-num">~2.1</div><div class="metric-label">Lotes vendidos pagam a plataforma</div></div>' +
-      '</div>' +
+      '<div class="section-num">A ideia</div>' +
+      '<h3 class="section-title">Um lugar feito para diminuir o ritmo.</h3>' +
+      '<p class="section-body">Às margens do Lago Corumbá IV, em Abadiânia, Goiás, Aurora Oasis nasce como refúgio premium: cerrado preservado, frente lago ininterrupta e arquitetura assinada para quem busca presença, não pressa. Distante o suficiente para acolher, próximo o suficiente para integrar — entre Anápolis, Goiânia e Brasília.</p>' +
     '</div>' +
 
     '<div class="modal-section">' +
       '<hr class="section-divider">' +
       '<div class="section-num">Os quatro pilares</div>' +
-      '<h3 class="section-title">O tempo é o novo luxo.</h3>' +
-      '<p class="section-body">Aurora Oasis é um endereço para quem entendeu que viver bem deixou de ser sobre o que se acumula. É sobre o que se preserva: silêncio, presença, lentidão, profundidade. Cada pilar do projeto materializa essa filosofia.</p>' +
+      '<h3 class="section-title">O que torna Aurora único.</h3>' +
       '<div class="pillars-grid">' +
         '<article class="pillar reveal" data-reveal>' +
           '<div class="pillar-num">01</div>' +
           '<h4 class="pillar-title">Presença</h4>' +
-          '<p class="pillar-desc">O tempo desacelera para quem sabe vivê-lo. Cada construção é desenhada para favorecer a contemplação, sem pressa, sem ruído.</p>' +
+          '<p class="pillar-desc">O tempo desacelera para quem sabe vivê-lo. Cada construção é desenhada para favorecer a contemplação — sem pressa, sem ruído.</p>' +
         '</article>' +
         '<article class="pillar reveal" data-reveal>' +
           '<div class="pillar-num">02</div>' +
@@ -733,37 +695,25 @@
 
   function implantacaoHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">03 · Roteiro</div>' +
-      '<h3 class="section-title">Sete paradas. Uma narrativa de venda.</h3>' +
-      '<p class="section-body">Cada cena foi planejada para conduzir o lead por uma jornada emocional e racional: primeiro o espanto visual, depois o contexto geográfico, depois o produto, depois o número.</p>' +
-      '<div class="stop-card"><div class="stop-num">01</div><div><div class="stop-label">Vista de Apresentação</div><div class="stop-desc">Panorâmica geral do empreendimento. Impacto visual imediato — skyline do lago ao fundo, lotes demarcados, infraestrutura aparente. Hotspot: área total + número de lotes.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">02</div><div><div class="stop-label">Drone Norte</div><div class="stop-desc">Vista aérea do vetor norte. Mostra a relação do projeto com a malha viária e a reserva de Mata Atlântica. Hotspot: distância de Brasília + tempo de carro.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">03</div><div><div class="stop-label">Drone Lago</div><div class="stop-desc">Sobre o espelho d\'água do Lago Corumbá IV. Contexto emocional máximo — a razão principal de compra. Hotspot: área do lago + altitude.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">04</div><div><div class="stop-label">Pôr do Sol</div><div class="stop-desc">Golden hour capturada na última hora do dia. Enquadramento cinematográfico com silhueta do lago. Hotspot: link para galeria completa.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">05</div><div><div class="stop-label">Acesso Principal</div><div class="stop-desc">Portaria e via de acesso pavimentada. Transmite segurança e maturidade da obra. Hotspot: infraestrutura entregue.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">06</div><div><div class="stop-label">Lote Destaque</div><div class="stop-desc">Walk-through do Lote 137, com marcações de divisa e vista direta para o lago. Hotspot: 1.250 m² · R$ 235.000 · disponível.</div></div></div>' +
-      '<div class="stop-card"><div class="stop-num">07</div><div><div class="stop-label">Área de Lazer</div><div class="stop-desc">Estrutura de lazer e convivência. Ancora a percepção de comunidade e lifestyle premium. Hotspot: CTA de agendamento de visita.</div></div></div>' +
+      '<div class="section-num">Master Plan</div>' +
+      '<h3 class="section-title">Um plano desenhado para o tempo.</h3>' +
+      '<p class="section-body">Volumetria suave, materiais naturais, integração com o cerrado nativo e vista privilegiada para o lago. Programa arquitetônico assinado pela <strong>FAAU · Flávio Aleixo</strong>.</p>' +
     '</div>' +
 
-    '<hr class="section-divider">' +
-
     '<div class="modal-section">' +
-      '<div class="section-num">04 · Camadas</div>' +
-      '<h3 class="section-title">Seis camadas sobre cada cena.</h3>' +
-      '<p class="section-body">O tour não é uma foto 360 passiva. Cada cena carrega dados ao vivo, ações de venda e identidade visual do empreendimento.</p>' +
-      '<div class="layer-card"><div class="layer-num">01</div><div><div class="layer-title">Hotspots de Produto</div><div class="layer-desc">Área do lote, preço, status (disponível / reservado / vendido) e metragem. Dados atualizáveis via painel admin sem novo deploy.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">02</div><div><div class="layer-title">Demarcações Visuais</div><div class="layer-desc">Polígonos SVG sobrepostos na esfera indicando zonas do empreendimento: Zona Oasis (ouro) e Zona Lago (verde). Editáveis manualmente ou via IA no modo admin.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">03</div><div><div class="layer-title">Navegação Entre Cenas</div><div class="layer-desc">Setas e miniaturas para transição fluida entre as 7 paradas. Transição com 800ms de crossfade suave.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">04</div><div><div class="layer-title">CTA de Reserva</div><div class="layer-desc">Botão embutido na cena do Lote Destaque que abre formulário de contato ou redireciona para WhatsApp do corretor. Rastreável por UTM.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">05</div><div><div class="layer-title">Identidade Visual AURORA</div><div class="layer-desc">Logotipo, paleta ouro + areia, tipografia Britti Sans e sistema de hairlines aplicados a todos os elementos de interface.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">06</div><div><div class="layer-title">Compartilhamento com Snapshot</div><div class="layer-desc">Botão de share que gera link com yaw/pitch atual — o receptor abre o tour no exato ângulo que o corretor recomendou.</div></div></div>' +
+      '<div class="section-num">Números</div>' +
+      '<div class="metrics-row">' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">241</div><div class="metric-label">Lotes</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">~1.250</div><div class="metric-label">m² médio por lote</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">30%</div><div class="metric-label">Cerrado preservado</div></div>' +
+      '</div>' +
     '</div>' +
 
     '<div class="modal-section">' +
       '<hr class="section-divider">' +
-      '<div class="section-num">Amenidades</div>' +
-      '<h3 class="section-title">Estrutura completa, sem ostentação.</h3>' +
-      '<p class="section-body">Programa arquitetônico assinado pela <strong>FAAU · Flávio Aleixo</strong>. Volumetria suave, materiais naturais, integração com o cerrado e vista privilegiada para o lago.</p>' +
+      '<div class="section-num">Estrutura</div>' +
+      '<h3 class="section-title">Vida completa, sem ostentação.</h3>' +
       '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>' +
         '<linearGradient id="aurora-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
           '<stop offset="0%" stop-color="#E8C97A"/>' +
@@ -997,12 +947,12 @@
 
   // ─── Presentation ─────────────────────────────────────────────────────────
   var PRESENTATION_SEQUENCE = [
-    { sceneId: 'pano_01', duration: 6000, action: null,                caption: 'Vista de Apresentação' },
-    { sceneId: 'pano_01', duration: 8000, action: 'modal:conceito',    caption: 'Conceito' },
-    { sceneId: 'pano_02', duration: 6000, action: 'rotate',            caption: 'Drone Norte · Track Arena' },
-    { sceneId: 'pano_03', duration: 8000, action: 'modal:implantacao', caption: 'Implantação' },
-    { sceneId: 'pano_04', duration: 6000, action: 'rotate',            caption: 'Pôr do Sol' },
-    { sceneId: 'pano_01', duration: 6000, action: 'modal:sobre',       caption: 'Sobre o projeto' }
+    { sceneId: 'pano_02', duration: 6000, action: null,                    caption: 'Vista do Lago' },
+    { sceneId: 'pano_02', duration: 9000, action: 'modal:conceito',        caption: 'Conceito · O tempo é o novo luxo' },
+    { sceneId: 'pano_03', duration: 7000, action: 'modal:localizacao',     caption: 'Localização · Lago Corumbá IV' },
+    { sceneId: 'pano_01', duration: 8000, action: 'modal:implantacao',     caption: 'Implantação · 241 lotes' },
+    { sceneId: 'pano_04', duration: 8000, action: 'modal:disponibilidades', caption: 'Disponibilidade · A partir de R$ 235k' },
+    { sceneId: 'pano_02', duration: 6000, action: null,                    caption: 'Aurora · Raro como o tempo' }
   ];
 
   var presentationState = { running: false, step: 0, timeoutId: null };
@@ -1545,7 +1495,7 @@
 
     buildScenes();
     buildFlatScenes();
-    switchScene(0, true);
+    switchScene(1, true);
     hideLoading();
     initDriftLoop();
     initTouchGestures();
@@ -1571,8 +1521,11 @@
         { tileSize: 512, size: 4096, fallbackOnly: false }
       ]);
 
+      var initPose = (sceneData.id === 'pano_02')
+        ? { yaw: 0, pitch: -0.05, fov: 130 * Math.PI / 180 }
+        : { yaw: 0, pitch: -0.30, fov: FOV_DEFAULT };
       var view = new Marzipano.RectilinearView(
-        { yaw: 0, pitch: -0.30, fov: FOV_DEFAULT },
+        initPose,
         limiter
       );
       var scene = viewer.createScene({ source: source, geometry: geometry, view: view });
@@ -1601,8 +1554,21 @@
       s.scene.switchTo({ transitionDuration: 800 });
     }
 
-    basePose.yaw = 0;
-    basePose.pitch = -0.30;
+    var s_data = SCENES[idx];
+    if (s_data && s_data.id === 'pano_02') {
+      var s_mz = marzipanoScenes[idx];
+      if (s_mz) {
+        s_mz.view.setYaw(0);
+        s_mz.view.setPitch(-0.05);
+        s_mz.view.setFov(130 * Math.PI / 180);
+        currentFov = 130 * Math.PI / 180;
+      }
+      basePose.yaw = 0;
+      basePose.pitch = -0.05;
+    } else {
+      basePose.yaw = 0;
+      basePose.pitch = -0.30;
+    }
     driftStart = performance.now();
     userInteracting = false;
 
@@ -1938,17 +1904,17 @@
   var SCENE_HOTSPOTS = {
     pano_01: [
       { yaw:  0.1,  pitch: -0.05, label: 'Lago Corumbá IV', desc: 'Espelho d\'água que delimita o empreendimento ao norte e leste.' },
-      { yaw: -0.5,  pitch:  0.1,  label: 'Quadras Aurora',  desc: 'Setor principal do loteamento. 241 lotes distribuídos em 6 quadras.' },
-      { yaw:  0.8,  pitch:  0.05, label: 'Mata Cerrado',    desc: 'Reserva nativa preservada. 30% do empreendimento mantém vegetação original.' }
+      { yaw: -0.5,  pitch:  0.1,  label: 'Quadras Aurora',   desc: 'Setor principal do loteamento.' },
+      { yaw:  0.8,  pitch:  0.05, label: 'Mata Cerrado',     desc: 'Reserva nativa preservada.' }
     ],
     pano_02: [
-      { yaw:  0,    pitch: -0.1,  label: 'Visão Norte',     desc: 'Direção do nascer do sol, vista privilegiada para os lotes premium.' }
+      { yaw:  0,    pitch: -0.05, label: 'Vista frente lago', desc: 'O lago como vizinho permanente. Frente d\'água que pertence ao empreendimento.' }
     ],
     pano_03: [
-      { yaw:  0,    pitch: -0.08, label: 'Margem do lago',  desc: 'Frente d\'água ininterrupta de aproximadamente 1,2 km.' }
+      { yaw:  0,    pitch: -0.08, label: 'Margem do lago',   desc: 'Frente d\'água ininterrupta de aproximadamente 1,2 km.' }
     ],
     pano_04: [
-      { yaw:  0.2,  pitch: -0.1,  label: 'Pôr do sol',      desc: 'Hora dourada característica do cerrado goiano.' }
+      { yaw:  0.2,  pitch: -0.1,  label: 'Pôr do sol',       desc: 'Hora dourada característica do cerrado goiano.' }
     ]
   };
 
