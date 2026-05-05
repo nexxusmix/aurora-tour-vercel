@@ -547,7 +547,7 @@
   var DRIFT_PERIOD_YAW = 24000;
   var DRIFT_PERIOD_PITCH = 18000;
   var driftStart = performance.now();
-  var basePose = { yaw: 0, pitch: -0.22 };
+  var basePose = { yaw: 0, pitch: -0.30 };
   var userInteracting = false;
 
   // Zoom
@@ -1121,7 +1121,7 @@
       s.view.setPitch(-0.22);
       s.view.setFov(FOV_DEFAULT);
       basePose.yaw = 0;
-      basePose.pitch = -0.22;
+      basePose.pitch = -0.30;
       currentFov = FOV_DEFAULT;
       driftStart = performance.now();
     }
@@ -1540,7 +1540,7 @@
     }
 
     basePose.yaw = 0;
-    basePose.pitch = -0.18;
+    basePose.pitch = -0.30;
     driftStart = performance.now();
     userInteracting = false;
 
