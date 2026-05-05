@@ -1,17 +1,5 @@
-// api/segment.js — POST { image, prompt } → cria prediction Replicate, retorna { id }
-//
-// MODELO EM USO: meta/sam-2 (oficial Meta, segmentação automática de objetos)
-// Replicate aceita { model: "meta/sam-2" } sem precisar fixar uma version ID específica
-// — ele usa a versão mais recente automaticamente.
-//
-// Se quiser trocar de modelo, basta alterar o campo `model` abaixo. Opções populares:
-//   "meta/sam-2"                              — SAM 2 oficial Meta (recomendado)
-//   "lucataco/grounded-sam-2"                 — SAM 2 + texto prompt (bounding box + mask)
-//   "yohannes/segment-anything-2"             — wrapper alternativo do SAM 2
-//
-// Para fixar uma version específica, substitua `model` por `version: "<sha256>"`.
-// Versions disponíveis: https://replicate.com/meta/sam-2/versions
-
+// api/segment.js — POST { image, prompt } → Gemini Vision detecta objetos e retorna bounding boxes
+// Síncrono — Gemini responde em ~3-8s, dentro do limite Hobby 10s.
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -19,93 +7,80 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  var token = process.env.REPLICATE_API_TOKEN;
-  if (!token) {
-    return res.status(500).json({
-      error: 'REPLICATE_API_TOKEN nao configurado.',
-      help: 'Acesse vercel.com → projeto aurora-tour-vercel → Settings → Environment Variables. Token gratuito em replicate.com/account/api-tokens.'
-    });
-  }
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY não configurado no Vercel.' });
 
-  var body = req.body;
+  let body = req.body;
   if (typeof body === 'string') {
-    try { body = JSON.parse(body); } catch (e) { body = {}; }
+    try { body = JSON.parse(body); } catch { body = {}; }
   }
-  if (!body || typeof body !== 'object') body = {};
+  const image = body && body.image;
+  const userPrompt = (body && body.prompt) || 'lotes de loteamento, lago/água, áreas de mata/cerrado, edificações';
+  if (!image) return res.status(400).json({ error: 'image (data URL) é obrigatório' });
 
-  var image = body.image;
-  var prompt = body.prompt || 'lots, lake, trees, buildings, vegetation';
+  // Extrair base64 + mime do data URL
+  const m = /^data:(image\/[a-z+]+);base64,(.+)$/i.exec(image);
+  if (!m) return res.status(400).json({ error: 'image deve ser data URL base64 (image/jpeg ou image/png)' });
+  const mimeType = m[1];
+  const base64 = m[2];
 
-  if (!image) {
-    return res.status(400).json({ error: 'image (data URL base64 ou URL publica) e obrigatorio' });
-  }
+  const systemPrompt = `Você é um detector de objetos em imagens aéreas de loteamentos imobiliários.
+Identifique os elementos solicitados pelo usuário na imagem.
+Retorne APENAS um array JSON válido com a seguinte estrutura:
+[
+  { "label": "string descritiva (em português)", "box_2d": [ymin, xmin, ymax, xmax], "score": 0.0-1.0 }
+]
+- box_2d em escala 0-1000 normalizada (ymin/xmin = canto superior esquerdo, ymax/xmax = canto inferior direito).
+- Inclua até 6 objetos mais relevantes.
+- Se não houver detecções, retorne [].
+- Não inclua texto fora do JSON. Apenas o array.`;
 
-  // SAM 2 via meta/sam-2 (sem version fixa — usa latest)
-  // Input reference: https://replicate.com/meta/sam-2
-  var replicateBody = {
-    model: 'meta/sam-2',
-    input: {
-      image: image,
-      // SAM 2 faz segmentação automática de todos os objetos sem precisar de prompt de texto.
-      // Se o modelo suportar text_prompt (ex: grounded-sam-2), inclua-o:
-      use_m2m: true,
-      points_per_side: 32,
-      pred_iou_thresh: 0.88,
-      stability_score_thresh: 0.95,
-      output_type: 'png'
+  const requestBody = {
+    contents: [{
+      role: 'user',
+      parts: [
+        { text: `${systemPrompt}\n\nElementos a detectar: ${userPrompt}` },
+        { inline_data: { mime_type: mimeType, data: base64 } }
+      ]
+    }],
+    generation_config: {
+      temperature: 0.1,
+      response_mime_type: 'application/json'
     }
   };
 
   try {
-    var r = await fetch('https://api.replicate.com/v1/predictions', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Token ' + token,
-        'Content-Type': 'application/json',
-        'Prefer': 'respond-async'
-      },
-      body: JSON.stringify(replicateBody)
-    });
-
-    var data = await r.json();
-
-    if (!r.ok) {
-      // Fallback: tentar com version fixada do meta/sam-2 (última conhecida em 2025-08)
-      // Se a requisição acima falhou por input schema incompatível, tentamos inputs mais simples
-      var fallbackBody = {
-        model: 'meta/sam-2',
-        input: {
-          image: image
-        }
-      };
-
-      var r2 = await fetch('https://api.replicate.com/v1/predictions', {
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
         method: 'POST',
-        headers: {
-          'Authorization': 'Token ' + token,
-          'Content-Type': 'application/json',
-          'Prefer': 'respond-async'
-        },
-        body: JSON.stringify(fallbackBody)
-      });
-
-      var data2 = await r2.json();
-      if (!r2.ok) {
-        return res.status(502).json({
-          error: 'Replicate create falhou',
-          details: data2,
-          original_error: data
-        });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
       }
-
-      return res.status(202).json({ id: data2.id, status: data2.status });
+    );
+    const data = await r.json();
+    if (!r.ok) {
+      return res.status(502).json({ error: 'Gemini API erro', details: data });
     }
 
-    return res.status(202).json({ id: data.id, status: data.status });
+    // Parse text → JSON array
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+    let detections = [];
+    try {
+      detections = JSON.parse(text);
+      if (!Array.isArray(detections)) detections = [];
+    } catch (e) {
+      // fallback: tentar extrair JSON via regex
+      const match = text.match(/\[[\s\S]*\]/);
+      if (match) {
+        try { detections = JSON.parse(match[0]); } catch {}
+      }
+    }
 
+    return res.status(200).json({ status: 'succeeded', detections, raw: text });
   } catch (err) {
-    return res.status(500).json({ error: 'Falha ao criar predicao Replicate', details: String(err) });
+    return res.status(500).json({ error: 'Falha ao chamar Gemini', details: String(err) });
   }
 }
 
-export var config = { runtime: 'nodejs', maxDuration: 10 };
+export const config = { runtime: 'nodejs', maxDuration: 10 };
