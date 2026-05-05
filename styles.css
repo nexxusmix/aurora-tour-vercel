@@ -165,17 +165,18 @@ html, body {
   letter-spacing: 0.1em; color: var(--ink-muted);
 }
 
-/* ─── Brand Logo (shared) ───────────────────────────────────────────────── */
+/* ─── Brand Logo (shared, SVG inline Cinzel serif) ───────────────────────── */
 .brand-logo {
   height: 22px; width: auto; display: block;
+  color: var(--ink);
 }
-.brand-logo-light { display: none; }
-.on-dark .brand-logo-dark { display: none; }
-.on-dark .brand-logo-light { display: block; }
-/* Theme-based logo swap */
-.brand-logo-dark { display: block; }
-:root[data-theme="dark"] .brand-logo-dark { display: none; }
-:root[data-theme="dark"] .brand-logo-light { display: block; }
+.brand-svg { color: var(--ink); fill: currentColor; overflow: visible; }
+.brand-svg text { font-family: 'Cinzel', Georgia, 'Times New Roman', serif; font-weight: 500; }
+:root[data-theme="dark"] .brand-svg { color: var(--ink); }
+/* Legacy classes kept as no-op for any leftover img */
+.brand-logo-light, .brand-logo-dark { display: none; }
+img.brand-logo-dark { display: none; }
+img.brand-logo-light { display: none; }
 .brand-meta {
   font: 400 10px/1 'Britti Sans', sans-serif;
   font-style: normal;
