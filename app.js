@@ -822,16 +822,14 @@
 
   function imagensHTML() {
     var photos = [
-      { src: '/img/gallery/aurora-drone-01.jpg', label: 'Vista aérea · 30/09/2025',    cat: 'Drone' },
-      { src: '/img/gallery/aurora-drone-02.jpg', label: 'Lago Corumbá IV',              cat: 'Drone' },
-      { src: '/img/gallery/aurora-drone-03.jpg', label: 'Mata nativa · entrada',        cat: 'Drone' },
-      { src: '/img/gallery/aurora-drone-04.jpg', label: 'Sol da manhã sobre o lago',    cat: 'Drone' },
-      { src: '/img/gallery/aurora-drone-05.jpg', label: 'Amplitude · cerrado',          cat: 'Drone' },
-      { src: '/img/gallery/aurora-drone-06.jpg', label: 'Margem do lago',               cat: 'Drone' },
-      { src: '/img/faau/faau-01.jpg',            label: 'Volumetria suave',             cat: 'Arquitetura · FAAU' },
-      { src: '/img/faau/faau-02.jpg',            label: 'Materiais naturais',           cat: 'Arquitetura · FAAU' },
-      { src: '/img/faau/faau-03.jpg',            label: 'Integração interior-exterior', cat: 'Arquitetura · FAAU' },
-      { src: '/img/faau/faau-04.jpg',            label: 'Detalhe construtivo',          cat: 'Arquitetura · FAAU' }
+      { src: 'img/gallery/capa-book-oasis-1.webp', label: 'Capa · Volume 1', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-book-oasis-2.webp', label: 'Capa · Volume 2', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-book-oasis-3.webp', label: 'Capa · Volume 3', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-book-oasis-4.webp', label: 'Capa · Volume 4', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-book-oasis-5.webp', label: 'Capa · Volume 5', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-book-oasis-6.webp', label: 'Capa · Volume 6', cat: 'Book Editorial' },
+      { src: 'img/gallery/capa-magazine-retro.webp',  label: 'Magazine · Edição Retro',   cat: 'Editorial' },
+      { src: 'img/gallery/capa-magazine-retro-2.webp', label: 'Magazine · Edição Retro 2', cat: 'Editorial' }
     ];
     var items = photos.map(function(p, i) {
       return '<figure class="g-item reveal" data-reveal style="--delay:' + (i * 60) + 'ms">' +
@@ -844,8 +842,8 @@
     }).join('');
     return '<div class="modal-section">' +
       '<div class="section-num">Galeria</div>' +
-      '<h3 class="section-title">Aurora em detalhes.</h3>' +
-      '<p class="section-body">Imagens reais do empreendimento (drone, setembro 2025) e referências arquitetônicas do escritório FAAU, autor do projeto.</p>' +
+      '<h3 class="section-title">Aurora em peças finais.</h3>' +
+      '<p class="section-body">Capas editoriais, magazine e materiais de comunicação aprovados do projeto Aurora Oasis.</p>' +
     '</div>' +
     '<div class="gallery-grid">' + items + '</div>';
   }
@@ -853,40 +851,41 @@
   function fotolivroHTML() {
     return '<div class="modal-section">' +
       '<div class="section-num">Book Digital</div>' +
-      '<h3 class="section-title">Aurora · edição completa.</h3>' +
-      '<p class="section-body">Compilação editorial em formato fotolivro digital, navegável página a página. Lançamento previsto para a semana 4 do cronograma.</p>' +
-      '<div class="book-mockup reveal" data-reveal>' +
-        '<div class="book-cover">' +
-          '<img src="/img/oasis-logo-black-aa.png" class="book-logo brand-logo-dark" alt="OASIS">' +
-          '<img src="/img/oasis-logo-white-aa.png" class="book-logo brand-logo-light" alt="OASIS">' +
-          '<div class="book-title">Aurora · Lago Corumbá IV</div>' +
-          '<div class="book-mini">Book digital · 2026</div>' +
-        '</div>' +
-        '<div class="book-status">Em produção</div>' +
+      '<h3 class="section-title">Aurora · Onde o tempo mora.</h3>' +
+      '<p class="section-body">Edição editorial completa do empreendimento. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis em formato fotolivro.</p>' +
+    '</div>' +
+    '<div class="modal-section">' +
+      '<div class="pdf-viewer-wrap reveal" data-reveal>' +
+        '<iframe class="pdf-viewer" src="pdf/aurora-oasis-fotolivro.pdf#view=FitH&toolbar=0" title="Fotolivro Aurora Oasis"></iframe>' +
+      '</div>' +
+      '<div class="pdf-actions">' +
+        '<a href="pdf/aurora-oasis-fotolivro.pdf" download class="modal-link pdf-action">Baixar PDF</a>' +
+        '<a href="pdf/aurora-oasis-fotolivro.pdf" target="_blank" rel="noopener" class="modal-link pdf-action">Abrir em tela cheia</a>' +
       '</div>' +
     '</div>';
   }
 
   function videosHTML() {
+    var videos = [
+      { src: 'video/aurora-raro-como-tempo.mp4',    poster: 'img/gallery/capa-book-oasis-1.webp', cat: 'Teaser', label: 'Raro como o tempo' },
+      { src: 'video/aurora-precisa-mais-tempo.mp4', poster: 'img/gallery/capa-book-oasis-2.webp', cat: 'Teaser', label: 'Você precisa de mais tempo' },
+      { src: 'video/aurora-presenca.mp4',           poster: 'img/gallery/capa-book-oasis-3.webp', cat: 'Teaser', label: 'Tempo sem presença é apenas espera' },
+      { src: 'video/aurora-escritorio.mp4',         poster: 'img/gallery/capa-magazine-retro.webp', cat: 'Reveal', label: 'Próximo lançamento exclusivo' }
+    ];
+    var items = videos.map(function(v, i) {
+      return '<div class="v-item reveal" data-reveal style="--delay:' + (i * 80) + 'ms">' +
+        '<video controls preload="metadata" poster="' + v.poster + '" muted playsinline>' +
+          '<source src="' + v.src + '" type="video/mp4">' +
+        '</video>' +
+        '<div class="v-meta"><span class="v-cat">' + v.cat + '</span><span class="v-label">' + v.label + '</span></div>' +
+      '</div>';
+    }).join('');
     return '<div class="modal-section">' +
       '<div class="section-num">Vídeos</div>' +
-      '<h3 class="section-title">Movimento sobre o lago.</h3>' +
-      '<p class="section-body">Captação aérea drone setembro 2025. Versão estendida e teaser de 60 segundos em pós-produção.</p>' +
+      '<h3 class="section-title">Material aprovado.</h3>' +
+      '<p class="section-body">Teasers de fase conceito e reveal exclusivo do escritório Silva Investimentos.</p>' +
     '</div>' +
-    '<div class="video-stack">' +
-      '<div class="v-item reveal" data-reveal>' +
-        '<video controls preload="metadata" poster="/img/gallery/aurora-drone-01.jpg" muted playsinline>' +
-          '<source src="/video/aurora-drone-01.mp4" type="video/mp4">' +
-        '</video>' +
-        '<div class="v-meta"><span class="v-cat">Drone aéreo</span><span class="v-label">Aurora · panorâmica norte</span></div>' +
-      '</div>' +
-      '<div class="v-item reveal" data-reveal>' +
-        '<video controls preload="metadata" poster="/img/gallery/aurora-drone-04.jpg" muted playsinline>' +
-          '<source src="/video/aurora-drone-02.mp4" type="video/mp4">' +
-        '</video>' +
-        '<div class="v-meta"><span class="v-cat">Drone aéreo</span><span class="v-label">Aurora · espelho d\'água</span></div>' +
-      '</div>' +
-    '</div>';
+    '<div class="video-stack">' + items + '</div>';
   }
 
   function sobreHTML() {
