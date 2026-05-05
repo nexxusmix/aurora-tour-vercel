@@ -184,6 +184,17 @@
         </svg>
       </button>
 
+      <!-- Share -->
+      <button class="bb-aux-btn" id="btn-share" aria-label="Compartilhar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="2.5"/>
+          <circle cx="6" cy="12" r="2.5"/>
+          <circle cx="18" cy="19" r="2.5"/>
+          <line x1="8.2" y1="10.7" x2="15.8" y2="6.3"/>
+          <line x1="8.2" y1="13.3" x2="15.8" y2="17.7"/>
+        </svg>
+      </button>
+
       <!-- Fullscreen -->
       <button class="bb-aux-btn" id="btn-fullscreen" aria-label="Tela cheia">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
@@ -197,6 +208,17 @@
       </button>
     </div>
   </footer>
+
+  <!-- Scene Mini-map (top left of panorama) -->
+  <div id="scene-minimap" class="scene-minimap">
+    <div class="sm-mini">Cenas</div>
+    <div class="sm-thumbs">
+      <button class="sm-thumb is-active" data-scene="pano_01" aria-label="Cena 01"><span>01</span></button>
+      <button class="sm-thumb" data-scene="pano_02" aria-label="Cena 02"><span>02</span></button>
+      <button class="sm-thumb" data-scene="pano_03" aria-label="Cena 03"><span>03</span></button>
+      <button class="sm-thumb" data-scene="pano_04" aria-label="Cena 04"><span>04</span></button>
+    </div>
+  </div>
 
   <!-- Scene Picker (above bottom bar) -->
   <div id="scene-picker" class="scene-picker" hidden>
@@ -256,6 +278,15 @@
       <div class="mm-toggle-row">
         <span class="mm-label">Profundidade de campo</span>
         <button class="switch-btn active" data-toggle="dof" role="switch" aria-checked="true">
+          <span class="switch-knob"></span>
+        </button>
+      </div>
+
+      <div class="mm-divider"></div>
+
+      <div class="mm-toggle-row">
+        <span class="mm-label">Hotspots do panorama</span>
+        <button class="switch-btn active" data-toggle="hotspots" role="switch" aria-checked="true">
           <span class="switch-knob"></span>
         </button>
       </div>

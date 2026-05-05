@@ -9,12 +9,7 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(THEME_KEY, theme);
-    if (window._mapInstance) {
-      var style = theme === 'dark'
-        ? 'https://tiles.openfreemap.org/styles/dark'
-        : 'https://tiles.openfreemap.org/styles/positron';
-      window._mapInstance.setStyle(style);
-    }
+    // Map style stays independent from theme (user controls via layer switcher)
   }
 
   var savedTheme = localStorage.getItem(THEME_KEY) || 'light';
@@ -655,7 +650,24 @@
 
       '<div class="modal-section">',
         '<div class="section-num">Mapa</div>',
-        '<div id="map" style="height:420px;width:100%;border:1px solid var(--hairline);"></div>',
+        '<div class="map-frame">',
+          '<div id="map" class="map-canvas"></div>',
+          '<div class="map-layers">',
+            '<button class="map-layer-btn is-active" data-style="satellite"><div class="ml-thumb ml-sat"></div><span class="ml-label">Satélite</span></button>',
+            '<button class="map-layer-btn" data-style="streets"><div class="ml-thumb ml-str"></div><span class="ml-label">Mapa</span></button>',
+            '<button class="map-layer-btn" data-style="terrain"><div class="ml-thumb ml-ter"></div><span class="ml-label">Relevo</span></button>',
+            '<button class="map-layer-btn" data-style="dark"><div class="ml-thumb ml-drk"></div><span class="ml-label">Noite</span></button>',
+          '</div>',
+          '<div class="map-cities">',
+            '<button class="mc-btn is-active" data-fly="aurora">Aurora</button>',
+            '<button class="mc-btn" data-fly="anapolis">Anápolis</button>',
+            '<button class="mc-btn" data-fly="brasilia">Brasília</button>',
+            '<button class="mc-btn" data-fly="goiania">Goiânia</button>',
+            '<span class="mc-divider"></span>',
+            '<button class="mc-btn mc-tour" data-fly="tour">Tour automático</button>',
+            '<button class="mc-btn mc-overview" data-fly="overview">Visão geral</button>',
+          '</div>',
+        '</div>',
       '</div>',
 
       '<div class="modal-section modal-actions">',
@@ -822,20 +834,26 @@
 
   function imagensHTML() {
     var photos = [
-      { src: 'img/gallery/capa-book-oasis-1.webp', label: 'Capa · Volume 1', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-book-oasis-2.webp', label: 'Capa · Volume 2', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-book-oasis-3.webp', label: 'Capa · Volume 3', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-book-oasis-4.webp', label: 'Capa · Volume 4', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-book-oasis-5.webp', label: 'Capa · Volume 5', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-book-oasis-6.webp', label: 'Capa · Volume 6', cat: 'Book Editorial' },
-      { src: 'img/gallery/capa-magazine-retro.webp',  label: 'Magazine · Edição Retro',   cat: 'Editorial' },
-      { src: 'img/gallery/capa-magazine-retro-2.webp', label: 'Magazine · Edição Retro 2', cat: 'Editorial' }
+      { src: 'img/gallery/capa-book-oasis-1.webp', label: 'Capa · Volume 1', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-book-oasis-2.webp', label: 'Capa · Volume 2', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-book-oasis-3.webp', label: 'Capa · Volume 3', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-book-oasis-4.webp', label: 'Capa · Volume 4', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-book-oasis-5.webp', label: 'Capa · Volume 5', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-book-oasis-6.webp', label: 'Capa · Volume 6', cat: 'editorial', tag: 'Editorial' },
+      { src: 'img/gallery/capa-magazine-retro.webp',  label: 'Magazine · Edição Retro',   cat: 'magazine', tag: 'Magazine' },
+      { src: 'img/gallery/capa-magazine-retro-2.webp', label: 'Magazine · Edição Retro 2', cat: 'magazine', tag: 'Magazine' }
     ];
+    var cats = ['todos'];
+    photos.forEach(function(p) { if (cats.indexOf(p.cat) < 0) cats.push(p.cat); });
+    var filters = cats.map(function(c, i) {
+      var label = c === 'todos' ? 'Todos' : (c.charAt(0).toUpperCase() + c.slice(1));
+      return '<button class="gf-btn' + (i === 0 ? ' is-active' : '') + '" data-cat="' + c + '">' + label + '</button>';
+    }).join('');
     var items = photos.map(function(p, i) {
-      return '<figure class="g-item reveal" data-reveal style="--delay:' + (i * 60) + 'ms">' +
+      return '<figure class="g-item reveal" data-cat="' + p.cat + '" data-reveal style="--delay:' + (i * 60) + 'ms">' +
         '<img loading="lazy" src="' + p.src + '" alt="' + p.label + '">' +
         '<figcaption class="g-cap">' +
-          '<span class="g-cat">' + p.cat + '</span>' +
+          '<span class="g-cat">' + p.tag + '</span>' +
           '<span class="g-label">' + p.label + '</span>' +
         '</figcaption>' +
       '</figure>';
@@ -843,9 +861,23 @@
     return '<div class="modal-section">' +
       '<div class="section-num">Galeria</div>' +
       '<h3 class="section-title">Aurora em peças finais.</h3>' +
-      '<p class="section-body">Capas editoriais, magazine e materiais de comunicação aprovados do projeto Aurora Oasis.</p>' +
+      '<p class="section-body">Capas editoriais, magazine e materiais de comunicação aprovados.</p>' +
+      '<div class="gallery-filters">' + filters + '</div>' +
     '</div>' +
-    '<div class="gallery-grid">' + items + '</div>';
+    '<div class="gallery-grid" id="gallery-grid">' + items + '</div>';
+  }
+
+  function bindGalleryFilters() {
+    document.querySelectorAll('.gf-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.gf-btn').forEach(function(b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        var cat = btn.dataset.cat;
+        document.querySelectorAll('.g-item').forEach(function(item) {
+          item.style.display = (cat === 'todos' || item.dataset.cat === cat) ? '' : 'none';
+        });
+      });
+    });
   }
 
   function fotolivroHTML() {
@@ -1159,6 +1191,7 @@
     setTimeout(function() {
       initRevealObserver();
       bindCardParallax();
+      if (title === 'Galeria de Imagens') bindGalleryFilters();
     }, 50);
   }
 
@@ -1254,60 +1287,172 @@
     closeScenePicker();
   }
 
-  // ─── MapLibre Localização ─────────────────────────────────────────────────
+  // ─── MapLibre Localização (hiper interativo) ─────────────────────────────
+  var MAP_LAYER_STYLES = {
+    satellite: {
+      version: 8,
+      sources: { src: { type: 'raster', tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize: 256, attribution: 'Esri · World Imagery' } },
+      layers: [{ id: 'l', type: 'raster', source: 'src' }]
+    },
+    streets: 'https://tiles.openfreemap.org/styles/positron',
+    terrain: {
+      version: 8,
+      sources: { src: { type: 'raster', tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'], tileSize: 256, attribution: 'Esri · World Topo Map' } },
+      layers: [{ id: 'l', type: 'raster', source: 'src' }]
+    },
+    dark: 'https://tiles.openfreemap.org/styles/dark'
+  };
+
+  var MAP_POINTS = {
+    aurora:   { coord: [-48.464529, -16.274689], label: 'Aurora Oasis', cat: 'Empreendimento',  meta: 'Lago Corumbá IV · Abadiânia',     primary: true },
+    anapolis: { coord: [-48.953200, -16.328600], label: 'Anápolis',     cat: '36 km · 40 min',  meta: 'Trajeto BR-414 · acesso direto' },
+    brasilia: { coord: [-47.929500, -15.793900], label: 'Brasília',     cat: '112 km · 1h 30',  meta: 'BR-060 + GO-330 · capital federal' },
+    goiania:  { coord: [-49.253800, -16.686900], label: 'Goiânia',      cat: '96 km · 1h 20',   meta: 'BR-060 · capital de Goiás' }
+  };
+
+  var mapInstance = null;
+  var mapMarkers = {};
+  var mapCurrentStyle = 'satellite';
+  var tourTimer = null;
+
+  function applyMapStyle(styleId) {
+    if (!mapInstance) return;
+    mapInstance.setStyle(MAP_LAYER_STYLES[styleId]);
+    mapCurrentStyle = styleId;
+    mapInstance.once('styledata', function() { rebuildMapLines(); });
+    document.querySelectorAll('.map-layer-btn').forEach(function(b) {
+      b.classList.toggle('is-active', b.dataset.style === styleId);
+    });
+  }
+
+  function rebuildMapLines() {
+    if (!mapInstance) return;
+    if (mapInstance.getSource('connections')) return;
+    var lines = ['anapolis', 'brasilia', 'goiania'].map(function(id) {
+      return { type: 'Feature', properties: { id: id }, geometry: { type: 'LineString', coordinates: [MAP_POINTS.aurora.coord, MAP_POINTS[id].coord] } };
+    });
+    mapInstance.addSource('connections', { type: 'geojson', data: { type: 'FeatureCollection', features: lines } });
+    mapInstance.addLayer({ id: 'conn-line', type: 'line', source: 'connections',
+      paint: { 'line-color': '#C9A84C', 'line-width': 1.4, 'line-dasharray': [3, 2], 'line-opacity': 0.85 }
+    });
+  }
+
+  function buildMapMarker(point, key) {
+    var el = document.createElement('div');
+    el.className = 'map-marker' + (point.primary ? ' is-primary' : '');
+    el.innerHTML = '<div class="pin"></div>' + (point.primary ? '<div class="ring"></div>' : '');
+
+    var popup = new maplibregl.Popup({ offset: 16, closeButton: false, anchor: 'bottom' })
+      .setHTML('<div class="map-popup"><div class="mp-cat">' + point.cat + '</div><div class="mp-title">' + point.label + '</div><div class="mp-meta">' + point.meta + '</div></div>');
+
+    var m = new maplibregl.Marker({ element: el, anchor: 'center' })
+      .setLngLat(point.coord)
+      .setPopup(popup)
+      .addTo(mapInstance);
+
+    el.addEventListener('click', function() { flyToMapPoint(key); });
+    return m;
+  }
+
+  function flyToMapPoint(key) {
+    if (!mapInstance) return;
+    if (key === 'tour') { startMapTour(); return; }
+    if (key === 'overview') { mapOverview(); return; }
+    var p = MAP_POINTS[key];
+    if (!p) return;
+    mapInstance.flyTo({
+      center: p.coord, zoom: key === 'aurora' ? 15 : 12,
+      bearing: Math.random() * 30 - 15, pitch: 45,
+      speed: 0.8, curve: 1.6, essential: true
+    });
+    setTimeout(function() {
+      var mk = mapMarkers[key];
+      if (mk && !mk.getPopup().isOpen()) mk.togglePopup();
+    }, 1400);
+    document.querySelectorAll('.mc-btn').forEach(function(b) {
+      b.classList.toggle('is-active', b.dataset.fly === key);
+    });
+  }
+
+  function mapOverview() {
+    if (!mapInstance) return;
+    var bounds = new maplibregl.LngLatBounds();
+    Object.values(MAP_POINTS).forEach(function(p) { bounds.extend(p.coord); });
+    mapInstance.fitBounds(bounds, { padding: 80, duration: 1400, pitch: 0, bearing: 0 });
+    document.querySelectorAll('.mc-btn').forEach(function(b) {
+      b.classList.toggle('is-active', b.dataset.fly === 'overview');
+    });
+    if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; }
+  }
+
+  function startMapTour() {
+    var tourBtn = document.querySelector('[data-fly="tour"]');
+    if (tourTimer) {
+      clearTimeout(tourTimer);
+      tourTimer = null;
+      if (tourBtn) tourBtn.classList.remove('is-active');
+      return;
+    }
+    if (tourBtn) tourBtn.classList.add('is-active');
+    var seq = ['aurora', 'anapolis', 'brasilia', 'goiania', 'aurora'];
+    var i = 0;
+    var step = function() {
+      if (i >= seq.length) { tourTimer = null; if (tourBtn) tourBtn.classList.remove('is-active'); return; }
+      flyToMapPoint(seq[i++]);
+      tourTimer = setTimeout(step, 4200);
+    };
+    step();
+  }
+
   function initLocationMap() {
     if (!window.maplibregl) return;
     var el = document.getElementById('map');
     if (!el || el._inited) return;
     el._inited = true;
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var map = new maplibregl.Map({
+
+    mapInstance = new maplibregl.Map({
       container: 'map',
-      style: isDark
-        ? 'https://tiles.openfreemap.org/styles/dark'
-        : 'https://tiles.openfreemap.org/styles/positron',
-      center: [-48.46, -16.50],
-      zoom: 8,
+      style: MAP_LAYER_STYLES.satellite,
+      center: MAP_POINTS.aurora.coord,
+      zoom: 5,
+      pitch: 0,
+      bearing: 0,
       attributionControl: false
     });
-    window._mapInstance = map;
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    window._mapInstance = mapInstance;
 
-    var points = [
-      { id: 'aurora',   coord: [-48.464529, -16.274689], label: 'Aurora Oasis', mini: 'Abadiânia · GO', primary: true },
-      { id: 'anapolis', coord: [-48.953200, -16.328600], label: 'Anápolis',      mini: '36 km · 40 min' },
-      { id: 'goiania',  coord: [-49.253800, -16.686900], label: 'Goiânia',       mini: '96 km · 1h 20min' },
-      { id: 'brasilia', coord: [-47.929500, -15.793900], label: 'Brasília',      mini: '112 km · 1h 30min' }
-    ];
+    mapInstance.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-left');
+    mapInstance.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
-    map.on('load', function() {
-      var features = points.slice(1).map(function(p) {
-        return {
-          type: 'Feature',
-          geometry: { type: 'LineString', coordinates: [points[0].coord, p.coord] }
-        };
+    mapInstance.on('load', function() {
+      rebuildMapLines();
+      Object.entries(MAP_POINTS).forEach(function(entry) {
+        mapMarkers[entry[0]] = buildMapMarker(entry[1], entry[0]);
       });
-      map.addSource('connections', { type: 'geojson', data: { type: 'FeatureCollection', features: features } });
-      map.addLayer({
-        id: 'connections',
-        type: 'line',
-        source: 'connections',
-        paint: { 'line-color': '#C9A84C', 'line-width': 1, 'line-dasharray': [2, 2], 'line-opacity': 0.7 }
-      });
+
+      // Cinematic arrival
+      setTimeout(function() {
+        var bounds = new maplibregl.LngLatBounds();
+        Object.values(MAP_POINTS).forEach(function(p) { bounds.extend(p.coord); });
+        mapInstance.fitBounds(bounds, { padding: 80, duration: 1800, pitch: 35 });
+      }, 400);
+      setTimeout(function() {
+        mapInstance.flyTo({ center: MAP_POINTS.aurora.coord, zoom: 14, pitch: 55, bearing: -15, speed: 0.6, curve: 1.4 });
+        setTimeout(function() {
+          var mk = mapMarkers['aurora'];
+          if (mk && !mk.getPopup().isOpen()) mk.togglePopup();
+        }, 1600);
+      }, 2400);
     });
 
-    points.forEach(function(p) {
-      var markerEl = document.createElement('div');
-      markerEl.className = 'map-marker' + (p.primary ? ' is-primary' : '');
-      markerEl.innerHTML = '<div class="map-pin"></div><div class="map-tag"><span class="map-tag-label">' + p.label + '</span><span class="map-tag-mini">' + p.mini + '</span></div>';
-      new maplibregl.Marker({ element: markerEl, anchor: 'bottom' })
-        .setLngLat(p.coord)
-        .addTo(map);
+    // Layer switcher bindings
+    document.querySelectorAll('.map-layer-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { applyMapStyle(btn.dataset.style); });
     });
-
-    var bounds = new maplibregl.LngLatBounds();
-    points.forEach(function(p) { bounds.extend(p.coord); });
-    map.fitBounds(bounds, { padding: 60, duration: 0 });
+    // City fly bindings
+    document.querySelectorAll('.mc-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { flyToMapPoint(btn.dataset.fly); });
+    });
   }
 
   // ─── Theme Toggle ────────────────────────────────────────────────────────
@@ -1421,7 +1566,13 @@
     hdrLabel.textContent = s.data.label;
 
     updateScenePickerActive();
+    updateSceneMinimap();
     setTimeout(updateRegionOverlay, 50);
+    var sceneData = SCENES[idx];
+    var mzS = marzipanoScenes[idx];
+    if (sceneData && mzS) {
+      setTimeout(function() { buildHotspotsForScene(sceneData.id, mzS.scene); }, 100);
+    }
   }
 
   // ─── Loading ──────────────────────────────────────────────────────────────
@@ -1550,6 +1701,13 @@
       return;
     }
     if (key === 'dof') { return; } // DoF removed
+    if (key === 'hotspots') {
+      hotspotsVisible = nowActive;
+      var sceneData = SCENES[currentSceneIdx];
+      var mzS = marzipanoScenes[currentSceneIdx];
+      if (sceneData && mzS) buildHotspotsForScene(sceneData.id, mzS.scene);
+      return;
+    }
 
     regionVisibility[key] = nowActive;
 
@@ -1681,6 +1839,96 @@
   infoModal.addEventListener('click', function(e) {
     if (e.target === infoModal) infoModal.hidden = true;
   });
+
+  // ─── Toast ────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'toast';
+      t.className = 'toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('is-visible');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() { t.classList.remove('is-visible'); }, 2400);
+  }
+
+  // ─── Share Button ─────────────────────────────────────────────────────────
+  var btnShare = document.getElementById('btn-share');
+  if (btnShare) {
+    btnShare.addEventListener('click', function() {
+      var url = location.href;
+      var title = 'Aurora Oasis · Tour Virtual';
+      var text = 'Cinema esférico interativo · Lago Corumbá IV · Abadiânia, GO';
+      if (navigator.share) {
+        navigator.share({ title: title, text: text, url: url }).catch(function() {});
+      } else {
+        navigator.clipboard.writeText(url).then(function() {
+          showToast('Link copiado pra área de transferência');
+        }).catch(function() {
+          showToast('Link copiado pra área de transferência');
+        });
+      }
+    });
+  }
+
+  // ─── Scene Mini-map ───────────────────────────────────────────────────────
+  function updateSceneMinimap() {
+    var sceneId = SCENES[currentSceneIdx] ? SCENES[currentSceneIdx].id : null;
+    document.querySelectorAll('.sm-thumb').forEach(function(btn) {
+      btn.classList.toggle('is-active', btn.dataset.scene === sceneId);
+    });
+  }
+
+  document.querySelectorAll('.sm-thumb').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sceneId = btn.dataset.scene;
+      var idx = SCENES.findIndex(function(s) { return s.id === sceneId; });
+      if (idx >= 0) switchScene(idx, false);
+    });
+  });
+
+  // ─── Panorama Hotspots ────────────────────────────────────────────────────
+  var SCENE_HOTSPOTS = {
+    pano_01: [
+      { yaw:  0.1,  pitch: -0.05, label: 'Lago Corumbá IV', desc: 'Espelho d\'água que delimita o empreendimento ao norte e leste.' },
+      { yaw: -0.5,  pitch:  0.1,  label: 'Quadras Aurora',  desc: 'Setor principal do loteamento. 241 lotes distribuídos em 6 quadras.' },
+      { yaw:  0.8,  pitch:  0.05, label: 'Mata Cerrado',    desc: 'Reserva nativa preservada. 30% do empreendimento mantém vegetação original.' }
+    ],
+    pano_02: [
+      { yaw:  0,    pitch: -0.1,  label: 'Visão Norte',     desc: 'Direção do nascer do sol, vista privilegiada para os lotes premium.' }
+    ],
+    pano_03: [
+      { yaw:  0,    pitch: -0.08, label: 'Margem do lago',  desc: 'Frente d\'água ininterrupta de aproximadamente 1,2 km.' }
+    ],
+    pano_04: [
+      { yaw:  0.2,  pitch: -0.1,  label: 'Pôr do sol',      desc: 'Hora dourada característica do cerrado goiano.' }
+    ]
+  };
+
+  var hotspotsVisible = true;
+
+  function buildHotspotsForScene(sceneId, mzScene) {
+    if (!mzScene || !SCENE_HOTSPOTS[sceneId]) return;
+    var container = mzScene.hotspotContainer();
+    container.listHotspots().forEach(function(h) { container.destroyHotspot(h); });
+    if (!hotspotsVisible) return;
+
+    SCENE_HOTSPOTS[sceneId].forEach(function(h) {
+      var el = document.createElement('div');
+      el.className = 'pano-hotspot';
+      el.innerHTML =
+        '<div class="ph-dot"></div>' +
+        '<div class="ph-card">' +
+          '<div class="ph-cat">Ponto de interesse</div>' +
+          '<div class="ph-label">' + h.label + '</div>' +
+          '<div class="ph-desc">' + h.desc + '</div>' +
+        '</div>';
+      container.createHotspot(el, { yaw: h.yaw, pitch: h.pitch });
+    });
+  }
 
   // ─── Bootstrap ────────────────────────────────────────────────────────────
   if (document.fonts && document.fonts.ready) {
