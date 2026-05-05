@@ -535,6 +535,8 @@
   var currentSceneIdx = 0;
   var viewer = null;
   var marzipanoScenes = [];
+  var flatScenes = [];
+  var overviewMode = false;
   var autorotating = false;
   var autorotateCtrl = null;
   var regionVisibility = { regions: true, aurora_oasis: true, aurora_lago: true };
@@ -1066,7 +1068,7 @@
   // ─── Feature Definitions ─────────────────────────────────────────────────
   var FEATURES = {
     home: {
-      handler: function() { resetView(); }
+      handler: function() { homeAction(); }
     },
     conceito: {
       title: 'Conceito',
@@ -1124,6 +1126,58 @@
       basePose.pitch = -0.30;
       currentFov = FOV_DEFAULT;
       driftStart = performance.now();
+    }
+  }
+
+  // ─── Overview Mode (FlatView) ─────────────────────────────────────────────
+  function buildFlatScenes() {
+    SCENES.forEach(function(sceneData) {
+      var levels = [{ tileSize: 2048, size: { width: 2048, height: 1024 } }];
+      var geom = new Marzipano.FlatGeometry(levels);
+      var view = new Marzipano.FlatView(
+        { mediaAspectRatio: 2 },
+        Marzipano.FlatView.limit.letterbox()
+      );
+      var source = Marzipano.ImageUrlSource.fromString('/img/equirect/' + sceneData.id + '.jpg');
+      var scene = viewer.createScene({ source: source, geometry: geom, view: view });
+      flatScenes.push({ data: sceneData, scene: scene, view: view });
+    });
+  }
+
+  function toggleOverviewMode() {
+    overviewMode = !overviewMode;
+    var arr = overviewMode ? flatScenes : marzipanoScenes;
+    if (arr[currentSceneIdx]) {
+      arr[currentSceneIdx].scene.switchTo({ transitionDuration: 700 });
+    }
+    document.body.classList.toggle('overview-mode', overviewMode);
+
+    // Update Home button label and icon
+    var btn = document.querySelector('[data-feature="home"] .bb-label');
+    if (btn) btn.textContent = overviewMode ? 'Imersivo' : 'Home';
+
+    // Hide/show hotspots in overview
+    var hotspots = document.querySelectorAll('.pano-hotspot');
+    hotspots.forEach(function(h) { h.style.display = overviewMode ? 'none' : ''; });
+  }
+
+  function homeAction() {
+    if (overviewMode) {
+      toggleOverviewMode();
+      setTimeout(function() {
+        var s = marzipanoScenes[currentSceneIdx];
+        if (s) {
+          s.view.setYaw(0);
+          s.view.setPitch(-0.30);
+          s.view.setFov(FOV_DEFAULT);
+          basePose.yaw = 0;
+          basePose.pitch = -0.30;
+          currentFov = FOV_DEFAULT;
+          driftStart = performance.now();
+        }
+      }, 750);
+    } else {
+      toggleOverviewMode();
     }
   }
 
@@ -1490,9 +1544,12 @@
     });
 
     buildScenes();
+    buildFlatScenes();
     switchScene(0, true);
     hideLoading();
     initDriftLoop();
+    initTouchGestures();
+    detectFormat();
   }
 
   function buildScenes() {
@@ -1529,9 +1586,14 @@
     if (idx >= SCENES.length) idx = 0;
 
     currentSceneIdx = idx;
-    var s = marzipanoScenes[idx];
 
-    try { currentFov = s.view.fov(); } catch(e) {}
+    // Switch in the correct mode's array
+    var arr = overviewMode ? flatScenes : marzipanoScenes;
+    var s = arr[idx];
+
+    if (!s) return;
+
+    try { if (!overviewMode) currentFov = s.view.fov(); } catch(e) {}
 
     if (immediate) {
       s.scene.switchTo({ transitionDuration: 0 });
@@ -1544,14 +1606,14 @@
     driftStart = performance.now();
     userInteracting = false;
 
-    hdrNumber.textContent = s.data.number;
-    hdrLabel.textContent = s.data.label;
+    var mzS = marzipanoScenes[idx];
+    hdrNumber.textContent = mzS ? mzS.data.number : '';
+    hdrLabel.textContent = mzS ? mzS.data.label : '';
 
     updateScenePickerActive();
     updateSceneMinimap();
     setTimeout(updateRegionOverlay, 50);
     var sceneData = SCENES[idx];
-    var mzS = marzipanoScenes[idx];
     if (sceneData && mzS) {
       setTimeout(function() { buildHotspotsForScene(sceneData.id, mzS.scene); }, 100);
     }
@@ -1911,6 +1973,71 @@
       container.createHotspot(el, { yaw: h.yaw, pitch: h.pitch });
     });
   }
+
+  // ─── Touch Gestures ───────────────────────────────────────────────────────
+  function initTouchGestures() {
+    var container = viewerEl;
+
+    // Double-tap zoom in/out
+    var lastTapTime = 0;
+    container.addEventListener('touchend', function(e) {
+      var now = Date.now();
+      if (now - lastTapTime < 300 && e.touches.length === 0) {
+        var s = marzipanoScenes[currentSceneIdx];
+        if (!s) return;
+        var curFov = s.view.fov();
+        var midFov = (FOV_MIN + FOV_DEFAULT) / 2;
+        s.view.setFov(curFov > midFov ? FOV_MIN + 0.3 : FOV_DEFAULT);
+      }
+      lastTapTime = now;
+    }, { passive: true });
+
+    // 2-finger swipe horizontal = change scene
+    var twoFingerStart = null;
+    container.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        twoFingerStart = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+          time: Date.now()
+        };
+      }
+    }, { passive: true });
+    container.addEventListener('touchend', function(e) {
+      if (!twoFingerStart) return;
+      if (e.changedTouches.length === 0) { twoFingerStart = null; return; }
+      var t = e.changedTouches[0];
+      var dx = t.clientX - twoFingerStart.x;
+      var dy = t.clientY - twoFingerStart.y;
+      var dt = Date.now() - twoFingerStart.time;
+      if (dt < 600 && Math.abs(dx) > 100 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx > 0) switchScene(currentSceneIdx - 1, false);
+        else switchScene(currentSceneIdx + 1, false);
+      }
+      twoFingerStart = null;
+    }, { passive: true });
+
+    // Dragging class for user-select disable
+    container.addEventListener('pointerdown', function() {
+      document.body.classList.add('dragging');
+    });
+    container.addEventListener('pointerup', function() {
+      document.body.classList.remove('dragging');
+    });
+    container.addEventListener('pointercancel', function() {
+      document.body.classList.remove('dragging');
+    });
+  }
+
+  // ─── Format Detection ─────────────────────────────────────────────────────
+  function detectFormat() {
+    var w = window.innerWidth, h = window.innerHeight;
+    document.body.classList.toggle('totem-vertical', h > w * 1.5 && w >= 768);
+    document.body.classList.toggle('totem-horizontal', w > h * 1.7 && h <= 900 && w >= 1280);
+    document.body.classList.toggle('is-mobile-portrait', w <= 480);
+  }
+  window.addEventListener('resize', detectFormat);
+  window.addEventListener('orientationchange', detectFormat);
 
   // ─── Bootstrap ────────────────────────────────────────────────────────────
   if (document.fonts && document.fonts.ready) {
