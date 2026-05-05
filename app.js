@@ -552,8 +552,8 @@
 
   // Zoom
   var FOV_MIN = 35 * Math.PI / 180;
-  var FOV_MAX = 160 * Math.PI / 180;
-  var FOV_DEFAULT = 150 * Math.PI / 180;
+  var FOV_MAX = 179 * Math.PI / 180;
+  var FOV_DEFAULT = 175 * Math.PI / 180;
   var FOV_STEP = 5 * Math.PI / 180;
   var currentFov = FOV_DEFAULT;
 
@@ -1515,7 +1515,7 @@
       ]);
 
       var view = new Marzipano.RectilinearView(
-        { yaw: 0, pitch: -0.22, fov: FOV_DEFAULT },
+        { yaw: 0, pitch: -0.30, fov: FOV_DEFAULT },
         limiter
       );
       var scene = viewer.createScene({ source: source, geometry: geometry, view: view });
