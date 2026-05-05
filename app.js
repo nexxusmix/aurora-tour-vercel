@@ -1763,7 +1763,7 @@
       ]);
 
       var initPose = (sceneData.id === 'pano_02')
-        ? { yaw: 0, pitch: -0.05, fov: 130 * Math.PI / 180 }
+        ? { yaw: 0, pitch: -0.55, fov: 95 * Math.PI / 180 }
         : { yaw: 0, pitch: -0.30, fov: FOV_DEFAULT };
       var view = new Marzipano.RectilinearView(
         initPose,
@@ -1800,12 +1800,12 @@
       var s_mz = marzipanoScenes[idx];
       if (s_mz) {
         s_mz.view.setYaw(0);
-        s_mz.view.setPitch(-0.05);
-        s_mz.view.setFov(130 * Math.PI / 180);
-        currentFov = 130 * Math.PI / 180;
+        s_mz.view.setPitch(-0.55);
+        s_mz.view.setFov(95 * Math.PI / 180);
+        currentFov = 95 * Math.PI / 180;
       }
       basePose.yaw = 0;
-      basePose.pitch = -0.05;
+      basePose.pitch = -0.55;
     } else {
       basePose.yaw = 0;
       basePose.pitch = -0.30;
@@ -1897,9 +1897,10 @@
   }
 
   function applyZoomStep(deltaRad) {
-    if (overviewMode) return;
-    var s = marzipanoScenes[currentSceneIdx];
-    if (!s) return;
+    var s = (typeof overviewMode !== 'undefined' && overviewMode && typeof flatScenes !== 'undefined' && flatScenes[currentSceneIdx])
+      ? flatScenes[currentSceneIdx]
+      : marzipanoScenes[currentSceneIdx];
+    if (!s || !s.view || typeof s.view.fov !== 'function') return;
     var cur = s.view.fov();
     var next = cur + deltaRad;
     next = Math.max(FOV_MIN, Math.min(FOV_MAX, next));
@@ -1936,17 +1937,23 @@
   var btnZoomIn  = document.getElementById('btn-zoom-in');
   var btnZoomOut = document.getElementById('btn-zoom-out');
   if (btnZoomIn) {
-    btnZoomIn.addEventListener('click', function() { applyZoomStep(-FOV_STEP * 2); });
+    btnZoomIn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      applyZoomStep(-FOV_STEP * 2);
+    });
   }
   if (btnZoomOut) {
-    btnZoomOut.addEventListener('click', function() {
-      if (overviewMode) return;
+    btnZoomOut.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       var s = marzipanoScenes[currentSceneIdx];
-      if (!s) return;
-      var cur = s.view.fov();
-      if (cur >= FOV_MAX - 0.05) {
-        if (typeof toggleOverviewMode === 'function') toggleOverviewMode();
-        return;
+      if (s && !overviewMode) {
+        var cur = s.view.fov();
+        if (cur >= FOV_MAX - 0.05) {
+          if (typeof toggleOverviewMode === 'function') toggleOverviewMode();
+          return;
+        }
       }
       applyZoomStep(+FOV_STEP * 2);
     });
