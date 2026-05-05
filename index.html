@@ -12,10 +12,20 @@
 </head>
 <body>
 
+  <!-- Admin Bar -->
+  <div id="admin-bar">
+    <div class="admin-dot"></div>
+    <span class="admin-label">Modo Admin</span>
+    <button class="admin-action-btn" id="admin-btn-manual" type="button">Demarcações Manual</button>
+    <button class="admin-action-btn" id="admin-btn-ia" type="button">Demarcações IA</button>
+    <button class="admin-action-btn" id="admin-btn-content" type="button">Editar Conteúdo</button>
+    <button class="admin-action-btn admin-exit-btn" id="admin-btn-exit" type="button">Sair</button>
+  </div>
+
   <!-- Loading screen -->
   <div id="loading-screen">
     <div class="loading-inner">
-      <img src="/img/oasis-logo-black.png" alt="OASIS · Lago Corumbá IV" class="loading-logo" />
+      <img src="/img/oasis-logo-black-aa.png" alt="OASIS · Lago Corumbá IV" class="loading-logo" />
       <div class="loading-sub">Lago Corumbá IV · Goiás</div>
       <div class="loading-bar-wrap">
         <div class="loading-bar-track"><div class="loading-bar-fill" id="loading-bar"></div></div>
@@ -39,8 +49,8 @@
   <!-- Header -->
   <header id="header">
     <div class="header-brand">
-      <img src="/img/oasis-logo-black.png" alt="OASIS" class="brand-logo brand-logo-dark">
-      <img src="/img/oasis-logo-white.png" alt="OASIS" class="brand-logo brand-logo-light">
+      <img src="/img/oasis-logo-black-aa.png" alt="OASIS" class="brand-logo brand-logo-dark">
+      <img src="/img/oasis-logo-white-aa.png" alt="OASIS" class="brand-logo brand-logo-light">
     </div>
     <div class="header-scene-info" id="header-scene-info">
       <span class="scene-number" id="hdr-number">01</span>
@@ -52,8 +62,8 @@
   <!-- Bottom Bar — feature nav -->
   <footer id="bottom-bar" role="contentinfo">
     <div class="bb-brand">
-      <img src="/img/oasis-logo-black.png" class="brand-logo brand-logo-dark" alt="OASIS">
-      <img src="/img/oasis-logo-white.png" class="brand-logo brand-logo-light" alt="OASIS">
+      <img src="/img/oasis-logo-black-aa.png" class="brand-logo brand-logo-dark" alt="OASIS">
+      <img src="/img/oasis-logo-white-aa.png" class="brand-logo brand-logo-light" alt="OASIS">
       <div class="brand-meta">Lago Corumbá IV · Goiás</div>
     </div>
 
@@ -67,8 +77,10 @@
       </button>
 
       <button class="bb-feat" data-feature="conceito" aria-label="Conceito">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 4 12.7c-.6.4-1 1.1-1 1.8V18H9v-1.5c0-.7-.4-1.4-1-1.8A7 7 0 0 1 12 2Z" stroke-width="1.5" stroke-linecap="round"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="bb-icon" aria-hidden="true">
+          <path d="M6 2h12M6 22h12M8 2v3a4 4 0 0 0 .8 2.4L12 12l-3.2 4.6A4 4 0 0 0 8 19v3M16 2v3a4 4 0 0 1-.8 2.4L12 12l3.2 4.6A4 4 0 0 1 16 19v3"/>
+          <line x1="9" y1="6" x2="15" y2="6" opacity="0.4"/>
+          <path d="M10 17.5h4" opacity="0.6"/>
         </svg>
         <span class="bb-label">Conceito</span>
       </button>
@@ -289,7 +301,7 @@
           <line x1="15" y1="1" x2="1" y2="15" stroke="#1A1A1A" stroke-width="1.5"/>
         </svg>
       </button>
-      <img src="/img/oasis-logo-black.png" alt="OASIS" class="modal-logo" />
+      <img src="/img/oasis-logo-black-aa.png" alt="OASIS" class="modal-logo" />
       <h2 class="modal-title">Oasis</h2>
       <p class="modal-sub">LAGO CORUMBÁ IV · ABADIÂNIA · GOIÁS</p>
       <div class="modal-divider"></div>
