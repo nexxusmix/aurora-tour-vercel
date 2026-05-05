@@ -338,15 +338,15 @@
     return '<div class="admin-section">' +
         '<div class="admin-section-title">Detecção automática de áreas</div>' +
         '<p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;">A IA analisa a cena atual do tour e propõe demarcações de áreas distintas (lote, lago, mata, edificação).</p>' +
-        '<p style="font-size:11px;color:var(--ink-muted);line-height:1.5;">Stack: Replicate · SAM 2 (meta/sam-2) via Vercel Serverless Function</p>' +
+        '<p style="font-size:11px;color:var(--ink-muted);line-height:1.5;">Detecção automática via Google Gemini Vision.<br>Modelo: gemini-2.0-flash (free tier 15 req/min).</p>' +
       '</div>' +
       '<div class="admin-divider"></div>' +
       '<div class="admin-section">' +
-        '<button class="admin-action primary" id="btn-detect-ia">Detectar lotes na cena atual</button>' +
+        '<button class="admin-action primary" id="btn-detect-ia">Detectar regiões na cena atual</button>' +
         '<div id="admin-ia-status" style="margin-top:12px;font-size:11px;color:var(--ink-muted);line-height:1.5;"></div>' +
       '</div>' +
       '<div class="admin-divider"></div>' +
-      '<div class="admin-note" style="font-size:10px;">Requer REPLICATE_API_TOKEN configurado no Vercel: vercel.com → Settings → Environment Variables. Token gratuito em replicate.com/account/api-tokens.</div>';
+      '<div class="admin-note" style="font-size:10px;">Setup: configure GEMINI_API_KEY no Vercel Dashboard.<br>Token gratuito: aistudio.google.com/apikey</div>';
   }
 
   function bindIAPanel() {
@@ -356,76 +356,48 @@
     }
   }
 
-  // ─── detectIA — integração real Replicate SAM 2 via /api/segment + polling ─
+  // ─── detectIA — integração Google Gemini Vision via /api/segment (síncrono) ─
   async function detectIA() {
     var statusEl = document.getElementById('admin-ia-status');
     var setStatus = function(msg) { if (statusEl) statusEl.textContent = msg; };
 
-    // 1. Captura snapshot da cena atual (canvas Marzipano ou face de cubemap)
     setStatus('Capturando cena atual...');
     var dataUrl = await captureSnapshot();
-    if (!dataUrl) { setStatus('Erro: nao foi possivel capturar snapshot da cena.'); return; }
+    if (!dataUrl) { setStatus('Erro: não foi possível capturar snapshot.'); return; }
 
-    // 2. POST /api/segment — cria prediction assíncrona no Replicate
-    setStatus('Enviando para IA (SAM 2 via Replicate)...');
-    var createRes;
+    setStatus('Enviando pra IA Gemini...');
+    var res;
     try {
-      createRes = await fetch('/api/segment', {
+      res = await fetch('/api/segment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: dataUrl, prompt: 'lots, lake, vegetation, buildings' })
+        body: JSON.stringify({
+          image: dataUrl,
+          prompt: 'lotes de loteamento, lago, áreas de mata, edificações, vias'
+        })
       });
     } catch (e) {
-      setStatus('Erro de rede ao chamar /api/segment: ' + e.message);
+      setStatus('Erro de rede: ' + e.message);
       return;
     }
 
-    var createData = await createRes.json();
-    if (!createRes.ok) {
-      var errMsg = createData.error || ('HTTP ' + createRes.status);
-      var details = createData.details ? ' · ' + JSON.stringify(createData.details).slice(0, 180) : '';
-      var help = createData.help ? ' | ' + createData.help : '';
-      setStatus('Erro: ' + errMsg + details + help);
+    var data = await res.json();
+    if (!res.ok) {
+      setStatus('Erro do servidor: ' + (data.error || res.status) + (data.details ? ' · ' + JSON.stringify(data.details).slice(0, 240) : ''));
       return;
     }
 
-    var predId = createData.id;
-    setStatus('IA processando... (id ' + predId.slice(0, 8) + ')');
-
-    // 3. Polling /api/segment-status a cada 2s, máximo 120s
-    var maxPolls = 60;
-    for (var i = 0; i < maxPolls; i++) {
-      await new Promise(function(resolve) { setTimeout(resolve, 2000); });
-
-      var statusRes;
-      try {
-        statusRes = await fetch('/api/segment-status?id=' + encodeURIComponent(predId));
-      } catch (e) {
-        setStatus('Erro de rede ao consultar status: ' + e.message);
-        return;
-      }
-
-      var statusData = await statusRes.json();
-      setStatus('IA · ' + (statusData.status || 'processando') + ' (' + (i + 1) + '/' + maxPolls + ')');
-
-      if (statusData.status === 'succeeded') {
-        // 4. Importar resultados da predição
-        setStatus('IA concluida. Importando regioes...');
-        var output = statusData.output;
-        var importedCount = importIAResults(output);
-        setStatus('IA: ' + importedCount + ' regiao(oes) detectada(s) e adicionada(s) ao painel manual.');
-        if (typeof refreshRegionsList === 'function') refreshRegionsList();
-        if (typeof rebuildRegionsOverlay === 'function') rebuildRegionsOverlay();
-        return;
-      }
-
-      if (statusData.status === 'failed' || statusData.status === 'canceled') {
-        setStatus('IA falhou: ' + (statusData.error || statusData.status));
-        return;
-      }
+    var detections = data.detections || [];
+    if (detections.length === 0) {
+      setStatus('IA não detectou regiões. Tente uma cena com mais elementos.');
+      return;
     }
 
-    setStatus('Timeout — predicao ainda em processamento. Tente novamente em instantes.');
+    setStatus('Importando ' + detections.length + ' regiões detectadas...');
+    var added = importIAResults(detections);
+    setStatus('IA: ' + added + ' região(ões) adicionada(s). Ajuste manualmente se necessário.');
+    if (typeof refreshRegionsList === 'function') refreshRegionsList();
+    if (typeof rebuildRegionsOverlay === 'function') rebuildRegionsOverlay();
   }
 
   // Captura snapshot do viewer Marzipano como data URL JPEG
@@ -461,45 +433,25 @@
     });
   }
 
-  // Importa resultado da predição SAM como regiões no painel de demarcações
-  function importIAResults(output) {
-    // Output varia por modelo:
-    //   meta/sam-2                  → array de { url: PNG mask }
-    //   lucataco/grounded-sam-2     → { detections: [{ box, mask, label, score }] }
-    //   segment-anything-everything → [{ url }, ...]
-    // Por enquanto extraímos o que for array e salvamos como anotação raw.
-    // O user ajusta posições no painel manual após a detecção.
-    if (!output) {
-      console.warn('importIAResults: output vazio', output);
-      return 0;
-    }
-
+  // Importa detecções Gemini como regiões no painel de demarcações
+  function importIAResults(detections) {
     var regions = (typeof loadRegions === 'function') ? loadRegions() : [];
     var added = 0;
 
-    var polygons = null;
-    if (Array.isArray(output)) {
-      polygons = output;
-    } else if (output.detections && Array.isArray(output.detections)) {
-      polygons = output.detections;
-    } else if (output.masks && Array.isArray(output.masks)) {
-      polygons = output.masks;
-    } else if (output.polygons && Array.isArray(output.polygons)) {
-      polygons = output.polygons;
-    } else {
-      console.warn('importIAResults: formato desconhecido — inspecionar output:', output);
-      return 0;
-    }
+    detections.forEach(function(det, i) {
+      if (!det.box_2d || det.box_2d.length !== 4) return;
 
-    polygons.forEach(function(p, i) {
+      var vertices = convertGeminiBoxToYawPitch(det.box_2d);
+      if (!vertices || vertices.length === 0) return;
+
       regions.push({
         id: 'ia_' + Date.now() + '_' + i,
-        label: p.label || ('IA · regiao ' + (i + 1)),
+        label: det.label || ('IA · região ' + (i + 1)),
         color: '#C9A84C',
-        vertices: convertIAPolyToYawPitch(p),
+        vertices: vertices,
         createdAt: new Date().toISOString(),
-        source: 'ai',
-        iaRaw: p        // guarda raw pra debug — pode remover depois
+        source: 'gemini',
+        score: det.score || null
       });
       added++;
     });
@@ -508,43 +460,38 @@
     return added;
   }
 
-  // Converte bounding box ou polygon SAM para coordenadas yaw/pitch via Marzipano
-  function convertIAPolyToYawPitch(p) {
+  // Converte bounding box Gemini [ymin, xmin, ymax, xmax] (escala 0-1000) para yaw/pitch via Marzipano
+  function convertGeminiBoxToYawPitch(box) {
+    // box = [ymin, xmin, ymax, xmax] em escala 0-1000
     var s = marzipanoScenes[currentSceneIdx];
+    if (!s || !s.view) return [];
 
-    // Tenta converter box [x_min, y_min, x_max, y_max] via screenToCoordinates
-    if (p.box && Array.isArray(p.box) && p.box.length === 4 && s && s.view) {
-      var canvas = document.querySelector('#viewer canvas');
-      if (canvas) {
-        var w = canvas.clientWidth;
-        var h = canvas.clientHeight;
-        // SAM retorna box em pixels da imagem original (aprox 1024x512 equirect)
-        // Fazemos remap proporcional para o canvas atual
-        var pts = [
-          { x: p.box[0] * w / 1024, y: p.box[1] * h / 512 },
-          { x: p.box[2] * w / 1024, y: p.box[1] * h / 512 },
-          { x: p.box[2] * w / 1024, y: p.box[3] * h / 512 },
-          { x: p.box[0] * w / 1024, y: p.box[3] * h / 512 }
-        ];
-        var result = [];
-        pts.forEach(function(pt) {
-          try {
-            result.push(s.view.screenToCoordinates(pt));
-          } catch (e) {
-            result.push({ yaw: 0, pitch: 0 });
-          }
-        });
-        return result;
-      }
-    }
+    var canvas = document.querySelector('#viewer canvas');
+    if (!canvas) return [];
 
-    // Fallback: placeholder retangular central pra admin ajustar manualmente
-    return [
-      { yaw: -0.3, pitch:  0   },
-      { yaw:  0.3, pitch:  0   },
-      { yaw:  0.3, pitch:  0.2 },
-      { yaw: -0.3, pitch:  0.2 }
+    var w = canvas.clientWidth;
+    var h = canvas.clientHeight;
+
+    // Normalizar 0-1000 → pixels do canvas
+    var x0 = (box[1] / 1000) * w;
+    var y0 = (box[0] / 1000) * h;
+    var x1 = (box[3] / 1000) * w;
+    var y1 = (box[2] / 1000) * h;
+
+    var corners = [
+      { x: x0, y: y0 },
+      { x: x1, y: y0 },
+      { x: x1, y: y1 },
+      { x: x0, y: y1 }
     ];
+
+    return corners.map(function(pt) {
+      try {
+        return s.view.screenToCoordinates(pt);
+      } catch (e) {
+        return { yaw: 0, pitch: 0 };
+      }
+    });
   }
 
   // ─── Admin Content Panel ──────────────────────────────────────────────────
