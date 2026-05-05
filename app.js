@@ -1,5 +1,5 @@
-/* Aurora Oasis Tour Virtual v3 — app.js */
-/* Neo Swiss | Marzipano 5-level 8192px | Parallax + DoF + Zoom | Bottom Bar */
+/* Aurora Oasis Tour Virtual v4 — app.js */
+/* Feature Bottom Bar | MapLibre Localização | Scene Picker | Zero Italic */
 
 (function () {
   'use strict';
@@ -52,6 +52,8 @@
   var autorotateCtrl = null;
   var regionVisibility = { regions: true, aurora_oasis: true, aurora_lago: true };
   var menuOpen = false;
+  var scenePkrOpen = false;
+  var featModalOpen = false;
 
   // Parallax state
   var parallaxEnabled = true;
@@ -67,34 +69,261 @@
   var zoomIntTimer = null;
 
   // Zoom
-  var FOV_MIN = 20 * Math.PI / 180;
-  var FOV_MAX = 120 * Math.PI / 180;
+  var FOV_MIN = 30 * Math.PI / 180;
+  var FOV_MAX = 130 * Math.PI / 180;
   var FOV_STEP = 5 * Math.PI / 180;
-  var currentFov = 90 * Math.PI / 180;
+  var currentFov = 110 * Math.PI / 180;
 
   // ─── DOM refs ─────────────────────────────────────────────────────────────
-  var viewerEl      = document.getElementById('viewer');
-  var loadScreen    = document.getElementById('loading-screen');
-  var loadBar       = document.getElementById('loading-bar');
-  var loadPct       = document.getElementById('loading-pct');
-  var hdrNumber     = document.getElementById('hdr-number');
-  var hdrLabel      = document.getElementById('hdr-label');
-  var bbScenesEl    = document.getElementById('bb-scenes');
-  var infoModal     = document.getElementById('info-modal');
-  var modalCloseBtn = document.getElementById('modal-close-btn');
-  var regionOverlay = document.getElementById('region-overlay');
-  var shareToast    = document.getElementById('share-toast');
-  var dofOverlay    = document.getElementById('dof-overlay');
-  var menuModal     = document.getElementById('menu-modal');
-  var mmCloseBtn    = document.getElementById('mm-close-btn');
-  var zoomSlider    = document.getElementById('zoom-slider');
-  var btnZoomIn     = document.getElementById('btn-zoom-in');
-  var btnZoomOut    = document.getElementById('btn-zoom-out');
-  var btnAutorotate = document.getElementById('btn-autorotate');
-  var btnInfo       = document.getElementById('btn-info');
-  var btnShare      = document.getElementById('btn-share');
-  var btnFullscreen = document.getElementById('btn-fullscreen');
-  var btnMenu       = document.getElementById('btn-menu');
+  var viewerEl       = document.getElementById('viewer');
+  var loadScreen     = document.getElementById('loading-screen');
+  var loadBar        = document.getElementById('loading-bar');
+  var loadPct        = document.getElementById('loading-pct');
+  var hdrNumber      = document.getElementById('hdr-number');
+  var hdrLabel       = document.getElementById('hdr-label');
+  var infoModal      = document.getElementById('info-modal');
+  var modalCloseBtn  = document.getElementById('modal-close-btn');
+  var regionOverlay  = document.getElementById('region-overlay');
+  var shareToast     = document.getElementById('share-toast');
+  var dofOverlay     = document.getElementById('dof-overlay');
+  var menuModal      = document.getElementById('menu-modal');
+  var mmCloseBtn     = document.getElementById('mm-close-btn');
+  var zoomSlider     = document.getElementById('zoom-slider');
+  var btnZoomIn      = document.getElementById('btn-zoom-in');
+  var btnZoomOut     = document.getElementById('btn-zoom-out');
+  var btnAutorotate  = document.getElementById('btn-autorotate');
+  var btnFullscreen  = document.getElementById('btn-fullscreen');
+  var btnAdmin       = document.getElementById('btn-admin');
+  var btnCenas       = document.getElementById('btn-cenas');
+  var scenePicker    = document.getElementById('scene-picker');
+  var featModal      = document.getElementById('feat-modal');
+  var featModalBack  = document.getElementById('feat-modal-backdrop');
+  var featModalClose = document.getElementById('feat-modal-close');
+  var featModalTitle = document.getElementById('feat-modal-title');
+  var featModalBody  = document.getElementById('feat-modal-body');
+
+  // ─── Feature Definitions ─────────────────────────────────────────────────
+  function locationContent() {
+    return [
+      '<div class="modal-section">',
+        '<div class="modal-mini">Endereço</div>',
+        '<div class="modal-line">Lago Corumbá IV</div>',
+        '<div class="modal-line">Abadiânia · Goiás · 72940-000</div>',
+      '</div>',
+      '<div class="modal-section">',
+        '<div class="modal-mini">Coordenadas</div>',
+        '<div class="modal-line modal-mono">-16.274689 · -48.464529</div>',
+      '</div>',
+      '<div class="modal-section">',
+        '<div id="map"></div>',
+      '</div>',
+      '<div class="modal-section modal-actions">',
+        '<a href="https://www.google.com/maps/?q=-16.274689,-48.464529" target="_blank" rel="noopener" class="modal-link">Abrir no Google Maps</a>',
+        '<a href="https://www.google.com/maps/dir/?api=1&destination=-16.274689,-48.464529" target="_blank" rel="noopener" class="modal-link">Como chegar</a>',
+      '</div>'
+    ].join('');
+  }
+
+  var FEATURES = {
+    home: {
+      handler: function() { resetView(); }
+    },
+    conceito: {
+      title: 'Conceito',
+      content: [
+        '<div class="modal-section">',
+          '<div class="modal-mini">O Projeto</div>',
+          '<div class="modal-line">Aurora Oasis é um loteamento de alto padrão às margens do Lago Corumbá IV, em Abadiânia, Goiás.</div>',
+        '</div>',
+        '<div class="modal-section">',
+          '<div class="modal-mini">Visão</div>',
+          '<div class="modal-line">241 lotes com infraestrutura completa, área de lazer premium e segurança 24h. A 90 km de Brasília.</div>',
+        '</div>',
+        '<div class="modal-section">',
+          '<div class="modal-mini">Fase Atual</div>',
+          '<div class="modal-line">1ª Fase · 60 lotes disponíveis.</div>',
+        '</div>'
+      ].join('')
+    },
+    localizacao: {
+      title: 'Localização',
+      content: locationContent(),
+      onOpen: function() {
+        setTimeout(initLocationMap, 120);
+      }
+    },
+    implantacao: {
+      title: 'Implantação',
+      content: '<div class="modal-section"><div class="modal-mini">Master Plan</div><div class="modal-line">Master plan do empreendimento. Conteúdo em breve.</div></div>'
+    },
+    disponibilidades: {
+      title: 'Mapa de Disponibilidades',
+      content: '<div class="modal-section"><div class="modal-mini">Status dos Lotes</div><div class="modal-line">Status dos lotes em tempo real. Conteúdo em breve.</div></div>'
+    },
+    imagens: {
+      title: 'Galeria de Imagens',
+      content: '<div class="modal-section"><div class="modal-mini">Fotografia</div><div class="modal-line">Galeria fotográfica em alta resolução. Conteúdo em breve.</div></div>'
+    },
+    fotolivro: {
+      title: 'Fotolivro · Book Digital',
+      content: '<div class="modal-section"><div class="modal-mini">Edição Completa</div><div class="modal-line">Edição completa do projeto. Conteúdo em breve.</div></div>'
+    },
+    videos: {
+      title: 'Vídeos',
+      content: '<div class="modal-section"><div class="modal-mini">Audiovisual</div><div class="modal-line">Reels, teasers e versão estendida. Conteúdo em breve.</div></div>'
+    },
+    cenas: {
+      handler: function() { toggleScenePicker(); }
+    }
+  };
+
+  // ─── Reset View ───────────────────────────────────────────────────────────
+  function resetView() {
+    closeAllOverlays();
+    var s = marzipanoScenes[currentSceneIdx];
+    if (s) {
+      s.view.setYaw(0);
+      s.view.setPitch(0);
+      basePose.yaw = 0;
+      basePose.pitch = 0;
+    }
+  }
+
+  // ─── Feature Modal ────────────────────────────────────────────────────────
+  function openFeatModal(title, content, onOpen) {
+    featModalTitle.textContent = title;
+    featModalBody.innerHTML = content;
+    featModal.hidden = false;
+    featModalOpen = true;
+    if (onOpen) onOpen();
+  }
+
+  function closeFeatModal() {
+    featModal.hidden = true;
+    featModalOpen = false;
+    document.querySelectorAll('.bb-feat').forEach(function(b) {
+      b.classList.remove('is-active');
+    });
+  }
+
+  featModalClose.addEventListener('click', closeFeatModal);
+  featModalBack.addEventListener('click', closeFeatModal);
+
+  // ─── Feature Buttons ──────────────────────────────────────────────────────
+  document.querySelectorAll('.bb-feat').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var f = btn.dataset.feature;
+      var cfg = FEATURES[f];
+      if (!cfg) return;
+
+      // Deactivate all feat buttons first
+      document.querySelectorAll('.bb-feat').forEach(function(b) {
+        b.classList.remove('is-active');
+      });
+
+      // Close scene picker if open
+      closeScenePicker();
+
+      if (cfg.handler) {
+        cfg.handler();
+        return;
+      }
+
+      // If same modal already open, close it
+      if (featModalOpen && featModalTitle.textContent === cfg.title) {
+        closeFeatModal();
+        return;
+      }
+
+      btn.classList.add('is-active');
+      openFeatModal(cfg.title, cfg.content, cfg.onOpen);
+    });
+  });
+
+  // Cenas aux button
+  btnCenas.addEventListener('click', function() {
+    toggleScenePicker();
+  });
+
+  // ─── Scene Picker ─────────────────────────────────────────────────────────
+  function toggleScenePicker() {
+    if (scenePkrOpen) {
+      closeScenePicker();
+    } else {
+      openScenePicker();
+    }
+  }
+
+  function openScenePicker() {
+    scenePicker.hidden = false;
+    scenePkrOpen = true;
+    btnCenas.classList.add('is-active');
+    updateScenePickerActive();
+  }
+
+  function closeScenePicker() {
+    scenePicker.hidden = true;
+    scenePkrOpen = false;
+    btnCenas.classList.remove('is-active');
+  }
+
+  function updateScenePickerActive() {
+    document.querySelectorAll('.sp-btn').forEach(function(btn, i) {
+      btn.classList.toggle('active', i === currentSceneIdx);
+    });
+  }
+
+  document.querySelectorAll('.sp-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(btn.dataset.sceneIdx, 10);
+      switchScene(idx, false);
+      closeScenePicker();
+    });
+  });
+
+  // Close pickers on backdrop click (outside scene-picker)
+  document.addEventListener('click', function(e) {
+    if (scenePkrOpen && !scenePicker.contains(e.target) && e.target !== btnCenas && !btnCenas.contains(e.target)) {
+      closeScenePicker();
+    }
+  });
+
+  // ─── Close All Overlays ───────────────────────────────────────────────────
+  function closeAllOverlays() {
+    closeFeatModal();
+    closeScenePicker();
+  }
+
+  // ─── MapLibre Localização ─────────────────────────────────────────────────
+  function initLocationMap() {
+    if (!window.maplibregl) return;
+    var el = document.getElementById('map');
+    if (!el || el._inited) return;
+    el._inited = true;
+    var map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://tiles.openfreemap.org/styles/positron',
+      center: [-48.464529, -16.274689],
+      zoom: 13,
+      attributionControl: false
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+    // Gold marker dot
+    var dot = document.createElement('div');
+    dot.style.cssText = 'width:14px;height:14px;border-radius:50%;background:#C9A84C;border:2px solid #1A1A1A;box-shadow:0 0 0 4px rgba(201,168,76,0.2);';
+    new maplibregl.Marker({ element: dot }).setLngLat([-48.464529, -16.274689]).addTo(map);
+  }
+
+  // ─── Admin placeholder ────────────────────────────────────────────────────
+  btnAdmin.addEventListener('click', function() {
+    var pw = prompt('Senha admin:');
+    if (pw === 'aurora') {
+      alert('Modo admin em desenvolvimento. Em breve: demarcações manuais e via IA, edição de conteúdo, upload de panoramas.');
+    } else if (pw !== null) {
+      alert('Senha inválida.');
+    }
+  });
 
   // ─── Marzipano Init ───────────────────────────────────────────────────────
   function initViewer() {
@@ -107,7 +336,6 @@
     };
     viewer = new Marzipano.Viewer(viewerEl, viewerOpts);
 
-    // Configure scroll zoom speed
     try {
       var wheelMethod = viewer.controls().method('wheelZoom');
       if (wheelMethod && wheelMethod.instance) {
@@ -115,7 +343,6 @@
       }
     } catch (e) {}
 
-    // Autorotate controller
     autorotateCtrl = Marzipano.autorotate({
       yawSpeed: 0.04,
       targetPitch: 0,
@@ -128,29 +355,22 @@
   }
 
   function buildScenes() {
-    var limiter = Marzipano.RectilinearView.limit.traditional(
-      8192,
-      FOV_MIN,
-      FOV_MAX
-    );
+    var limiter = Marzipano.RectilinearView.limit.traditional(4096, FOV_MIN, FOV_MAX);
 
-    SCENES.forEach(function (sceneData) {
-      // URL template: /media/panorama_pano_01_0/{f}/{z}/{y}_{x}.webp
-      // z=0 lowest res (512px), z=4 highest (8192px)
-      var source = Marzipano.ImageUrlSource.fromString(
-        '/media/panorama_' + sceneData.id + '_0/{f}/{z}/{y}_{x}.webp',
-        {
-          cubeMapPreviewUrl: '/media/thumb_' + sceneData.id + '.webp'
-        }
-      );
+    SCENES.forEach(function(sceneData) {
+      var baseId = sceneData.id;
+      var source = new Marzipano.ImageUrlSource(function(tile) {
+        var inverted = 3 - tile.z;
+        return { url: '/media/panorama_' + baseId + '_0/' + tile.face + '/' + inverted + '/' + tile.y + '_' + tile.x + '.jpg' };
+      }, {
+        cubeMapPreviewUrl: '/media/thumb_' + sceneData.id + '.webp'
+      });
 
-      // 5 levels: z=0 (512) → z=4 (8192)
       var geometry = new Marzipano.CubeGeometry([
-        { tileSize: 512, size: 512,  fallbackOnly: true  },  // z=0
-        { tileSize: 512, size: 1024, fallbackOnly: false },  // z=1
-        { tileSize: 512, size: 2048, fallbackOnly: false },  // z=2
-        { tileSize: 512, size: 4096, fallbackOnly: false },  // z=3
-        { tileSize: 512, size: 8192, fallbackOnly: false }   // z=4
+        { tileSize: 512, size: 512,  fallbackOnly: true  },
+        { tileSize: 512, size: 1024, fallbackOnly: false },
+        { tileSize: 512, size: 2048, fallbackOnly: false },
+        { tileSize: 512, size: 4096, fallbackOnly: false }
       ]);
 
       var view = new Marzipano.RectilinearView(
@@ -158,7 +378,6 @@
         limiter
       );
       var scene = viewer.createScene({ source: source, geometry: geometry, view: view });
-
       marzipanoScenes.push({ data: sceneData, scene: scene, view: view });
     });
   }
@@ -171,8 +390,7 @@
     currentSceneIdx = idx;
     var s = marzipanoScenes[idx];
 
-    // Preserve current fov when switching
-    try { currentFov = s.view.fov(); } catch(e){}
+    try { currentFov = s.view.fov(); } catch(e) {}
 
     if (immediate) {
       s.scene.switchTo({ transitionDuration: 0 });
@@ -180,7 +398,6 @@
       s.scene.switchTo({ transitionDuration: 800 });
     }
 
-    // Reset base pose on scene switch
     basePose.yaw = 0;
     basePose.pitch = 0;
     parallaxTarget.yaw = 0;
@@ -189,60 +406,16 @@
     hdrNumber.textContent = s.data.number;
     hdrLabel.textContent = s.data.label;
 
-    // Update bottom bar active state
-    var btns = bbScenesEl.querySelectorAll('.bb-scene');
-    btns.forEach(function (btn, i) {
-      btn.classList.toggle('active', i === idx);
-    });
-
+    updateScenePickerActive();
     setTimeout(updateRegionOverlay, 50);
-  }
-
-  // ─── Build Bottom Bar Scene Buttons ───────────────────────────────────────
-  function buildBottomBarScenes() {
-    SCENES.forEach(function (s, idx) {
-      var btn = document.createElement('button');
-      btn.className = 'bb-scene' + (idx === 0 ? ' active' : '');
-      btn.setAttribute('data-idx', idx);
-      btn.setAttribute('aria-label', s.label);
-
-      var img = document.createElement('img');
-      img.className = 'bb-thumb';
-      img.src = '/media/thumb_' + s.id + '.webp';
-      img.alt = s.label;
-      img.loading = 'lazy';
-
-      var meta = document.createElement('div');
-      meta.className = 'bb-scene-meta';
-
-      var numSpan = document.createElement('span');
-      numSpan.className = 'bb-num';
-      numSpan.textContent = s.number;
-
-      var labelSpan = document.createElement('span');
-      labelSpan.className = 'bb-label';
-      labelSpan.textContent = s.label;
-
-      meta.appendChild(numSpan);
-      meta.appendChild(labelSpan);
-      btn.appendChild(img);
-      btn.appendChild(meta);
-
-      btn.addEventListener('click', function () {
-        var i = parseInt(btn.getAttribute('data-idx'), 10);
-        switchScene(i, false);
-      });
-
-      bbScenesEl.appendChild(btn);
-    });
   }
 
   // ─── Loading ──────────────────────────────────────────────────────────────
   function hideLoading() {
     setLoadProgress(100);
-    setTimeout(function () {
+    setTimeout(function() {
       loadScreen.classList.add('fade-out');
-      setTimeout(function () { loadScreen.style.display = 'none'; }, 700);
+      setTimeout(function() { loadScreen.style.display = 'none'; }, 700);
     }, 400);
   }
 
@@ -263,8 +436,7 @@
 
   // ─── Parallax 3D ──────────────────────────────────────────────────────────
   function initParallax() {
-    // Mouse movement → subtle yaw/pitch offset
-    viewerEl.addEventListener('mousemove', function (e) {
+    viewerEl.addEventListener('mousemove', function(e) {
       if (!parallaxEnabled || isDragging) return;
       var rect = viewerEl.getBoundingClientRect();
       var nx = (e.clientX - rect.left) / rect.width - 0.5;
@@ -273,10 +445,9 @@
       parallaxTarget.pitch = -ny * PARALLAX_RANGE * 2;
     });
 
-    viewerEl.addEventListener('mousedown', function () { isDragging = true; });
-    window.addEventListener('mouseup', function () {
+    viewerEl.addEventListener('mousedown', function() { isDragging = true; });
+    window.addEventListener('mouseup', function() {
       if (isDragging) {
-        // Update basePose from current view when drag ends
         var s = marzipanoScenes[currentSceneIdx];
         if (s) {
           basePose.yaw   = s.view.yaw();
@@ -290,13 +461,12 @@
       isDragging = false;
     });
 
-    // Touch/DeviceOrientation parallax for mobile
     if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', function (e) {
+      window.addEventListener('deviceorientation', function(e) {
         if (!parallaxEnabled || isDragging) return;
         if (e.beta == null) return;
-        var gamma = (e.gamma || 0) / 45;  // tilt left-right → yaw
-        var beta  = ((e.beta  || 0) - 45) / 45;  // tilt forward → pitch
+        var gamma = (e.gamma || 0) / 45;
+        var beta  = ((e.beta  || 0) - 45) / 45;
         parallaxTarget.yaw   = Math.max(-1, Math.min(1, gamma)) * PARALLAX_RANGE;
         parallaxTarget.pitch = Math.max(-1, Math.min(1, beta))  * PARALLAX_RANGE * 0.5;
       });
@@ -310,11 +480,9 @@
       if (parallaxEnabled && !isDragging && viewer) {
         var s = marzipanoScenes[currentSceneIdx];
         if (s) {
-          // Lerp offset toward target
           parallaxOffset.yaw   += (parallaxTarget.yaw   - parallaxOffset.yaw)   * 0.06;
           parallaxOffset.pitch += (parallaxTarget.pitch - parallaxOffset.pitch) * 0.06;
 
-          // Only apply if offset is significant
           if (Math.abs(parallaxOffset.yaw) > 0.0001 || Math.abs(parallaxOffset.pitch) > 0.0001) {
             var targetYaw   = basePose.yaw   + parallaxOffset.yaw;
             var targetPitch = basePose.pitch + parallaxOffset.pitch;
@@ -322,7 +490,6 @@
             var cp = s.view.pitch();
             var ny = cy + (targetYaw   - cy) * 0.05;
             var np = cp + (targetPitch - cp) * 0.05;
-            // Clamp pitch
             np = Math.max(-Math.PI/3, Math.min(Math.PI/3, np));
             s.view.setYaw(ny);
             s.view.setPitch(np);
@@ -334,7 +501,7 @@
     requestAnimationFrame(tick);
   }
 
-  // ─── Depth of Field Overlay ───────────────────────────────────────────────
+  // ─── Depth of Field ───────────────────────────────────────────────────────
   function setDof(enabled) {
     dofEnabled = enabled;
     if (enabled && !zoomInteracting) {
@@ -350,43 +517,33 @@
     currentFov = fovRad;
     var s = marzipanoScenes[currentSceneIdx];
     if (s) s.view.setFov(fovRad);
-    // Update slider (fov in degrees)
     var deg = Math.round(fovRad * 180 / Math.PI);
     zoomSlider.value = deg;
 
-    // Temporarily disable DoF during zoom interaction
     dofOverlay.classList.add('disabled');
     if (zoomIntTimer) clearTimeout(zoomIntTimer);
     zoomInteracting = true;
-    zoomIntTimer = setTimeout(function () {
+    zoomIntTimer = setTimeout(function() {
       zoomInteracting = false;
       if (dofEnabled) dofOverlay.classList.remove('disabled');
     }, 600);
   }
 
-  btnZoomIn.addEventListener('click', function () {
-    setFov(currentFov - FOV_STEP);
-  });
-  btnZoomOut.addEventListener('click', function () {
-    setFov(currentFov + FOV_STEP);
-  });
-
-  zoomSlider.addEventListener('input', function () {
+  btnZoomIn.addEventListener('click', function() { setFov(currentFov - FOV_STEP); });
+  btnZoomOut.addEventListener('click', function() { setFov(currentFov + FOV_STEP); });
+  zoomSlider.addEventListener('input', function() {
     setFov(parseInt(zoomSlider.value, 10) * Math.PI / 180);
   });
 
-  // Sync slider when view changes (via drag/scroll)
   function onViewChange() {
     var s = marzipanoScenes[currentSceneIdx];
     if (!s) return;
     try {
       var fov = s.view.fov();
       currentFov = fov;
-      var deg = Math.round(fov * 180 / Math.PI);
-      zoomSlider.value = deg;
+      zoomSlider.value = Math.round(fov * 180 / Math.PI);
     } catch(e) {}
 
-    // Update base pose when view changes (non-parallax)
     if (!isDragging) {
       basePose.yaw   = s.view.yaw();
       basePose.pitch = s.view.pitch();
@@ -395,10 +552,10 @@
   }
 
   // ─── Autorotate ───────────────────────────────────────────────────────────
-  btnAutorotate.addEventListener('click', function () {
+  btnAutorotate.addEventListener('click', function() {
     autorotating = !autorotating;
     btnAutorotate.setAttribute('aria-pressed', autorotating ? 'true' : 'false');
-    btnAutorotate.classList.toggle('active', autorotating);
+    btnAutorotate.classList.toggle('is-active', autorotating);
     if (autorotating) {
       viewer.startMovement(autorotateCtrl);
     } else {
@@ -407,73 +564,38 @@
   });
 
   // ─── Fullscreen ───────────────────────────────────────────────────────────
-  btnFullscreen.addEventListener('click', function () { toggleFullscreen(); });
+  btnFullscreen.addEventListener('click', toggleFullscreen);
 
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(function () {});
+      document.documentElement.requestFullscreen().catch(function() {});
     } else {
-      document.exitFullscreen().catch(function () {});
+      document.exitFullscreen().catch(function() {});
     }
   }
 
-  document.addEventListener('fullscreenchange', function () {
-    var isFs = !!document.fullscreenElement;
-    btnFullscreen.classList.toggle('active', isFs);
-  });
-
-  // ─── Share ────────────────────────────────────────────────────────────────
-  btnShare.addEventListener('click', function () {
-    var url = window.location.href;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(showShareToast).catch(function () { fallbackCopy(url); });
-    } else {
-      fallbackCopy(url);
-    }
-  });
-
-  function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); showShareToast(); } catch (e) {}
-    document.body.removeChild(ta);
-  }
-
-  function showShareToast() {
-    shareToast.classList.add('show');
-    setTimeout(function () { shareToast.classList.remove('show'); }, 2200);
-  }
-
-  // ─── Info Modal ───────────────────────────────────────────────────────────
-  btnInfo.addEventListener('click', function () { infoModal.hidden = false; });
-  modalCloseBtn.addEventListener('click', function () { infoModal.hidden = true; });
-  infoModal.addEventListener('click', function (e) {
-    if (e.target === infoModal) infoModal.hidden = true;
+  document.addEventListener('fullscreenchange', function() {
+    btnFullscreen.classList.toggle('is-active', !!document.fullscreenElement);
   });
 
   // ─── Menu Modal ───────────────────────────────────────────────────────────
-  btnMenu.addEventListener('click', function () { openMenu(); });
-  mmCloseBtn.addEventListener('click', function () { closeMenu(); });
-  menuModal.addEventListener('click', function (e) {
+  // (Menu accessible via Admin button or keyboard; no dedicated button in new bar)
+  mmCloseBtn.addEventListener('click', closeMenu);
+  menuModal.addEventListener('click', function(e) {
     if (e.target === menuModal) closeMenu();
   });
 
   function openMenu() {
     menuOpen = true;
     menuModal.hidden = false;
-    btnMenu.classList.add('active');
   }
   function closeMenu() {
     menuOpen = false;
     menuModal.hidden = true;
-    btnMenu.classList.remove('active');
   }
 
   // ─── Toggle Switches ──────────────────────────────────────────────────────
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', function(e) {
     var btn = e.target.closest('.switch-btn');
     if (!btn) return;
     var key = btn.getAttribute('data-toggle');
@@ -485,35 +607,29 @@
 
     if (key === 'parallax') {
       parallaxEnabled = nowActive;
-      if (!nowActive) {
-        parallaxTarget.yaw = 0;
-        parallaxTarget.pitch = 0;
-      }
+      if (!nowActive) { parallaxTarget.yaw = 0; parallaxTarget.pitch = 0; }
       return;
     }
-
-    if (key === 'dof') {
-      setDof(nowActive);
-      return;
-    }
+    if (key === 'dof') { setDof(nowActive); return; }
 
     regionVisibility[key] = nowActive;
 
     if (key === 'regions') {
       document.querySelectorAll('[data-toggle="aurora_oasis"], [data-toggle="aurora_lago"]')
-        .forEach(function (sub) {
+        .forEach(function(sub) {
           sub.classList.toggle('active', nowActive);
           sub.setAttribute('aria-checked', nowActive ? 'true' : 'false');
           regionVisibility[sub.getAttribute('data-toggle')] = nowActive;
         });
     }
-
     updateRegionOverlay();
   });
 
   // ─── Keyboard Shortcuts ───────────────────────────────────────────────────
-  document.addEventListener('keydown', function (e) {
+  document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
+      if (featModalOpen) { closeFeatModal(); return; }
+      if (scenePkrOpen)  { closeScenePicker(); return; }
       if (!infoModal.hidden) { infoModal.hidden = true; return; }
       if (menuOpen) { closeMenu(); return; }
     }
@@ -523,6 +639,7 @@
     if (e.key === ' ') { e.preventDefault(); btnAutorotate.click(); return; }
     if (e.key === '+' || e.key === '=') { setFov(currentFov - FOV_STEP); return; }
     if (e.key === '-' || e.key === '_') { setFov(currentFov + FOV_STEP); return; }
+    if (e.key === 'm' || e.key === 'M') { menuOpen ? closeMenu() : openMenu(); return; }
   });
 
   // ─── Region Overlay ───────────────────────────────────────────────────────
@@ -543,17 +660,17 @@
     if (!scene) return;
     var view = scene.view;
 
-    REGIONS.forEach(function (region) {
+    REGIONS.forEach(function(region) {
       if (!regionVisibility[region.id]) return;
       if (region.appearsIn.indexOf(SCENES[currentSceneIdx].id) < 0) return;
 
-      var pts = region.polygon.map(function (v) {
+      var pts = region.polygon.map(function(v) {
         return view.coordinatesToScreen({ yaw: v.yaw, pitch: v.pitch });
       });
-      var validPts = pts.filter(function (p) { return p !== null; });
+      var validPts = pts.filter(function(p) { return p !== null; });
       if (validPts.length < 3) return;
 
-      var ptsStr = validPts.map(function (p) { return p.x + ',' + p.y; }).join(' ');
+      var ptsStr = validPts.map(function(p) { return p.x + ',' + p.y; }).join(' ');
 
       var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.setAttribute('points', ptsStr);
@@ -563,7 +680,7 @@
       svg.appendChild(poly);
 
       var cx = 0, cy = 0;
-      validPts.forEach(function (p) { cx += p.x; cy += p.y; });
+      validPts.forEach(function(p) { cx += p.x; cy += p.y; });
       cx /= validPts.length; cy /= validPts.length;
 
       var labelPad = 10;
@@ -595,27 +712,31 @@
   }
 
   function attachViewChangeListeners() {
-    marzipanoScenes.forEach(function (s) {
+    marzipanoScenes.forEach(function(s) {
       s.view.addEventListener('change', onViewChange);
     });
   }
 
-  window.addEventListener('resize', function () {
+  window.addEventListener('resize', function() {
     if (viewer) viewer.updateSize();
     updateRegionOverlay();
   });
 
-  // ─── Bootstrap ────────────────────────────────────────────────────────────
-  buildBottomBarScenes();
+  // ─── Info modal (kept for compatibility) ──────────────────────────────────
+  modalCloseBtn.addEventListener('click', function() { infoModal.hidden = true; });
+  infoModal.addEventListener('click', function(e) {
+    if (e.target === infoModal) infoModal.hidden = true;
+  });
 
+  // ─── Bootstrap ────────────────────────────────────────────────────────────
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
+    document.fonts.ready.then(function() {
       initViewer();
       attachViewChangeListeners();
       initParallax();
     });
   } else {
-    window.addEventListener('load', function () {
+    window.addEventListener('load', function() {
       initViewer();
       attachViewChangeListeners();
       initParallax();
