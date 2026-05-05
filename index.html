@@ -155,11 +155,21 @@
       </button>
 
       <button class="bb-feat bb-feat-cta" data-feature="apresentacao" aria-label="Apresentação guiada">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon pres-icon" aria-hidden="true">
-          <circle class="pres-ring" cx="12" cy="12" r="9" stroke-dasharray="3 3"/>
-          <polygon points="10 8 17 12 10 16 10 8" stroke-linejoin="round" fill="currentColor"/>
+        <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="bb-icon pres-icon" aria-hidden="true">
+          <defs>
+            <linearGradient id="pres-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E8C97A"/>
+              <stop offset="55%" stop-color="#C9A84C"/>
+              <stop offset="100%" stop-color="#A7842F"/>
+            </linearGradient>
+          </defs>
+          <circle class="pres-ring-outer" cx="14" cy="14" r="12.4" stroke-width="0.7" opacity="0.35"/>
+          <circle class="pres-ring" cx="14" cy="14" r="10.6" stroke-width="0.9"/>
+          <circle class="pres-ring-inner" cx="14" cy="14" r="8.4" stroke-width="0.5" opacity="0.45"/>
+          <polygon class="pres-play" points="11.5 9.5 19.2 14 11.5 18.5" fill="url(#pres-grad)" stroke="url(#pres-grad)" stroke-width="0.8"/>
         </svg>
         <span class="bb-label">Apresentação</span>
+        <span class="bb-cta-mark" aria-hidden="true"></span>
       </button>
 
     </nav>
