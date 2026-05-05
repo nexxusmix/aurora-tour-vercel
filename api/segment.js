@@ -49,22 +49,38 @@ Retorne APENAS um array JSON válido com a seguinte estrutura:
     }
   };
 
+  // Fallback simples: tenta modelo leve primeiro (mais quota); se falhar, modelo mainstream
+  const MODELS = ['gemini-1.5-flash-8b', 'gemini-1.5-flash'];
+
+  let r, data, text, lastErr = null, modelUsed = null;
   try {
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      }
-    );
-    const data = await r.json();
-    if (!r.ok) {
-      return res.status(502).json({ error: 'Gemini API erro', details: data });
+    for (const model of MODELS) {
+      r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        }
+      );
+      data = await r.json();
+      if (r.ok) { modelUsed = model; break; }
+      lastErr = data;
+      if (r.status !== 429 && r.status !== 404 && r.status !== 503) break;
+    }
+    if (!r || !r.ok) {
+      const status = r ? r.status : 500;
+      return res.status(status === 429 ? 429 : 502).json({
+        error: status === 429
+          ? 'Cota Gemini esgotada em todos os modelos free tier. Tente novamente em alguns minutos ou troque a GEMINI_API_KEY.'
+          : 'Gemini API erro',
+        details: lastErr,
+        models_tried: MODELS
+      });
     }
 
     // Parse text → JSON array
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+    text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
     let detections = [];
     try {
       detections = JSON.parse(text);
