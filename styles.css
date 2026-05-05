@@ -17,12 +17,33 @@
 }
 
 /* ─── CSS Vars ───────────────────────────────────────────────────────────── */
-:root {
-  --aurora-gold: #C9A84C;
+:root, :root[data-theme="light"] {
+  --bg-main: #EFEDE2;
   --ink: #1A1A1A;
-  --sand: #EFEDE2;
+  --ink-soft: rgba(26,26,26,0.7);
+  --ink-muted: rgba(26,26,26,0.55);
   --hairline: rgba(26,26,26,0.12);
   --hairline-strong: rgba(26,26,26,0.4);
+  --panel: rgba(239,237,226,0.94);
+  --panel-solid: #EFEDE2;
+  --aurora-gold: #C9A84C;
+  --modal-bg: #EFEDE2;
+  --sand: #EFEDE2;
+  --transition: 320ms cubic-bezier(0.4, 0, 0.15, 1);
+}
+
+:root[data-theme="dark"] {
+  --bg-main: #0A0A0A;
+  --ink: #FAFAFA;
+  --ink-soft: rgba(250,250,250,0.78);
+  --ink-muted: rgba(250,250,250,0.5);
+  --hairline: rgba(250,250,250,0.12);
+  --hairline-strong: rgba(250,250,250,0.4);
+  --panel: rgba(14,14,14,0.92);
+  --panel-solid: #141414;
+  --aurora-gold: #D4B560;
+  --modal-bg: #141414;
+  --sand: #141414;
   --transition: 320ms cubic-bezier(0.4, 0, 0.15, 1);
 }
 
@@ -32,11 +53,11 @@
 html, body {
   width: 100%; height: 100%;
   overflow: hidden;
-  background: #1A1A1A;
+  background: var(--bg-main);
   font-family: 'Britti Sans', sans-serif;
   font-weight: 400;
   font-style: normal;
-  color: #1A1A1A;
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -80,7 +101,7 @@ html, body {
 /* ─── Loading Screen ─────────────────────────────────────────────────────── */
 #loading-screen {
   position: fixed; inset: 0;
-  background: #EFEDE2;
+  background: var(--bg-main);
   display: flex; align-items: center; justify-content: center;
   z-index: 1000;
   transition: opacity 0.6s ease;
@@ -101,7 +122,7 @@ html, body {
 }
 .loading-sub {
   font-weight: 400; font-style: normal; font-size: 10px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: rgba(26,26,26,0.55);
+  text-transform: uppercase; color: var(--ink-muted);
   margin-top: 6px;
 }
 .loading-bar-wrap {
@@ -110,7 +131,7 @@ html, body {
 }
 .loading-bar-track {
   width: 240px; height: 1px;
-  background: rgba(26,26,26,0.15);
+  background: var(--hairline);
 }
 .loading-bar-fill {
   height: 1px; background: #C9A84C;
@@ -118,7 +139,7 @@ html, body {
 }
 .loading-percent {
   font-weight: 400; font-style: normal; font-size: 10px;
-  letter-spacing: 0.1em; color: rgba(26,26,26,0.4);
+  letter-spacing: 0.1em; color: var(--ink-muted);
 }
 
 /* ─── Brand Logo (shared) ───────────────────────────────────────────────── */
@@ -128,11 +149,15 @@ html, body {
 .brand-logo-light { display: none; }
 .on-dark .brand-logo-dark { display: none; }
 .on-dark .brand-logo-light { display: block; }
+/* Theme-based logo swap */
+.brand-logo-dark { display: block; }
+:root[data-theme="dark"] .brand-logo-dark { display: none; }
+:root[data-theme="dark"] .brand-logo-light { display: block; }
 .brand-meta {
   font: 400 10px/1 'Britti Sans', sans-serif;
   font-style: normal;
   letter-spacing: 0.18em;
-  text-transform: uppercase; color: rgba(26,26,26,0.55);
+  text-transform: uppercase; color: var(--ink-muted);
   margin-top: 4px;
 }
 
@@ -140,10 +165,10 @@ html, body {
 #header {
   position: fixed; top: 0; left: 0; right: 0;
   height: 52px;
-  background: rgba(239,237,226,0.92);
+  background: var(--panel);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(26,26,26,0.08);
+  border-bottom: 1px solid var(--hairline);
   display: flex; align-items: center;
   padding: 0 20px;
   z-index: 50;
@@ -176,7 +201,7 @@ html, body {
   flex-shrink: 0;
 }
 .scene-label {
-  font-weight: 400; font-style: normal; font-size: 12px; color: #1A1A1A;
+  font-weight: 400; font-style: normal; font-size: 12px; color: var(--ink);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   letter-spacing: 0.02em;
 }
@@ -246,7 +271,7 @@ html, body {
   display: flex; align-items: center; gap: 32px;
   height: 100px;
   padding: 16px 32px;
-  background: rgba(239, 237, 226, 0.94);
+  background: var(--panel);
   backdrop-filter: blur(18px) saturate(105%);
   -webkit-backdrop-filter: blur(18px) saturate(105%);
   border-top: 1px solid var(--hairline);
@@ -277,7 +302,7 @@ html, body {
   padding: 14px 16px;
   background: transparent;
   border: 1px solid transparent;
-  color: rgba(26,26,26,0.7);
+  color: var(--ink-soft);
   cursor: pointer;
   transition: all 380ms cubic-bezier(0.25, 0.1, 0.25, 1);
   font-style: normal;
@@ -479,7 +504,7 @@ html, body {
 .modal-panel {
   position: absolute; right: 0; top: 0; bottom: 0;
   width: 60vw; max-width: 880px; min-width: 480px;
-  background: var(--sand);
+  background: var(--modal-bg);
   border-left: 1px solid var(--hairline);
   padding: 32px;
   overflow-y: auto;
@@ -500,7 +525,8 @@ html, body {
 .modal-title {
   font: 300 22px/1.2 'Britti Sans', sans-serif;
   font-style: normal;
-  color: var(--ink); margin: 0;
+  color: var(--ink);
+  margin: 0;
 }
 .modal-close-btn {
   background: transparent; border: 1px solid transparent;
@@ -517,7 +543,7 @@ html, body {
   font: 400 10px/1 'Britti Sans', sans-serif;
   font-style: normal;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(26,26,26,0.55); margin-bottom: 8px;
+  color: var(--ink-muted); margin-bottom: 8px;
 }
 .modal-line {
   font: 400 14px/1.5 'Britti Sans', sans-serif;
@@ -554,10 +580,10 @@ html, body {
 .menu-modal[hidden] { display: none; }
 
 .mm-box {
-  background: rgba(239,237,226,0.96);
+  background: var(--panel);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(26,26,26,0.1);
+  border: 1px solid var(--hairline);
   padding: 28px;
   max-width: 360px;
   width: 100%;
@@ -576,7 +602,7 @@ html, body {
 .mm-title {
   font-weight: 400; font-style: normal; font-size: 10px;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(26,26,26,0.4);
+  color: var(--ink-muted);
   margin-bottom: 16px;
 }
 
@@ -590,11 +616,11 @@ html, body {
   border-bottom: 1px solid rgba(26,26,26,0.05);
 }
 .mm-label {
-  font-weight: 400; font-style: normal; font-size: 13px; color: #1A1A1A;
+  font-weight: 400; font-style: normal; font-size: 13px; color: var(--ink);
 }
 .mm-label.sub {
   display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: rgba(26,26,26,0.75);
+  font-size: 12px; color: var(--ink-soft);
 }
 
 .mm-sub-group { padding-left: 0; }
@@ -606,12 +632,12 @@ html, body {
 
 .mm-footer { margin-top: 16px; }
 .mm-credit {
-  font-weight: 400; font-style: normal; font-size: 11px; color: rgba(26,26,26,0.4);
+  font-weight: 400; font-style: normal; font-size: 11px; color: var(--ink-muted);
 }
 .mm-credit a {
-  color: rgba(26,26,26,0.6); text-decoration: none;
+  color: var(--ink-soft); text-decoration: none;
 }
-.mm-credit a:hover { color: #1A1A1A; }
+.mm-credit a:hover { color: var(--ink); }
 
 /* ─── Switch Buttons ─────────────────────────────────────────────────────── */
 .switch-btn {
@@ -624,13 +650,13 @@ html, body {
   transition: background 0.2s, border-color 0.2s;
 }
 .switch-btn.active {
-  background: #1A1A1A;
-  border-color: #1A1A1A;
+  background: var(--ink);
+  border-color: var(--ink);
 }
 .switch-knob {
   position: absolute; top: 2px; left: 2px;
   width: 10px; height: 10px;
-  background: #EFEDE2;
+  background: var(--bg-main);
   transition: transform 0.2s;
 }
 .switch-btn.active .switch-knob {
@@ -656,7 +682,7 @@ html, body {
 .modal-overlay[hidden] { display: none; }
 
 .modal-box {
-  background: #EFEDE2;
+  background: var(--modal-bg);
   width: 100%; max-width: 440px;
   padding: 40px 36px 36px;
   position: relative;
@@ -673,19 +699,19 @@ html, body {
   height: 36px; object-fit: contain; margin-bottom: 16px;
 }
 .modal-box .modal-title {
-  font-weight: 300; font-style: normal; font-size: 32px; color: #1A1A1A; line-height: 1;
+  font-weight: 300; font-style: normal; font-size: 32px; color: var(--ink); line-height: 1;
 }
 .modal-sub {
   font-weight: 400; font-style: normal; font-size: 10px;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(26,26,26,0.4); margin-top: 6px;
+  color: var(--ink-muted); margin-top: 6px;
 }
 .modal-divider {
   height: 1px; background: rgba(26,26,26,0.12);
   margin: 20px 0;
 }
 .modal-box .modal-body {
-  font-weight: 400; font-style: normal; font-size: 14px; color: #1A1A1A;
+  font-weight: 400; font-style: normal; font-size: 14px; color: var(--ink);
   line-height: 1.6;
 }
 .modal-stats {
@@ -700,25 +726,25 @@ html, body {
   font-weight: 300; font-style: normal; font-size: 28px; color: #C9A84C; line-height: 1;
 }
 .stat-l {
-  font-weight: 400; font-style: normal; font-size: 10px; color: rgba(26,26,26,0.5);
+  font-weight: 400; font-style: normal; font-size: 10px; color: var(--ink-muted);
   text-align: center;
 }
 .modal-stat-sep {
   width: 1px; height: 36px; background: rgba(26,26,26,0.12);
 }
 .modal-footer-note {
-  font-weight: 400; font-style: normal; font-size: 11px; color: rgba(26,26,26,0.4);
+  font-weight: 400; font-style: normal; font-size: 11px; color: var(--ink-muted);
   margin-top: 4px;
 }
 .modal-footer-note a {
-  color: rgba(26,26,26,0.6); text-decoration: none;
+  color: var(--ink-soft); text-decoration: none;
 }
-.modal-footer-note a:hover { color: #1A1A1A; }
+.modal-footer-note a:hover { color: var(--ink); }
 
 /* ─── Share Toast ────────────────────────────────────────────────────────── */
 .share-toast {
   position: fixed; bottom: 116px; left: 50%; transform: translateX(-50%);
-  background: #1A1A1A; color: #EFEDE2;
+  background: var(--ink); color: var(--bg-main);
   font-weight: 400; font-style: normal; font-size: 12px; letter-spacing: 0.06em;
   padding: 8px 20px;
   z-index: 300;
@@ -751,7 +777,7 @@ html, body {
 .section-body {
   font: 400 14px/1.65 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.85);
+  color: var(--ink-soft);
   margin: 0 0 24px;
 }
 .section-divider {
@@ -781,7 +807,7 @@ html, body {
   font-style: normal;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(26,26,26,0.55);
+  color: var(--ink-muted);
   margin-bottom: 8px;
 }
 .compare-title {
@@ -799,7 +825,7 @@ html, body {
   font-style: normal;
   padding: 8px 0;
   border-bottom: 1px solid var(--hairline);
-  color: rgba(26,26,26,0.85);
+  color: var(--ink-soft);
 }
 .compare-list li:last-child { border-bottom: none; }
 
@@ -822,7 +848,7 @@ html, body {
 .metric-label {
   font: 400 11px/1.4 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.7);
+  color: var(--ink-soft);
   letter-spacing: 0.04em;
 }
 
@@ -849,7 +875,7 @@ html, body {
 .layer-desc {
   font: 400 13px/1.55 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.75);
+  color: var(--ink-soft);
 }
 
 .cost-table {
@@ -863,7 +889,7 @@ html, body {
   font-style: normal;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(26,26,26,0.55);
+  color: var(--ink-muted);
   padding: 12px 8px;
   border-bottom: 1px solid var(--hairline);
 }
@@ -916,7 +942,7 @@ html, body {
 .timeline-desc {
   font: 400 12.5px/1.5 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.7);
+  color: var(--ink-soft);
 }
 
 .intangible-row {
@@ -939,7 +965,7 @@ html, body {
 .intangible-desc {
   font: 400 12px/1.5 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.65);
+  color: var(--ink-soft);
 }
 
 .stop-card {
@@ -964,7 +990,7 @@ html, body {
 .stop-desc {
   font: 400 12.5px/1.5 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.7);
+  color: var(--ink-soft);
 }
 
 .cta-block {
@@ -982,7 +1008,7 @@ html, body {
 .cta-body {
   font: 400 13px/1.55 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
-  color: rgba(26,26,26,0.8);
+  color: var(--ink-soft);
   margin-bottom: 16px;
 }
 .cta-link {
@@ -1034,3 +1060,66 @@ html, body {
   .share-toast { bottom: 140px; }
   .brand-logo { height: 18px; }
 }
+
+/* ─── Admin Mark (/// signature) ────────────────────────────────────────── */
+.admin-mark {
+  font: 400 16px/1 "Britti Sans", system-ui, sans-serif;
+  color: currentColor;
+  letter-spacing: -0.06em;
+  font-style: normal;
+  display: inline-block;
+  padding-top: 2px;
+}
+.bb-admin:hover .admin-mark { color: var(--aurora-gold); }
+
+/* ─── Theme Toggle ───────────────────────────────────────────────────────── */
+.theme-icon { width: 16px; height: 16px; transition: opacity 240ms; }
+.theme-icon-moon { display: none; }
+:root[data-theme="dark"] .theme-icon-sun { display: none; }
+:root[data-theme="dark"] .theme-icon-moon { display: inline-block; }
+
+/* ─── Apresentação CTA ───────────────────────────────────────────────────── */
+.bb-feat-cta { position: relative; }
+.bb-feat-cta::before { width: 80% !important; background: var(--aurora-gold) !important; opacity: 1; }
+.bb-feat-cta .bb-label { color: var(--aurora-gold); }
+.bb-feat-cta:hover { background: rgba(201,168,76,0.1); }
+.bb-feat-cta .bb-icon { color: var(--aurora-gold); }
+
+.bb-feat-cta.is-running .bb-icon { color: var(--aurora-gold); animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* ─── Presentation Overlay ───────────────────────────────────────────────── */
+.pres-overlay {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-32px);
+  z-index: 80; padding: 14px 22px; min-width: 360px;
+  background: var(--panel); backdrop-filter: blur(18px);
+  border: 1px solid var(--hairline);
+  display: flex; align-items: center; gap: 18px;
+  opacity: 0; pointer-events: none;
+  transition: all 360ms cubic-bezier(0.25,0.1,0.25,1);
+}
+.pres-overlay.is-active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1; pointer-events: auto;
+}
+.pres-bar-track {
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: var(--hairline);
+}
+.pres-bar-fill {
+  height: 100%; background: var(--aurora-gold);
+  width: 0%; transition: width 380ms ease-out;
+}
+.pres-meta { display: flex; flex-direction: column; gap: 2px; }
+.pres-mini { font: 400 9.5px/1 "Britti Sans"; letter-spacing: 0.18em; text-transform: uppercase; color: var(--aurora-gold); font-style: normal; }
+.pres-caption { font: 300 14px/1 "Britti Sans"; color: var(--ink); font-style: normal; }
+.pres-stop {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid var(--hairline-strong);
+  padding: 6px 12px; cursor: pointer; color: var(--ink);
+  font: 400 11px/1 "Britti Sans"; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: all 240ms;
+  font-style: normal;
+}
+.pres-stop:hover { border-color: var(--aurora-gold); color: var(--aurora-gold); }
+.pres-stop svg { stroke: currentColor; }

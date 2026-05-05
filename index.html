@@ -135,6 +135,13 @@
         <span class="bb-label">Vídeos</span>
       </button>
 
+      <button class="bb-feat bb-feat-cta" data-feature="apresentacao" aria-label="Apresentação guiada">
+        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span class="bb-label">Apresentação</span>
+      </button>
+
     </nav>
 
     <div class="bb-aux">
@@ -183,12 +190,20 @@
         </svg>
       </button>
 
+      <!-- Theme toggle -->
+      <button class="bb-aux-btn" id="btn-theme" aria-label="Alternar tema" title="Tema claro/escuro">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
       <!-- Admin -->
       <button class="bb-aux-btn bb-admin" id="btn-admin" aria-label="Admin">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>
-        </svg>
+        <span class="admin-mark">///</span>
       </button>
     </div>
   </footer>
@@ -329,6 +344,19 @@
 
   <!-- Share toast -->
   <div id="share-toast" class="share-toast" aria-live="polite">Link copiado</div>
+
+  <!-- Presentation overlay -->
+  <div id="pres-overlay" class="pres-overlay">
+    <div class="pres-bar-track"><div class="pres-bar-fill" id="pres-bar"></div></div>
+    <div class="pres-meta">
+      <span class="pres-mini">Apresentação Guiada</span>
+      <span class="pres-caption" id="pres-caption">—</span>
+    </div>
+    <button class="pres-stop" id="btn-pres-stop" aria-label="Encerrar apresentação">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="12" height="12"/></svg>
+      <span>Encerrar</span>
+    </button>
+  </div>
 
   <script src="/lib/marzipano.js"></script>
   <script src="/app.js"></script>

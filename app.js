@@ -3,6 +3,23 @@
 (function () {
   'use strict';
 
+  // ─── Theme ────────────────────────────────────────────────────────────────
+  var THEME_KEY = 'aurora-tour-theme';
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    if (window._mapInstance) {
+      var style = theme === 'dark'
+        ? 'https://tiles.openfreemap.org/styles/dark'
+        : 'https://tiles.openfreemap.org/styles/positron';
+      window._mapInstance.setStyle(style);
+    }
+  }
+
+  var savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+  applyTheme(savedTheme);
+
   // ─── Admin ────────────────────────────────────────────────────────────────
   var ADMIN_PASSWORD = '827336';
 
@@ -341,6 +358,100 @@
     '</div>';
   }
 
+  // ─── Autorotate helpers ───────────────────────────────────────────────────
+  function startAutorotate() {
+    if (!autorotating) {
+      autorotating = true;
+      btnAutorotate.setAttribute('aria-pressed', 'true');
+      btnAutorotate.classList.add('is-active');
+      viewer.startMovement(autorotateCtrl);
+    }
+  }
+
+  function stopAutorotate() {
+    if (autorotating) {
+      autorotating = false;
+      btnAutorotate.setAttribute('aria-pressed', 'false');
+      btnAutorotate.classList.remove('is-active');
+      viewer.stopMovement();
+    }
+  }
+
+  // ─── Close modal helper ───────────────────────────────────────────────────
+  function closeModal() {
+    closeFeatModal();
+  }
+
+  // ─── Presentation ─────────────────────────────────────────────────────────
+  var PRESENTATION_SEQUENCE = [
+    { sceneId: 'pano_01', duration: 6000, action: null,                caption: 'Vista de Apresentação' },
+    { sceneId: 'pano_01', duration: 8000, action: 'modal:conceito',    caption: 'Conceito' },
+    { sceneId: 'pano_02', duration: 6000, action: 'rotate',            caption: 'Drone Norte · Track Arena' },
+    { sceneId: 'pano_03', duration: 8000, action: 'modal:implantacao', caption: 'Implantação' },
+    { sceneId: 'pano_04', duration: 6000, action: 'rotate',            caption: 'Pôr do Sol' },
+    { sceneId: 'pano_01', duration: 6000, action: 'modal:sobre',       caption: 'Sobre o projeto' }
+  ];
+
+  var presentationState = { running: false, step: 0, timeoutId: null };
+
+  function startPresentation() {
+    if (presentationState.running) {
+      stopPresentation();
+      return;
+    }
+    presentationState.running = true;
+    presentationState.step = 0;
+    document.getElementById('pres-overlay').classList.add('is-active');
+    document.querySelector('[data-feature="apresentacao"]').classList.add('is-running');
+    runStep();
+  }
+
+  function runStep() {
+    if (!presentationState.running) return;
+    var step = presentationState.step;
+    if (step >= PRESENTATION_SEQUENCE.length) { stopPresentation(); return; }
+    var cfg = PRESENTATION_SEQUENCE[step];
+
+    var sceneIdx = SCENES.findIndex(function(s) { return s.id === cfg.sceneId; });
+    if (sceneIdx >= 0) switchScene(sceneIdx, false);
+
+    var cap = document.getElementById('pres-caption');
+    if (cap) cap.textContent = cfg.caption;
+
+    if (cfg.action === 'rotate') startAutorotate();
+    else stopAutorotate();
+
+    if (cfg.action && cfg.action.startsWith('modal:')) {
+      var f = cfg.action.split(':')[1];
+      if (FEATURES[f]) {
+        setTimeout(function() { openFeatModal(FEATURES[f].title, FEATURES[f].content, FEATURES[f].onOpen); }, 600);
+      }
+    } else {
+      closeModal();
+    }
+
+    var progress = ((step + 1) / PRESENTATION_SEQUENCE.length) * 100;
+    var bar = document.getElementById('pres-bar');
+    if (bar) bar.style.width = progress + '%';
+
+    presentationState.step++;
+    presentationState.timeoutId = setTimeout(runStep, cfg.duration);
+  }
+
+  function stopPresentation() {
+    presentationState.running = false;
+    if (presentationState.timeoutId) clearTimeout(presentationState.timeoutId);
+    document.getElementById('pres-overlay').classList.remove('is-active');
+    var presBtn = document.querySelector('[data-feature="apresentacao"]');
+    if (presBtn) presBtn.classList.remove('is-running');
+    var bar = document.getElementById('pres-bar');
+    if (bar) bar.style.width = '0%';
+    stopAutorotate();
+    closeModal();
+  }
+
+  document.getElementById('btn-pres-stop').addEventListener('click', stopPresentation);
+
   // ─── Feature Definitions ─────────────────────────────────────────────────
   var FEATURES = {
     home: {
@@ -383,6 +494,10 @@
     },
     cenas: {
       handler: function() { toggleScenePicker(); }
+    },
+    apresentacao: {
+      title: 'Apresentação Guiada',
+      handler: function() { startPresentation(); }
     }
   };
 
@@ -505,9 +620,13 @@
     var el = document.getElementById('map');
     if (!el || el._inited) return;
     el._inited = true;
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    var mapStyle = currentTheme === 'dark'
+      ? 'https://tiles.openfreemap.org/styles/dark'
+      : 'https://tiles.openfreemap.org/styles/positron';
     var map = new maplibregl.Map({
       container: 'map',
-      style: 'https://tiles.openfreemap.org/styles/positron',
+      style: mapStyle,
       center: [-48.464529, -16.274689],
       zoom: 13,
       attributionControl: false
@@ -517,7 +636,14 @@
     var dot = document.createElement('div');
     dot.style.cssText = 'width:14px;height:14px;border-radius:50%;background:#C9A84C;border:2px solid #1A1A1A;box-shadow:0 0 0 4px rgba(201,168,76,0.2);';
     new maplibregl.Marker({ element: dot }).setLngLat([-48.464529, -16.274689]).addTo(map);
+    window._mapInstance = map;
   }
+
+  // ─── Theme Toggle ────────────────────────────────────────────────────────
+  document.getElementById('btn-theme').addEventListener('click', function() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(cur === 'light' ? 'dark' : 'light');
+  });
 
   // ─── Admin ────────────────────────────────────────────────────────────────
   btnAdmin.addEventListener('click', openAdmin);
@@ -764,14 +890,8 @@
 
   // ─── Autorotate ───────────────────────────────────────────────────────────
   btnAutorotate.addEventListener('click', function() {
-    autorotating = !autorotating;
-    btnAutorotate.setAttribute('aria-pressed', autorotating ? 'true' : 'false');
-    btnAutorotate.classList.toggle('is-active', autorotating);
-    if (autorotating) {
-      viewer.startMovement(autorotateCtrl);
-    } else {
-      viewer.stopMovement();
-    }
+    if (autorotating) stopAutorotate();
+    else startAutorotate();
   });
 
   // ─── Fullscreen ───────────────────────────────────────────────────────────
@@ -838,6 +958,7 @@
   // ─── Keyboard Shortcuts ───────────────────────────────────────────────────
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
+      if (presentationState.running) { stopPresentation(); return; }
       if (featModalOpen) { closeFeatModal(); return; }
       if (scenePkrOpen)  { closeScenePicker(); return; }
       if (!infoModal.hidden) { infoModal.hidden = true; return; }
