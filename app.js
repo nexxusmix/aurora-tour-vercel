@@ -735,54 +735,61 @@
         '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-trail"><path d="M7 14L4.5 9 2 14h2v5h2v-5h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M14 12L11.5 6 9 12h2v7h2v-7h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M22 14L19.5 9 17 14h2v5h2v-5h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M5 19h14" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" stroke-dasharray="1 1.5"/></svg></span><div class="amenity-name">Trilha Cerrado</div></div>' +
         '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-mirante"><path d="M2 18l5-9 4 6 3-4 5 7H2z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><circle cx="18" cy="5.5" r="2.2" fill="url(#aurora-gold-grad)" opacity="0.9"/><line x1="2" y1="20" x2="22" y2="20" stroke="url(#aurora-gold-stroke)" stroke-width="1" stroke-linecap="round"/><line x1="2" y1="21.5" x2="22" y2="21.5" stroke="url(#aurora-gold-stroke)" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/><ellipse cx="6" cy="13" rx="0.8" ry="0.4" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Mirante Lago</div></div>' +
       '</div>' +
+    '</div>' +
+
+    '<div class="modal-section">' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Arquitetura</div>' +
+      '<h3 class="section-title">Assinada pela FAAU.</h3>' +
+      '<p class="section-body">Flávio Aleixo conduz o desenho urbanístico e arquitetônico do Aurora Oasis. Materiais naturais, volumetria que respeita a topografia e a integração com o cerrado nativo são princípios não-negociáveis do projeto.</p>' +
     '</div>';
   }
 
   function disponibilidadesHTML() {
     return '<div class="modal-section">' +
       '<div class="section-num">Visão Geral</div>' +
-      '<h3 class="section-title">241 lotes · 6 quadras · 3 categorias</h3>' +
-      '<p class="section-body">O empreendimento divide-se entre lotes premium frente-lago, lotes intermediários com vista parcial e lotes mata-cerrado. Status em tempo real disponível pelo Squad Hub conforme o lançamento avança.</p>' +
+      '<h3 class="section-title">241 lotes. Cada um, um endereço.</h3>' +
+      '<p class="section-body">O empreendimento divide-se em três tipologias: lotes premium frente-lago, intermediários com vista parcial e mata-cerrado. Status atualizado dos lotes disponíveis — reservas confirmadas pela equipe Silva Investimentos.</p>' +
       '<div class="metrics-row">' +
-        '<div class="metric"><div class="metric-num">241</div><div class="metric-label">Lotes totais</div></div>' +
-        '<div class="metric"><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
-        '<div class="metric"><div class="metric-num">~1.250</div><div class="metric-label">m² médio</div></div>' +
-        '<div class="metric"><div class="metric-num">R$ 235k</div><div class="metric-label">Ticket médio</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">241</div><div class="metric-label">Lotes totais</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">~1.250</div><div class="metric-label">m² médio</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">A partir de</div><div class="metric-label">R$ 235.000</div></div>' +
       '</div>' +
     '</div>' +
-    '<hr class="section-divider">' +
+
     '<div class="modal-section">' +
-      '<div class="section-num">Lote em destaque · 1ª Fase</div>' +
-      '<h3 class="section-title">Lote 137</h3>' +
-      '<div class="metrics-row">' +
-        '<div class="metric"><div class="metric-num">1.250</div><div class="metric-label">m² · Lote 137</div></div>' +
-        '<div class="metric"><div class="metric-num">R$ 235k</div><div class="metric-label">Valor de referência</div></div>' +
-        '<div class="metric"><div class="metric-num">60</div><div class="metric-label">Lotes · 1ª Fase</div></div>' +
-        '<div class="metric"><div class="metric-num">241</div><div class="metric-label">Lotes · Total</div></div>' +
-      '</div>' +
       '<hr class="section-divider">' +
-      '<div class="section-num">Status</div>' +
-      '<p class="section-body">Status atualizado dos lotes disponíveis. Reservas confirmadas pela equipe Silva Investimentos.</p>' +
+      '<div class="section-num">Tipologia em destaque</div>' +
+      '<div class="lote-card reveal" data-reveal>' +
+        '<div class="lote-header">' +
+          '<span class="lote-mini">Lote demonstrativo</span>' +
+          '<span class="lote-status">Disponível</span>' +
+        '</div>' +
+        '<h4 class="lote-title">Lote 137 · Frente-lago</h4>' +
+        '<div class="lote-grid">' +
+          '<div><div class="lote-mini">Área</div><div class="lote-val">1.250 m²</div></div>' +
+          '<div><div class="lote-mini">Vista</div><div class="lote-val">Lago direta</div></div>' +
+          '<div><div class="lote-mini">Valor</div><div class="lote-val">R$ 235.000</div></div>' +
+          '<div><div class="lote-mini">Pagamento</div><div class="lote-val">Em até 60×</div></div>' +
+        '</div>' +
+        '<div class="lote-actions">' +
+          '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20um%20lote%20no%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Falar com consultor</a>' +
+          '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20visita%20ao%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Agendar visita</a>' +
+        '</div>' +
+      '</div>' +
     '</div>';
   }
 
   function imagensHTML() {
     var photos = [
-      { src: 'img/gallery/capa-book-oasis-1.webp', label: 'Capa · Volume 1', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-book-oasis-2.webp', label: 'Capa · Volume 2', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-book-oasis-3.webp', label: 'Capa · Volume 3', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-book-oasis-4.webp', label: 'Capa · Volume 4', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-book-oasis-5.webp', label: 'Capa · Volume 5', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-book-oasis-6.webp', label: 'Capa · Volume 6', cat: 'editorial', tag: 'Editorial' },
-      { src: 'img/gallery/capa-magazine-retro.webp',  label: 'Magazine · Edição Retro',   cat: 'magazine', tag: 'Magazine' },
-      { src: 'img/gallery/capa-magazine-retro-2.webp', label: 'Magazine · Edição Retro 2', cat: 'magazine', tag: 'Magazine' }
+      { src: 'img/gallery/aurora-aerea-01.jpg', label: 'Vista aérea ampla', cat: 'aereo',   tag: 'Vista aérea' },
+      { src: 'img/gallery/aurora-aerea-02.jpg', label: 'Frente lago',       cat: 'lago',    tag: 'Frente lago' },
+      { src: 'img/gallery/aurora-aerea-03.jpg', label: 'Margem do lago',    cat: 'lago',    tag: 'Frente lago' },
+      { src: 'img/gallery/aurora-aerea-04.jpg', label: 'Cerrado nativo',    cat: 'cerrado', tag: 'Cerrado' },
+      { src: 'img/gallery/aurora-aerea-05.jpg', label: 'Hora dourada',      cat: 'aereo',   tag: 'Vista aérea' },
+      { src: 'img/gallery/aurora-aerea-06.jpg', label: 'Topografia natural', cat: 'cerrado', tag: 'Cerrado' }
     ];
-    var cats = ['todos'];
-    photos.forEach(function(p) { if (cats.indexOf(p.cat) < 0) cats.push(p.cat); });
-    var filters = cats.map(function(c, i) {
-      var label = c === 'todos' ? 'Todos' : (c.charAt(0).toUpperCase() + c.slice(1));
-      return '<button class="gf-btn' + (i === 0 ? ' is-active' : '') + '" data-cat="' + c + '">' + label + '</button>';
-    }).join('');
     var items = photos.map(function(p, i) {
       return '<figure class="g-item reveal" data-cat="' + p.cat + '" data-reveal style="--delay:' + (i * 60) + 'ms">' +
         '<img loading="lazy" src="' + p.src + '" alt="' + p.label + '">' +
@@ -793,10 +800,15 @@
       '</figure>';
     }).join('');
     return '<div class="modal-section">' +
-      '<div class="section-num">Galeria</div>' +
-      '<h3 class="section-title">Aurora em peças finais.</h3>' +
-      '<p class="section-body">Capas editoriais, magazine e materiais de comunicação aprovados.</p>' +
-      '<div class="gallery-filters">' + filters + '</div>' +
+      '<div class="section-num">O Lugar</div>' +
+      '<h3 class="section-title">Aurora visto de cima.</h3>' +
+      '<p class="section-body">Imagens aéreas reais do empreendimento. Cerrado, lago e a luz do fim de tarde que dá nome ao projeto.</p>' +
+      '<div class="gallery-filters">' +
+        '<button class="gf-btn is-active" data-cat="todos">Todos</button>' +
+        '<button class="gf-btn" data-cat="aereo">Vista aérea</button>' +
+        '<button class="gf-btn" data-cat="lago">Frente lago</button>' +
+        '<button class="gf-btn" data-cat="cerrado">Cerrado</button>' +
+      '</div>' +
     '</div>' +
     '<div class="gallery-grid" id="gallery-grid">' + items + '</div>';
   }
@@ -818,7 +830,7 @@
     return '<div class="modal-section">' +
       '<div class="section-num">Book Apresentação</div>' +
       '<h3 class="section-title">Aurora · Onde o tempo mora.</h3>' +
-      '<p class="section-body">Apresentação completa do empreendimento em formato editorial. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis para o investidor que sabe ler nas entrelinhas.</p>' +
+      '<p class="section-body">Edição editorial completa do empreendimento. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis em formato fotolivro.</p>' +
     '</div>' +
     '<div class="modal-section">' +
       '<div class="pdf-viewer-wrap reveal" data-reveal>' +
@@ -833,10 +845,10 @@
 
   function videosHTML() {
     var videos = [
-      { src: 'video/aurora-raro-como-tempo.mp4',    poster: 'img/gallery/capa-book-oasis-1.webp', cat: 'Teaser', label: 'Raro como o tempo' },
-      { src: 'video/aurora-precisa-mais-tempo.mp4', poster: 'img/gallery/capa-book-oasis-2.webp', cat: 'Teaser', label: 'Você precisa de mais tempo' },
-      { src: 'video/aurora-presenca.mp4',           poster: 'img/gallery/capa-book-oasis-3.webp', cat: 'Teaser', label: 'Tempo sem presença é apenas espera' },
-      { src: 'video/aurora-escritorio.mp4',         poster: 'img/gallery/capa-magazine-retro.webp', cat: 'Reveal', label: 'Próximo lançamento exclusivo' }
+      { src: 'video/aurora-raro-como-tempo.mp4',    poster: 'img/gallery/aurora-aerea-01.jpg', cat: 'Manifesto',    label: 'Raro como o tempo' },
+      { src: 'video/aurora-precisa-mais-tempo.mp4', poster: 'img/gallery/aurora-aerea-03.jpg', cat: 'Manifesto',    label: 'Você precisa de mais tempo' },
+      { src: 'video/aurora-presenca.mp4',           poster: 'img/gallery/aurora-aerea-05.jpg', cat: 'Manifesto',    label: 'Tempo sem presença é apenas espera' },
+      { src: 'video/aurora-escritorio.mp4',         poster: 'img/gallery/aurora-aerea-02.jpg', cat: 'Apresentação', label: 'O lugar onde o tempo mora' }
     ];
     var items = videos.map(function(v, i) {
       return '<div class="v-item reveal" data-reveal style="--delay:' + (i * 80) + 'ms">' +
@@ -848,80 +860,43 @@
     }).join('');
     return '<div class="modal-section">' +
       '<div class="section-num">Vídeos</div>' +
-      '<h3 class="section-title">Material aprovado.</h3>' +
-      '<p class="section-body">Teasers de fase conceito e reveal exclusivo do escritório Silva Investimentos.</p>' +
+      '<h3 class="section-title">Aurora em movimento.</h3>' +
+      '<p class="section-body">Capturas aéreas e manifesto editorial. Aurora visto pelo céu, em ritmo cinematográfico.</p>' +
     '</div>' +
     '<div class="video-stack">' + items + '</div>';
   }
 
   function sobreHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">05 · Stack</div>' +
-      '<h3 class="section-title">Tecnologia aplicada ao mercado imobiliário de alto padrão.</h3>' +
-      '<p class="section-body">Toda a plataforma foi construída sobre tecnologias abertas e de alta performance, sem dependência de licenças mensais de terceiros como Matterport ou iGuide. O cliente possui o código e o deploy.</p>' +
-      '<div class="layer-card"><div class="layer-num">01</div><div><div class="layer-title">Captura · Insta360 Pro 2 + DJI Matrice</div><div class="layer-desc">Câmera esférica de 8K montada em drone industrial. Cada parada é capturada em RAW esférico, processada em equiretangular e fatiada em cubemap para máxima compatibilidade mobile.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">02</div><div><div class="layer-title">Renderização · Marzipano.js + WebGL</div><div class="layer-desc">Engine open source do Google para tour 360 de alta performance. Suporte a cubemap 4K, transições suaves, gyroscópio nativo no iOS/Android e fullscreen API.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">03</div><div><div class="layer-title">Mapa · MapLibre GL + OpenFreeMap</div><div class="layer-desc">Mapa vetorial interativo sem custo por acesso. Estilo minimalista Positron, marcador personalizado com cor ouro do empreendimento.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">04</div><div><div class="layer-title">Deploy · Vercel Edge Network</div><div class="layer-desc">CDN global com latência sub-50ms no Brasil. Deploy contínuo por push no GitHub. Certificado SSL incluído. URL customizável.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">05</div><div><div class="layer-title">CMS · Squad Hub</div><div class="layer-desc">Painel web para atualizar status dos lotes, preços, demarcações e conteúdo dos modais sem acessar código. Integração via API com o tour.</div></div></div>' +
+      '<div class="section-num">Sobre o Aurora</div>' +
+      '<h3 class="section-title">Aurora Oasis.</h3>' +
+      '<p class="section-lead">Um endereço para quem entendeu que o tempo é o verdadeiro luxo.</p>' +
+      '<p class="section-body">Lago Corumbá IV · Abadiânia · Goiás. 241 lotes premium em meio ao cerrado nativo, com frente para o lago e arquitetura assinada pela FAAU. Posição estratégica entre Anápolis, Goiânia e Brasília.</p>' +
     '</div>' +
 
-    '<hr class="section-divider">' +
-
     '<div class="modal-section">' +
-      '<div class="section-num">06 · Investimento</div>' +
-      '<h3 class="section-title">Produção completa. Produto pronto para vender.</h3>' +
-      '<table class="cost-table">' +
-        '<thead><tr><th>Item</th><th>Descrição</th><th class="cost-amount">Valor</th></tr></thead>' +
-        '<tbody>' +
-          '<tr><td>Captura</td><td>2 dias de captação aérea e terrestre, 7 paradas</td><td class="cost-amount">R$ 4.800</td></tr>' +
-          '<tr><td>Processamento</td><td>Edição esférica, color grade, cubemap export</td><td class="cost-amount">R$ 2.400</td></tr>' +
-          '<tr><td>Plataforma</td><td>Desenvolvimento do tour interativo, hotspots, modais</td><td class="cost-amount">R$ 6.800</td></tr>' +
-          '<tr><td>Deploy + Domínio</td><td>Hospedagem Vercel 12 meses, SSL, DNS</td><td class="cost-amount">R$ 800</td></tr>' +
-          '<tr><td>Identidade Visual</td><td>Logotipo OASIS, paleta, tipografia, UI system</td><td class="cost-amount">R$ 3.200</td></tr>' +
-          '<tr><td>Fotos + Reels</td><td>Pacote fotográfico + 3 Reels entregáveis</td><td class="cost-amount">R$ 4.800</td></tr>' +
-          '<tr><td>Fotolivro Digital</td><td>Book editorial 20p, otimizado para mobile</td><td class="cost-amount">R$ 2.200</td></tr>' +
-        '</tbody>' +
-        '<tfoot><tr class="cost-total"><td colspan="2">Total</td><td class="cost-amount">R$ 25.000</td></tr></tfoot>' +
-      '</table>' +
-      '<p class="section-body" style="margin-top:12px;">Condição: 50% na assinatura, 50% na entrega. Parcelamento disponível. Inclui 3 meses de suporte técnico pós-entrega.</p>' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Realização</div>' +
+      '<h3 class="section-title">Silva Investimentos.</h3>' +
+      '<p class="section-body">Empreendedora com DNA de disciplina de longo prazo, respeito pelo entorno e compromisso com legado. Aurora Oasis é o projeto-âncora do portfólio em Lago Corumbá IV.</p>' +
     '</div>' +
 
-    '<hr class="section-divider">' +
+    '<div class="modal-section">' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Arquitetura</div>' +
+      '<h3 class="section-title">FAAU · Flávio Aleixo.</h3>' +
+      '<p class="section-body">Escritório responsável pelo desenho urbanístico e arquitetônico do Aurora Oasis. Volumetria suave, materiais naturais e integração com a topografia e o cerrado nativo são princípios não-negociáveis do projeto.</p>' +
+    '</div>' +
 
     '<div class="modal-section">' +
-      '<div class="section-num">07 · Retorno</div>' +
-      '<h3 class="section-title">~2,1 lotes vendidos pagam a plataforma.</h3>' +
-      '<p class="section-body">Com lotes a R$ 235.000 e comissão de 5%, cada venda gera R$ 11.750 para a incorporadora (ou para a imobiliária parceira). A plataforma se paga com a segunda venda e começa a gerar margem pura da terceira em diante.</p>' +
-      '<div class="metrics-row">' +
-        '<div class="metric"><div class="metric-num">R$ 11.7k</div><div class="metric-label">Comissão média por lote vendido</div></div>' +
-        '<div class="metric"><div class="metric-num">2,1x</div><div class="metric-label">Lotes para payback total</div></div>' +
-        '<div class="metric"><div class="metric-num">12 meses</div><div class="metric-label">Hospedagem inclusa</div></div>' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Próximo passo</div>' +
+      '<h3 class="section-title">Conheça Aurora pessoalmente.</h3>' +
+      '<p class="section-body">Reserve sua visita ao empreendimento. Equipe Silva Investimentos coordena o agendamento e oferece tour completo das tipologias e amenidades.</p>' +
+      '<div class="modal-actions" style="margin-top:20px;">' +
+        '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20visita%20ao%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Agendar visita por WhatsApp</a>' +
+        '<a href="mailto:contato@aurora-oasis.com.br?subject=Aurora%20Oasis%20-%20Interesse%20em%20visita" class="modal-link">Solicitar contato por e-mail</a>' +
       '</div>' +
-      '<div class="intangible-row">' +
-        '<div class="intangible-item"><div class="intangible-title">Diferenciação de marca</div><div class="intangible-desc">Único loteamento em Lago Corumbá IV com tour cinematográfico interativo.</div></div>' +
-        '<div class="intangible-item"><div class="intangible-title">Leads pré-qualificados</div><div class="intangible-desc">Quem chega à reunião já visitou o lote virtualmente e está 60% mais inclinado a fechar.</div></div>' +
-        '<div class="intangible-item"><div class="intangible-title">Ativo permanente</div><div class="intangible-desc">A plataforma continua vendendo 24/7 sem custo operacional adicional após entrega.</div></div>' +
-      '</div>' +
-    '</div>' +
-
-    '<hr class="section-divider">' +
-
-    '<div class="modal-section">' +
-      '<div class="section-num">08 · Execução</div>' +
-      '<h3 class="section-title">6 semanas da assinatura ao ar.</h3>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 1</div><div><div class="timeline-title">Briefing + Identidade Visual</div><div class="timeline-desc">Reunião de alinhamento, definição de paradas, aprovação da paleta e logotipo OASIS.</div></div></div>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 2</div><div><div class="timeline-title">Captação em Campo</div><div class="timeline-desc">2 dias de captura aérea e terrestre. Drone 8K nas 7 paradas definidas, cobertura fotográfica do empreendimento e entorno.</div></div></div>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 3</div><div><div class="timeline-title">Processamento + Galeria</div><div class="timeline-desc">Edição esférica, color grade, export cubemap. Entrega da galeria fotográfica em alta resolução.</div></div></div>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 4</div><div><div class="timeline-title">Plataforma + Fotolivro</div><div class="timeline-desc">Desenvolvimento do tour interativo, hotspots, modais com conteúdo. Entrega do book digital editorial.</div></div></div>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 5</div><div><div class="timeline-title">Reels + QA</div><div class="timeline-desc">Pós-produção dos 3 Reels entregáveis. Teste completo do tour em iOS, Android e desktop.</div></div></div>' +
-      '<div class="timeline-step"><div class="timeline-week">Semana 6</div><div><div class="timeline-title">Deploy + Treinamento</div><div class="timeline-desc">Publicação em domínio definitivo, configuração de DNS, treinamento da equipe de vendas no uso da plataforma.</div></div></div>' +
-    '</div>' +
-
-    '<div class="cta-block">' +
-      '<div class="cta-title">Próximo passo</div>' +
-      '<p class="cta-body">Agende uma reunião de 30 minutos com a Squad Film para definir datas de captação e assinar o contrato. Disponibilidade imediata para início na semana seguinte à assinatura.</p>' +
-      '<a href="https://squadfilm.com" target="_blank" rel="noopener" class="cta-link">squadfilm.com</a>' +
     '</div>';
   }
 
