@@ -1,4 +1,4 @@
-/* Aurora Oasis Tour Virtual v5 — Feature Bottom Bar | MapLibre | Admin | Rich Modals | Zero Italic */
+/* Aurora Oasis Tour Virtual v6 — FOV Wide | Drift Loop | Premium Icons | Admin Full | Zero Italic */
 
 (function () {
   'use strict';
@@ -22,9 +22,18 @@
 
   // ─── Admin ────────────────────────────────────────────────────────────────
   var ADMIN_PASSWORD = '827336';
+  var REGIONS_KEY = 'aurora_regions_v1';
+  var CONTENT_KEY = 'aurora_content_v1';
+  var currentAdminTab = null;
+  var drawingState = { active: false, label: '', color: '#C9A84C', type: 'polygon', vertices: [] };
 
-  function showAdminBar() {
-    // already toggled via admin-mode class
+  function loadRegions() {
+    try { return JSON.parse(localStorage.getItem(REGIONS_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveRegions(arr) { localStorage.setItem(REGIONS_KEY, JSON.stringify(arr)); }
+
+  function loadContent() {
+    try { return JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'); } catch(e) { return {}; }
   }
 
   function openAdmin() {
@@ -34,8 +43,486 @@
       alert('Senha inválida.');
       return;
     }
-    document.body.classList.add('admin-mode');
-    showAdminBar();
+    var adminBar = document.getElementById('admin-bar');
+    adminBar.hidden = false;
+    document.getElementById('viewer').style.top = '48px';
+    document.getElementById('header').style.top = '48px';
+  }
+
+  function exitAdmin() {
+    document.getElementById('admin-bar').hidden = true;
+    document.getElementById('viewer').style.top = '';
+    document.getElementById('header').style.top = '';
+    closeAdminPanel();
+    cleanupDrawing();
+    currentAdminTab = null;
+    document.querySelectorAll('.admin-btn[data-admin-tab]').forEach(function(b) {
+      b.classList.remove('is-active');
+    });
+  }
+
+  function closeAdminPanel() {
+    var panel = document.getElementById('admin-panel');
+    panel.hidden = true;
+  }
+
+  function openAdminPanel(tab) {
+    var panel = document.getElementById('admin-panel');
+    var titleEl = document.getElementById('admin-panel-title');
+    var bodyEl = document.getElementById('admin-panel-body');
+
+    panel.hidden = false;
+
+    document.querySelectorAll('.admin-btn[data-admin-tab]').forEach(function(b) {
+      b.classList.toggle('is-active', b.dataset.adminTab === tab);
+    });
+
+    currentAdminTab = tab;
+
+    if (tab === 'manual') {
+      titleEl.textContent = 'Demarcações Manual';
+      bodyEl.innerHTML = renderManualPanel();
+      bindManualPanel();
+    } else if (tab === 'ia') {
+      titleEl.textContent = 'Demarcações IA';
+      bodyEl.innerHTML = renderIAPanel();
+      bindIAPanel();
+    } else if (tab === 'content') {
+      titleEl.textContent = 'Editar Conteúdo';
+      bodyEl.innerHTML = renderContentPanel();
+      bindContentPanel();
+    } else if (tab === 'export') {
+      titleEl.textContent = 'Exportar / Importar';
+      bodyEl.innerHTML = renderExportPanel();
+      bindExportPanel();
+    }
+  }
+
+  // ─── Admin Manual Drawing ─────────────────────────────────────────────────
+  function renderManualPanel() {
+    var regions = loadRegions();
+    var listHTML = regions.length === 0 ? '<p style="color:var(--ink-muted);font-size:12px;">Nenhuma região cadastrada.</p>' : '';
+    regions.forEach(function(r) {
+      var vCount = r.vertices ? r.vertices.length : 0;
+      listHTML += '<div class="admin-region-item">' +
+        '<span class="admin-region-dot" style="background:' + r.color + '"></span>' +
+        '<span class="admin-region-name">' + r.label + '</span>' +
+        '<span class="admin-region-meta">' + vCount + ' vértices</span>' +
+        '<button class="admin-action danger" data-del-region="' + r.id + '" style="padding:4px 8px;font-size:10px;margin:0;">×</button>' +
+      '</div>';
+    });
+    return '<div class="admin-section">' +
+        '<div class="admin-status-pill" id="drawing-status">' +
+          '<span class="admin-status-dot"></span>' +
+          '<span>Modo desenho inativo</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="admin-divider"></div>' +
+      '<div class="admin-section">' +
+        '<div class="admin-section-title">Nova região</div>' +
+        '<label class="admin-label-field">Cor do pin</label>' +
+        '<div class="admin-radio-group" id="color-group">' +
+          '<button class="admin-radio-btn selected" data-color="#C9A84C">Dourado</button>' +
+          '<button class="admin-radio-btn" data-color="#30d158">Verde</button>' +
+          '<button class="admin-radio-btn" data-color="#c84c4c">Terracotta</button>' +
+          '<button class="admin-radio-btn" data-color="#4c7bc8">Azul</button>' +
+        '</div>' +
+        '<label class="admin-label-field">Tipo</label>' +
+        '<div class="admin-radio-group" id="type-group">' +
+          '<button class="admin-radio-btn selected" data-type="polygon">Polígono</button>' +
+          '<button class="admin-radio-btn" data-type="freehand">Freehand</button>' +
+        '</div>' +
+        '<label class="admin-label-field">Label</label>' +
+        '<input type="text" class="admin-input" id="new-region-label" placeholder="Ex: Zona Premium">' +
+        '<div class="admin-actions-row">' +
+          '<button class="admin-action primary" id="btn-start-drawing">Iniciar</button>' +
+          '<button class="admin-action" id="btn-finish-drawing" style="display:none">Finalizar (Enter)</button>' +
+          '<button class="admin-action danger" id="btn-cancel-drawing" style="display:none">Cancelar (Esc)</button>' +
+        '</div>' +
+        '<div class="admin-note" id="drawing-hint" style="display:none">Clique para adicionar vértices. Duplo clique ou Enter para fechar o polígono. Esc para cancelar.</div>' +
+      '</div>' +
+      '<div class="admin-divider"></div>' +
+      '<div class="admin-section">' +
+        '<div class="admin-section-title">Regiões existentes (' + regions.length + ')</div>' +
+        '<div class="admin-region-list">' + listHTML + '</div>' +
+        '<div class="admin-actions-row">' +
+          '<button class="admin-action primary" id="btn-save-regions">Salvar</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function bindManualPanel() {
+    var selectedColor = '#C9A84C';
+    var selectedType = 'polygon';
+
+    document.querySelectorAll('#color-group .admin-radio-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#color-group .admin-radio-btn').forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        selectedColor = btn.dataset.color;
+        drawingState.color = selectedColor;
+      });
+    });
+
+    document.querySelectorAll('#type-group .admin-radio-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('#type-group .admin-radio-btn').forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        selectedType = btn.dataset.type;
+        drawingState.type = selectedType;
+      });
+    });
+
+    var startBtn = document.getElementById('btn-start-drawing');
+    var finishBtn = document.getElementById('btn-finish-drawing');
+    var cancelBtn = document.getElementById('btn-cancel-drawing');
+    var statusPill = document.getElementById('drawing-status');
+    var hintEl = document.getElementById('drawing-hint');
+
+    if (startBtn) {
+      startBtn.addEventListener('click', function() {
+        var label = (document.getElementById('new-region-label') || {}).value || 'Região ' + Date.now();
+        startDrawingMode({ label: label, color: selectedColor, type: selectedType });
+        statusPill.classList.add('active');
+        statusPill.querySelector('span:last-child').textContent = 'Modo desenho ativo';
+        startBtn.style.display = 'none';
+        finishBtn.style.display = '';
+        cancelBtn.style.display = '';
+        hintEl.style.display = '';
+      });
+    }
+
+    if (finishBtn) {
+      finishBtn.addEventListener('click', function() { finishDrawing(); });
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function() { cleanupDrawing(); openAdminPanel('manual'); });
+    }
+
+    document.querySelectorAll('[data-del-region]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.dataset.delRegion;
+        var regions = loadRegions().filter(function(r) { return r.id !== id; });
+        saveRegions(regions);
+        openAdminPanel('manual');
+        rebuildRegionsOverlay();
+      });
+    });
+
+    var saveBtn = document.getElementById('btn-save-regions');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        rebuildRegionsOverlay();
+        saveBtn.textContent = 'Salvo!';
+        setTimeout(function() { saveBtn.textContent = 'Salvar'; }, 1200);
+      });
+    }
+  }
+
+  function startDrawingMode(opts) {
+    drawingState = { active: true, label: opts.label, color: opts.color, type: opts.type, vertices: [], lastSampleTime: 0 };
+    var pano = document.getElementById('pano') || document.getElementById('viewer');
+    pano.classList.add('drawing-mode');
+
+    if (opts.type === 'freehand') {
+      pano.addEventListener('pointerdown', onFreehandStart);
+    } else {
+      pano.addEventListener('click', onDrawClick);
+      pano.addEventListener('dblclick', finishDrawing);
+    }
+  }
+
+  function onDrawClick(e) {
+    if (!drawingState.active) return;
+    if (e.detail >= 2) return; // skip single-click on dblclick
+    var pano = document.getElementById('pano') || document.getElementById('viewer');
+    var rect = pano.getBoundingClientRect();
+    var screen = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    var s = marzipanoScenes[currentSceneIdx];
+    if (!s) return;
+    var coords = s.view.screenToCoordinates(screen);
+    if (!coords) return;
+    drawingState.vertices.push(coords);
+    renderDrawingPreview();
+  }
+
+  function onFreehandStart(e) {
+    var pano = document.getElementById('pano') || document.getElementById('viewer');
+    function onMove(ev) {
+      var now = performance.now();
+      if (now - drawingState.lastSampleTime < 50) return;
+      drawingState.lastSampleTime = now;
+      var rect = pano.getBoundingClientRect();
+      var screen = { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+      var s = marzipanoScenes[currentSceneIdx];
+      if (!s) return;
+      var coords = s.view.screenToCoordinates(screen);
+      if (!coords) return;
+      drawingState.vertices.push(coords);
+      renderDrawingPreview();
+    }
+    function onEnd() {
+      pano.removeEventListener('pointermove', onMove);
+      pano.removeEventListener('pointerup', onEnd);
+      finishDrawing();
+    }
+    pano.addEventListener('pointermove', onMove);
+    pano.addEventListener('pointerup', onEnd);
+  }
+
+  function renderDrawingPreview() {
+    var svg = document.getElementById('region-overlay');
+    if (!svg || drawingState.vertices.length < 2) return;
+    var s = marzipanoScenes[currentSceneIdx];
+    if (!s) return;
+    var w = window.innerWidth, h = window.innerHeight;
+
+    // Remove previous preview
+    var prev = svg.querySelector('#drawing-preview');
+    if (prev) prev.remove();
+
+    var pts = drawingState.vertices.map(function(v) {
+      return s.view.coordinatesToScreen({ yaw: v.yaw, pitch: v.pitch });
+    }).filter(function(p) { return p !== null; });
+    if (pts.length < 2) return;
+
+    var ptsStr = pts.map(function(p) { return p.x + ',' + p.y; }).join(' ');
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.id = 'drawing-preview';
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', ptsStr);
+    poly.setAttribute('fill', drawingState.color.replace(')', ',0.18)').replace('rgb(', 'rgba(') || 'rgba(201,168,76,0.18)');
+    poly.setAttribute('stroke', drawingState.color);
+    poly.setAttribute('stroke-width', '1.5');
+    poly.setAttribute('stroke-dasharray', '4 3');
+    g.appendChild(poly);
+    svg.appendChild(g);
+  }
+
+  function clearDrawingPreview() {
+    var prev = document.getElementById('drawing-preview');
+    if (prev) prev.remove();
+  }
+
+  function finishDrawing() {
+    if (!drawingState.active || drawingState.vertices.length < 3) { cleanupDrawing(); return; }
+    var regions = loadRegions();
+    regions.push({
+      id: 'r_' + Date.now(),
+      label: drawingState.label,
+      color: drawingState.color,
+      fillColor: 'rgba(201,168,76,0.18)',
+      strokeColor: drawingState.color,
+      vertices: drawingState.vertices,
+      appearsIn: [SCENES[currentSceneIdx].id],
+      createdAt: new Date().toISOString()
+    });
+    saveRegions(regions);
+    cleanupDrawing();
+    rebuildRegionsOverlay();
+    openAdminPanel('manual');
+  }
+
+  function cleanupDrawing() {
+    drawingState.active = false;
+    var pano = document.getElementById('pano') || document.getElementById('viewer');
+    pano.classList.remove('drawing-mode');
+    pano.removeEventListener('click', onDrawClick);
+    pano.removeEventListener('dblclick', finishDrawing);
+    pano.removeEventListener('pointerdown', onFreehandStart);
+    clearDrawingPreview();
+  }
+
+  function rebuildRegionsOverlay() {
+    updateRegionOverlay();
+  }
+
+  // ─── Admin IA Panel ───────────────────────────────────────────────────────
+  function renderIAPanel() {
+    var token = localStorage.getItem('aurora_replicate_token') || '';
+    var hasToken = !!token;
+    return '<div class="admin-section">' +
+        '<div class="admin-section-title">Detecção automática de áreas</div>' +
+        '<p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;">A IA analisa a cena atual do tour e propõe demarcações de áreas distintas (lote, lago, mata, edificação).</p>' +
+        '<p style="font-size:11px;color:var(--ink-muted);line-height:1.5;">Stack: Replicate · Segment Anything Model 2</p>' +
+      '</div>' +
+      '<div class="admin-divider"></div>' +
+      (hasToken
+        ? '<div class="admin-section"><button class="admin-action primary" id="btn-detect-ia">Detectar lotes na cena atual</button></div>'
+        : '<div class="admin-section">' +
+            '<div class="admin-note">Esta funcionalidade requer um token Replicate. Cole abaixo:</div>' +
+            '<label class="admin-label-field">REPLICATE_API_TOKEN</label>' +
+            '<input type="password" class="admin-input" id="replicate-token" placeholder="r8_...">' +
+            '<div class="admin-actions-row">' +
+              '<button class="admin-action primary" id="btn-save-token">Salvar token</button>' +
+            '</div>' +
+          '</div>') +
+      '<div class="admin-divider"></div>' +
+      '<div class="admin-note" style="font-size:10px;">Integração SAM via Replicate em desenvolvimento. Por ora, captura snapshot e inicia download local.</div>';
+  }
+
+  function bindIAPanel() {
+    var saveTokenBtn = document.getElementById('btn-save-token');
+    if (saveTokenBtn) {
+      saveTokenBtn.addEventListener('click', function() {
+        var v = (document.getElementById('replicate-token') || {}).value || '';
+        if (!v) return;
+        localStorage.setItem('aurora_replicate_token', v);
+        openAdminPanel('ia');
+      });
+    }
+    var detectBtn = document.getElementById('btn-detect-ia');
+    if (detectBtn) {
+      detectBtn.addEventListener('click', detectIA);
+    }
+  }
+
+  // TODO: integrar Replicate SAM via Vercel Serverless Function (api/segment.js) pra evitar CORS.
+  // Por enquanto, captura snapshot e baixa pro user processar manualmente.
+  async function detectIA() {
+    try {
+      var canvas = viewer && viewer.stage && viewer.stage().domElement ? viewer.stage().domElement() : null;
+      if (!canvas) { alert('Snapshot indisponível.'); return; }
+      var dataUrl = canvas.toDataURL('image/png');
+      var a = document.createElement('a');
+      a.href = dataUrl; a.download = 'aurora-snapshot-' + Date.now() + '.png';
+      a.click();
+      alert('Snapshot baixado. Integração SAM via Replicate em desenvolvimento.');
+    } catch(e) {
+      alert('Erro ao capturar snapshot: ' + e.message);
+    }
+  }
+
+  // ─── Admin Content Panel ──────────────────────────────────────────────────
+  var CONTENT_FIELDS = [
+    { key: 'conceito.manifesto', label: 'Conceito — Manifesto', type: 'textarea' },
+    { key: 'conceito.por-que-lead', label: 'Conceito — 01 Por que (lead)', type: 'textarea' },
+    { key: 'conceito.conceito-lead', label: 'Conceito — 02 Conceito (lead)', type: 'textarea' },
+    { key: 'localizacao.endereco-body', label: 'Localização — Endereço (body)', type: 'textarea' }
+  ];
+
+  function renderContentPanel() {
+    var overrides = loadContent();
+    var opts = '<option value="">— Selecionar campo —</option>';
+    CONTENT_FIELDS.forEach(function(f, i) {
+      opts += '<option value="' + f.key + '">' + f.label + '</option>';
+    });
+    return '<div class="admin-section">' +
+        '<div class="admin-section-title">Sobrescrever conteúdo dos modais</div>' +
+        '<label class="admin-label-field">Campo</label>' +
+        '<select class="admin-select" id="content-field-sel">' + opts + '</select>' +
+        '<div id="content-edit-area" style="display:none">' +
+          '<label class="admin-label-field" id="content-field-label">Valor</label>' +
+          '<textarea class="admin-textarea" id="content-field-val" rows="5"></textarea>' +
+        '</div>' +
+        '<div class="admin-actions-row">' +
+          '<button class="admin-action primary" id="btn-save-content">Salvar mudanças</button>' +
+          '<button class="admin-action danger" id="btn-reset-content">Restaurar padrão</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function bindContentPanel() {
+    var overrides = loadContent();
+    var sel = document.getElementById('content-field-sel');
+    var editArea = document.getElementById('content-edit-area');
+    var valEl = document.getElementById('content-field-val');
+    var labelEl = document.getElementById('content-field-label');
+
+    if (sel) {
+      sel.addEventListener('change', function() {
+        var key = sel.value;
+        if (!key) { editArea.style.display = 'none'; return; }
+        editArea.style.display = '';
+        var field = CONTENT_FIELDS.find(function(f) { return f.key === key; });
+        if (field && labelEl) labelEl.textContent = field.label;
+        if (valEl) valEl.value = overrides[key] || '';
+      });
+    }
+
+    var saveBtn = document.getElementById('btn-save-content');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        var key = sel ? sel.value : '';
+        if (!key || !valEl) return;
+        overrides[key] = valEl.value;
+        localStorage.setItem(CONTENT_KEY, JSON.stringify(overrides));
+        saveBtn.textContent = 'Salvo!';
+        setTimeout(function() { saveBtn.textContent = 'Salvar mudanças'; }, 1200);
+      });
+    }
+
+    var resetBtn = document.getElementById('btn-reset-content');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        if (!confirm('Restaurar todo o conteúdo ao padrão?')) return;
+        localStorage.removeItem(CONTENT_KEY);
+        openAdminPanel('content');
+      });
+    }
+  }
+
+  // ─── Admin Export Panel ───────────────────────────────────────────────────
+  function renderExportPanel() {
+    return '<div class="admin-section">' +
+        '<div class="admin-section-title">Configuração completa</div>' +
+        '<p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin-bottom:16px;">Exporte regions, conteúdo personalizado e tema em um único JSON. Importe para restaurar ou migrar configuração.</p>' +
+        '<div class="admin-actions-row">' +
+          '<button class="admin-action primary" id="btn-export">Exportar configuração</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="admin-divider"></div>' +
+      '<div class="admin-section">' +
+        '<div class="admin-section-title">Importar</div>' +
+        '<input type="file" accept=".json" id="import-file" style="display:none">' +
+        '<label for="import-file" class="admin-action" style="cursor:pointer;display:inline-flex;">Selecionar arquivo JSON</label>' +
+      '</div>';
+  }
+
+  function bindExportPanel() {
+    var expBtn = document.getElementById('btn-export');
+    if (expBtn) expBtn.addEventListener('click', exportConfig);
+
+    var importFile = document.getElementById('import-file');
+    if (importFile) {
+      importFile.addEventListener('change', function() {
+        if (!importFile.files[0]) return;
+        importConfig(importFile.files[0]);
+      });
+    }
+  }
+
+  function exportConfig() {
+    var cfg = {
+      version: 1,
+      regions: loadRegions(),
+      content: loadContent(),
+      theme: localStorage.getItem(THEME_KEY) || 'light',
+      exportedAt: new Date().toISOString()
+    };
+    var blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'aurora-config-' + Date.now() + '.json';
+    a.click();
+  }
+
+  function importConfig(file) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      try {
+        var cfg = JSON.parse(reader.result);
+        if (cfg.regions) saveRegions(cfg.regions);
+        if (cfg.content) localStorage.setItem(CONTENT_KEY, JSON.stringify(cfg.content));
+        if (cfg.theme) applyTheme(cfg.theme);
+        alert('Config importada! Recarregando...');
+        location.reload();
+      } catch(e) {
+        alert('JSON invalido: ' + e.message);
+      }
+    };
+    reader.readAsText(file);
   }
 
   // ─── Scene Data ───────────────────────────────────────────────────────────
@@ -89,24 +576,20 @@
   var scenePkrOpen = false;
   var featModalOpen = false;
 
-  // Parallax state
-  var parallaxEnabled = true;
-  var basePose = { yaw: 0, pitch: 0 };
-  var parallaxOffset = { yaw: 0, pitch: 0 };
-  var parallaxTarget = { yaw: 0, pitch: 0 };
-  var isDragging = false;
-  var PARALLAX_RANGE = 0.04;
-
-  // DoF state
-  var dofEnabled = true;
-  var zoomInteracting = false;
-  var zoomIntTimer = null;
+  // Drift loop state (replaces mouse parallax)
+  var DRIFT_AMPLITUDE = 0.012;
+  var DRIFT_PERIOD_YAW = 24000;
+  var DRIFT_PERIOD_PITCH = 18000;
+  var driftStart = performance.now();
+  var basePose = { yaw: 0, pitch: -0.18 };
+  var userInteracting = false;
 
   // Zoom
-  var FOV_MIN = 30 * Math.PI / 180;
-  var FOV_MAX = 130 * Math.PI / 180;
+  var FOV_MIN = 35 * Math.PI / 180;
+  var FOV_MAX = 145 * Math.PI / 180;
+  var FOV_DEFAULT = 130 * Math.PI / 180;
   var FOV_STEP = 5 * Math.PI / 180;
-  var currentFov = 110 * Math.PI / 180;
+  var currentFov = FOV_DEFAULT;
 
   // ─── DOM refs ─────────────────────────────────────────────────────────────
   var viewerEl       = document.getElementById('viewer');
@@ -119,13 +602,8 @@
   var modalCloseBtn  = document.getElementById('modal-close-btn');
   var regionOverlay  = document.getElementById('region-overlay');
   var shareToast     = document.getElementById('share-toast');
-  var dofOverlay     = document.getElementById('dof-overlay');
   var menuModal      = document.getElementById('menu-modal');
   var mmCloseBtn     = document.getElementById('mm-close-btn');
-  var zoomSlider     = document.getElementById('zoom-slider');
-  var btnZoomIn      = document.getElementById('btn-zoom-in');
-  var btnZoomOut     = document.getElementById('btn-zoom-out');
-  var btnAutorotate  = document.getElementById('btn-autorotate');
   var btnFullscreen  = document.getElementById('btn-fullscreen');
   var btnAdmin       = document.getElementById('btn-admin');
   var btnCenas       = document.getElementById('btn-cenas');
@@ -486,8 +964,6 @@
   function startAutorotate() {
     if (!autorotating) {
       autorotating = true;
-      btnAutorotate.setAttribute('aria-pressed', 'true');
-      btnAutorotate.classList.add('is-active');
       viewer.startMovement(autorotateCtrl);
     }
   }
@@ -495,8 +971,6 @@
   function stopAutorotate() {
     if (autorotating) {
       autorotating = false;
-      btnAutorotate.setAttribute('aria-pressed', 'false');
-      btnAutorotate.classList.remove('is-active');
       viewer.stopMovement();
     }
   }
@@ -631,9 +1105,12 @@
     var s = marzipanoScenes[currentSceneIdx];
     if (s) {
       s.view.setYaw(0);
-      s.view.setPitch(0);
+      s.view.setPitch(-0.18);
+      s.view.setFov(FOV_DEFAULT);
       basePose.yaw = 0;
-      basePose.pitch = 0;
+      basePose.pitch = -0.18;
+      currentFov = FOV_DEFAULT;
+      driftStart = performance.now();
     }
   }
 
@@ -840,22 +1317,27 @@
     applyTheme(cur === 'light' ? 'dark' : 'light');
   });
 
-  // ─── Admin ────────────────────────────────────────────────────────────────
+  // ─── Admin Event Listeners ────────────────────────────────────────────────
   btnAdmin.addEventListener('click', openAdmin);
 
-  var adminBtnExit = document.getElementById('admin-btn-exit');
-  if (adminBtnExit) {
-    adminBtnExit.addEventListener('click', function() {
-      document.body.classList.remove('admin-mode');
-    });
-  }
+  var adminExitBtn = document.getElementById('btn-admin-exit');
+  if (adminExitBtn) adminExitBtn.addEventListener('click', exitAdmin);
 
-  var adminBtnManual = document.getElementById('admin-btn-manual');
-  var adminBtnIa = document.getElementById('admin-btn-ia');
-  var adminBtnContent = document.getElementById('admin-btn-content');
-  if (adminBtnManual) adminBtnManual.addEventListener('click', function() { alert('Demarcações Manual · Em desenvolvimento.'); });
-  if (adminBtnIa) adminBtnIa.addEventListener('click', function() { alert('Demarcações IA · Em desenvolvimento.'); });
-  if (adminBtnContent) adminBtnContent.addEventListener('click', function() { alert('Editar Conteúdo · Em desenvolvimento.'); });
+  var adminPanelCloseBtn = document.getElementById('btn-admin-panel-close');
+  if (adminPanelCloseBtn) adminPanelCloseBtn.addEventListener('click', closeAdminPanel);
+
+  document.querySelectorAll('.admin-btn[data-admin-tab]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = btn.dataset.adminTab;
+      if (currentAdminTab === tab && !document.getElementById('admin-panel').hidden) {
+        closeAdminPanel();
+        currentAdminTab = null;
+        document.querySelectorAll('.admin-btn[data-admin-tab]').forEach(function(b) { b.classList.remove('is-active'); });
+      } else {
+        openAdminPanel(tab);
+      }
+    });
+  });
 
   // ─── Marzipano Init ───────────────────────────────────────────────────────
   function initViewer() {
@@ -877,13 +1359,14 @@
 
     autorotateCtrl = Marzipano.autorotate({
       yawSpeed: 0.04,
-      targetPitch: 0,
+      targetPitch: -0.18,
       interruptOnAction: true
     });
 
     buildScenes();
     switchScene(0, true);
     hideLoading();
+    initDriftLoop();
   }
 
   function buildScenes() {
@@ -906,7 +1389,7 @@
       ]);
 
       var view = new Marzipano.RectilinearView(
-        { yaw: 0, pitch: 0, fov: currentFov },
+        { yaw: 0, pitch: -0.18, fov: FOV_DEFAULT },
         limiter
       );
       var scene = viewer.createScene({ source: source, geometry: geometry, view: view });
@@ -931,9 +1414,9 @@
     }
 
     basePose.yaw = 0;
-    basePose.pitch = 0;
-    parallaxTarget.yaw = 0;
-    parallaxTarget.pitch = 0;
+    basePose.pitch = -0.18;
+    driftStart = performance.now();
+    userInteracting = false;
 
     hdrNumber.textContent = s.data.number;
     hdrLabel.textContent = s.data.label;
@@ -966,106 +1449,51 @@
   }
   tickLoad();
 
-  // ─── Parallax 3D ──────────────────────────────────────────────────────────
-  function initParallax() {
-    viewerEl.addEventListener('mousemove', function(e) {
-      if (!parallaxEnabled || isDragging) return;
-      var rect = viewerEl.getBoundingClientRect();
-      var nx = (e.clientX - rect.left) / rect.width - 0.5;
-      var ny = (e.clientY - rect.top) / rect.height - 0.5;
-      parallaxTarget.yaw   = nx * PARALLAX_RANGE * 2;
-      parallaxTarget.pitch = -ny * PARALLAX_RANGE * 2;
+  // ─── Drift Loop (replaces mouse parallax) ────────────────────────────────
+  function initDriftLoop() {
+    var container = viewerEl;
+    ['pointerdown', 'wheel', 'touchstart'].forEach(function(ev) {
+      container.addEventListener(ev, function() { userInteracting = true; }, { passive: true });
     });
-
-    viewerEl.addEventListener('mousedown', function() { isDragging = true; });
-    window.addEventListener('mouseup', function() {
-      if (isDragging) {
-        var s = marzipanoScenes[currentSceneIdx];
-        if (s) {
-          basePose.yaw   = s.view.yaw();
-          basePose.pitch = s.view.pitch();
-        }
-        parallaxTarget.yaw   = 0;
-        parallaxTarget.pitch = 0;
-        parallaxOffset.yaw   = 0;
-        parallaxOffset.pitch = 0;
-      }
-      isDragging = false;
-    });
-
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', function(e) {
-        if (!parallaxEnabled || isDragging) return;
-        if (e.beta == null) return;
-        var gamma = (e.gamma || 0) / 45;
-        var beta  = ((e.beta  || 0) - 45) / 45;
-        parallaxTarget.yaw   = Math.max(-1, Math.min(1, gamma)) * PARALLAX_RANGE;
-        parallaxTarget.pitch = Math.max(-1, Math.min(1, beta))  * PARALLAX_RANGE * 0.5;
-      });
-    }
-
-    startParallaxLoop();
-  }
-
-  function startParallaxLoop() {
-    function tick() {
-      if (parallaxEnabled && !isDragging && viewer) {
-        var s = marzipanoScenes[currentSceneIdx];
-        if (s) {
-          parallaxOffset.yaw   += (parallaxTarget.yaw   - parallaxOffset.yaw)   * 0.06;
-          parallaxOffset.pitch += (parallaxTarget.pitch - parallaxOffset.pitch) * 0.06;
-
-          if (Math.abs(parallaxOffset.yaw) > 0.0001 || Math.abs(parallaxOffset.pitch) > 0.0001) {
-            var targetYaw   = basePose.yaw   + parallaxOffset.yaw;
-            var targetPitch = basePose.pitch + parallaxOffset.pitch;
-            var cy = s.view.yaw();
-            var cp = s.view.pitch();
-            var ny = cy + (targetYaw   - cy) * 0.05;
-            var np = cp + (targetPitch - cp) * 0.05;
-            np = Math.max(-Math.PI/3, Math.min(Math.PI/3, np));
-            s.view.setYaw(ny);
-            s.view.setPitch(np);
+    ['pointerup', 'touchend', 'touchcancel'].forEach(function(ev) {
+      container.addEventListener(ev, function() {
+        setTimeout(function() {
+          var s = marzipanoScenes[currentSceneIdx];
+          if (s) {
+            basePose.yaw = s.view.yaw();
+            basePose.pitch = s.view.pitch();
           }
-        }
+          driftStart = performance.now();
+          userInteracting = false;
+        }, 250);
+      }, { passive: true });
+    });
+    requestAnimationFrame(driftTick);
+  }
+
+  function driftTick() {
+    if (!userInteracting && viewer && marzipanoScenes.length > 0) {
+      var t = performance.now() - driftStart;
+      var dy = Math.sin(t / DRIFT_PERIOD_YAW * Math.PI * 2) * DRIFT_AMPLITUDE;
+      var dp = Math.sin(t / DRIFT_PERIOD_PITCH * Math.PI * 2 + Math.PI / 3) * DRIFT_AMPLITUDE * 0.6;
+      var s = marzipanoScenes[currentSceneIdx];
+      if (s && !autorotating) {
+        try {
+          s.view.setYaw(basePose.yaw + dy);
+          s.view.setPitch(basePose.pitch + dp);
+        } catch(e) {}
       }
-      requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
+    requestAnimationFrame(driftTick);
   }
 
-  // ─── Depth of Field ───────────────────────────────────────────────────────
-  function setDof(enabled) {
-    dofEnabled = enabled;
-    if (enabled && !zoomInteracting) {
-      dofOverlay.classList.remove('disabled');
-    } else {
-      dofOverlay.classList.add('disabled');
-    }
-  }
-
-  // ─── Zoom Controls ────────────────────────────────────────────────────────
+  // ─── Zoom Controls (via scroll/pinch — no UI) ─────────────────────────────
   function setFov(fovRad) {
     fovRad = Math.max(FOV_MIN, Math.min(FOV_MAX, fovRad));
     currentFov = fovRad;
     var s = marzipanoScenes[currentSceneIdx];
     if (s) s.view.setFov(fovRad);
-    var deg = Math.round(fovRad * 180 / Math.PI);
-    zoomSlider.value = deg;
-
-    dofOverlay.classList.add('disabled');
-    if (zoomIntTimer) clearTimeout(zoomIntTimer);
-    zoomInteracting = true;
-    zoomIntTimer = setTimeout(function() {
-      zoomInteracting = false;
-      if (dofEnabled) dofOverlay.classList.remove('disabled');
-    }, 600);
   }
-
-  btnZoomIn.addEventListener('click', function() { setFov(currentFov - FOV_STEP); });
-  btnZoomOut.addEventListener('click', function() { setFov(currentFov + FOV_STEP); });
-  zoomSlider.addEventListener('input', function() {
-    setFov(parseInt(zoomSlider.value, 10) * Math.PI / 180);
-  });
 
   function onViewChange() {
     var s = marzipanoScenes[currentSceneIdx];
@@ -1073,21 +1501,9 @@
     try {
       var fov = s.view.fov();
       currentFov = fov;
-      zoomSlider.value = Math.round(fov * 180 / Math.PI);
     } catch(e) {}
-
-    if (!isDragging) {
-      basePose.yaw   = s.view.yaw();
-      basePose.pitch = s.view.pitch();
-    }
     updateRegionOverlay();
   }
-
-  // ─── Autorotate ───────────────────────────────────────────────────────────
-  btnAutorotate.addEventListener('click', function() {
-    if (autorotating) stopAutorotate();
-    else startAutorotate();
-  });
 
   // ─── Fullscreen ───────────────────────────────────────────────────────────
   btnFullscreen.addEventListener('click', toggleFullscreen);
@@ -1131,11 +1547,10 @@
     btn.setAttribute('aria-checked', nowActive ? 'true' : 'false');
 
     if (key === 'parallax') {
-      parallaxEnabled = nowActive;
-      if (!nowActive) { parallaxTarget.yaw = 0; parallaxTarget.pitch = 0; }
+      // Drift loop is always on — toggle is kept for UI compatibility
       return;
     }
-    if (key === 'dof') { setDof(nowActive); return; }
+    if (key === 'dof') { return; } // DoF removed
 
     regionVisibility[key] = nowActive;
 
@@ -1154,15 +1569,16 @@
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       if (presentationState.running) { stopPresentation(); return; }
+      if (drawingState.active) { cleanupDrawing(); openAdminPanel('manual'); return; }
       if (featModalOpen) { closeFeatModal(); return; }
       if (scenePkrOpen)  { closeScenePicker(); return; }
       if (!infoModal.hidden) { infoModal.hidden = true; return; }
       if (menuOpen) { closeMenu(); return; }
     }
+    if (e.key === 'Enter' && drawingState.active) { finishDrawing(); return; }
     if (e.key === 'ArrowLeft')  { switchScene(currentSceneIdx - 1, false); return; }
     if (e.key === 'ArrowRight') { switchScene(currentSceneIdx + 1, false); return; }
     if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); return; }
-    if (e.key === ' ') { e.preventDefault(); btnAutorotate.click(); return; }
     if (e.key === '+' || e.key === '=') { setFov(currentFov - FOV_STEP); return; }
     if (e.key === '-' || e.key === '_') { setFov(currentFov + FOV_STEP); return; }
     if (e.key === 'm' || e.key === 'M') { menuOpen ? closeMenu() : openMenu(); return; }
@@ -1172,7 +1588,12 @@
   function updateRegionOverlay() {
     if (!viewer) return;
     var svg = regionOverlay;
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    // Preserve drawing preview
+    var previewEl = document.getElementById('drawing-preview');
+    while (svg.firstChild) {
+      if (svg.firstChild === previewEl) { svg.appendChild(previewEl); break; }
+      svg.removeChild(svg.firstChild);
+    }
 
     var w = window.innerWidth;
     var h = window.innerHeight;
@@ -1186,11 +1607,19 @@
     if (!scene) return;
     var view = scene.view;
 
-    REGIONS.forEach(function(region) {
-      if (!regionVisibility[region.id]) return;
-      if (region.appearsIn.indexOf(SCENES[currentSceneIdx].id) < 0) return;
+    // Merge built-in + localStorage regions
+    var allRegions = REGIONS.concat(loadRegions());
 
-      var pts = region.polygon.map(function(v) {
+    allRegions.forEach(function(region) {
+      if (!regionVisibility[region.id]) return;
+
+      var vertices = region.vertices || region.polygon;
+      if (!vertices || vertices.length < 3) return;
+
+      // For built-in regions, check appearsIn
+      if (region.appearsIn && region.appearsIn.indexOf(SCENES[currentSceneIdx].id) < 0) return;
+
+      var pts = vertices.map(function(v) {
         return view.coordinatesToScreen({ yaw: v.yaw, pitch: v.pitch });
       });
       var validPts = pts.filter(function(p) { return p !== null; });
@@ -1200,8 +1629,8 @@
 
       var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.setAttribute('points', ptsStr);
-      poly.setAttribute('fill', region.fillColor);
-      poly.setAttribute('stroke', region.strokeColor);
+      poly.setAttribute('fill', region.fillColor || 'rgba(201,168,76,0.18)');
+      poly.setAttribute('stroke', region.strokeColor || region.color || '#C9A84C');
       poly.setAttribute('stroke-width', '1.5');
       svg.appendChild(poly);
 
@@ -1259,13 +1688,11 @@
     document.fonts.ready.then(function() {
       initViewer();
       attachViewChangeListeners();
-      initParallax();
     });
   } else {
     window.addEventListener('load', function() {
       initViewer();
       attachViewChangeListeners();
-      initParallax();
     });
   }
 

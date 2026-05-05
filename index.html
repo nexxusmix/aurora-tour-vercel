@@ -13,14 +13,26 @@
 <body>
 
   <!-- Admin Bar -->
-  <div id="admin-bar">
-    <div class="admin-dot"></div>
-    <span class="admin-label">Modo Admin</span>
-    <button class="admin-action-btn" id="admin-btn-manual" type="button">Demarcações Manual</button>
-    <button class="admin-action-btn" id="admin-btn-ia" type="button">Demarcações IA</button>
-    <button class="admin-action-btn" id="admin-btn-content" type="button">Editar Conteúdo</button>
-    <button class="admin-action-btn admin-exit-btn" id="admin-btn-exit" type="button">Sair</button>
+  <div id="admin-bar" hidden>
+    <div class="admin-brand">
+      <span class="admin-dot"></span>
+      <span class="admin-label">Modo Admin</span>
+    </div>
+    <button class="admin-btn" data-admin-tab="manual" type="button">Demarcações Manual</button>
+    <button class="admin-btn" data-admin-tab="ia" type="button">Demarcações IA</button>
+    <button class="admin-btn" data-admin-tab="content" type="button">Editar Conteúdo</button>
+    <button class="admin-btn" data-admin-tab="export" type="button">Exportar / Importar</button>
+    <button class="admin-btn admin-exit" id="btn-admin-exit" type="button">Sair Admin</button>
   </div>
+
+  <!-- Admin Panel -->
+  <aside id="admin-panel" class="admin-panel" hidden>
+    <header class="admin-panel-header">
+      <h3 class="admin-panel-title" id="admin-panel-title">—</h3>
+      <button class="admin-panel-close" id="btn-admin-panel-close" aria-label="Fechar painel">×</button>
+    </header>
+    <div class="admin-panel-body" id="admin-panel-body"></div>
+  </aside>
 
   <!-- Loading screen -->
   <div id="loading-screen">
@@ -70,74 +82,80 @@
     <nav class="bb-features" aria-label="Funcionalidades">
 
       <button class="bb-feat" data-feature="home" aria-label="Home">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <path d="M3 12L12 3l9 9M5 10v10h14V10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon home-icon" aria-hidden="true">
+          <path d="M3 11.5L12 4l9 7.5M5 10v10h14V10" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="15" r="1.5" class="home-dot" fill="currentColor" stroke="none"/>
         </svg>
         <span class="bb-label">Home</span>
       </button>
 
       <button class="bb-feat" data-feature="conceito" aria-label="Conceito">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="bb-icon" aria-hidden="true">
-          <path d="M6 2h12M6 22h12M8 2v3a4 4 0 0 0 .8 2.4L12 12l-3.2 4.6A4 4 0 0 0 8 19v3M16 2v3a4 4 0 0 1-.8 2.4L12 12l3.2 4.6A4 4 0 0 1 16 19v3"/>
-          <line x1="9" y1="6" x2="15" y2="6" opacity="0.4"/>
-          <path d="M10 17.5h4" opacity="0.6"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon hourglass-icon" aria-hidden="true">
+          <path d="M7 3h10M7 21h10M9 3v3.5c0 1.5.5 2 2 3.5l1 1 1-1c1.5-1.5 2-2 2-3.5V3M9 21v-3.5c0-1.5.5-2 2-3.5l1-1 1 1c1.5 1.5 2 2 2 3.5V21" stroke-linecap="round" stroke-linejoin="round"/>
+          <line class="sand-line" x1="12" y1="11" x2="12" y2="13" stroke-linecap="round"/>
         </svg>
         <span class="bb-label">Conceito</span>
       </button>
 
       <button class="bb-feat" data-feature="localizacao" aria-label="Localização">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z" stroke-width="1.5"/>
-          <circle cx="12" cy="9" r="2.5" stroke-width="1.5"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon pin-icon" aria-hidden="true">
+          <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z" stroke-linejoin="round"/>
+          <circle cx="12" cy="9" r="2.2" class="pin-dot" fill="currentColor" stroke="none"/>
+          <circle cx="12" cy="9" r="2.2" class="pin-ripple" stroke-width="1"/>
         </svg>
         <span class="bb-label">Localização</span>
       </button>
 
       <button class="bb-feat" data-feature="implantacao" aria-label="Implantação">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <rect x="3" y="3" width="7" height="7" stroke-width="1.5"/>
-          <rect x="14" y="3" width="7" height="7" stroke-width="1.5"/>
-          <rect x="3" y="14" width="7" height="7" stroke-width="1.5"/>
-          <rect x="14" y="14" width="7" height="7" stroke-width="1.5"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon grid-icon" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" class="g-q1"/>
+          <rect x="14" y="3" width="7" height="7" class="g-q2"/>
+          <rect x="3" y="14" width="7" height="7" class="g-q3"/>
+          <rect x="14" y="14" width="7" height="7" class="g-q4"/>
         </svg>
         <span class="bb-label">Implantação</span>
       </button>
 
       <button class="bb-feat" data-feature="disponibilidades" aria-label="Disponibilidades">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M9 3v15M15 6v15" stroke-width="1.5"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon map-icon" aria-hidden="true">
+          <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" stroke-linejoin="round"/>
+          <path d="M9 3v15M15 6v15"/>
+          <path class="check" d="M16 17l1.5 1.5L20 16" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="bb-label">Disponibilidades</span>
       </button>
 
       <button class="bb-feat" data-feature="imagens" aria-label="Imagens">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <rect x="3" y="5" width="18" height="14" stroke-width="1.5"/>
-          <circle cx="9" cy="11" r="1.5" stroke-width="1.5"/>
-          <path d="M21 17l-5-5-9 9" stroke-width="1.5" stroke-linejoin="round"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon photo-icon" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" stroke-linejoin="round"/>
+          <circle cx="9" cy="11" r="1.6" class="photo-sun"/>
+          <path d="M21 17l-5-5-9 9" stroke-linejoin="round"/>
         </svg>
         <span class="bb-label">Imagens</span>
       </button>
 
       <button class="bb-feat" data-feature="fotolivro" aria-label="Fotolivro">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <path d="M3 5a2 2 0 0 1 2-2h6v18H5a2 2 0 0 1-2-2V5ZM21 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5Z" stroke-width="1.5"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon book-icon" aria-hidden="true">
+          <path d="M12 4v17" stroke-linecap="round"/>
+          <path class="page-l" d="M12 4L5 4v15l7 0" stroke-linejoin="round"/>
+          <path class="page-r" d="M12 4l7 0v15l-7 0" stroke-linejoin="round"/>
         </svg>
         <span class="bb-label">Fotolivro</span>
       </button>
 
       <button class="bb-feat" data-feature="videos" aria-label="Vídeos">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <rect x="3" y="6" width="18" height="12" rx="1" stroke-width="1.5"/>
-          <path d="M11 9.5v5l4-2.5z" stroke-width="1.5" stroke-linejoin="round"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon video-icon" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="12" rx="1" stroke-linejoin="round"/>
+          <path d="M11 9.5v5l4-2.5z" stroke-linejoin="round"/>
+          <line class="scan-line" x1="3" y1="18" x2="6" y2="18" stroke-linecap="round" stroke="#C9A84C"/>
         </svg>
         <span class="bb-label">Vídeos</span>
       </button>
 
       <button class="bb-feat bb-feat-cta" data-feature="apresentacao" aria-label="Apresentação guiada">
-        <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polygon points="6 4 20 12 6 20 6 4"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="bb-icon pres-icon" aria-hidden="true">
+          <circle class="pres-ring" cx="12" cy="12" r="9" stroke-dasharray="3 3"/>
+          <polygon points="10 8 17 12 10 16 10 8" stroke-linejoin="round" fill="currentColor"/>
         </svg>
         <span class="bb-label">Apresentação</span>
       </button>
@@ -148,56 +166,28 @@
       <!-- Cenas -->
       <button class="bb-aux-btn" data-feature="cenas" id="btn-cenas" aria-label="Cenas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-          <rect x="3" y="3" width="8" height="8" rx="1" stroke-width="1.5"/>
-          <rect x="13" y="3" width="8" height="8" rx="1" stroke-width="1.5"/>
-          <rect x="3" y="13" width="8" height="8" rx="1" stroke-width="1.5"/>
-          <rect x="13" y="13" width="8" height="8" rx="1" stroke-width="1.5"/>
-        </svg>
-      </button>
-
-      <!-- Zoom -->
-      <div class="bb-zoom">
-        <button class="bb-aux-btn" id="btn-zoom-out" aria-label="Zoom out" style="width:24px;height:24px;">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="7" cy="7" r="4.5"/>
-            <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
-            <line x1="4.5" y1="7" x2="9.5" y2="7"/>
-          </svg>
-        </button>
-        <input type="range" id="zoom-slider" min="30" max="130" value="110" step="1" aria-label="Zoom">
-        <button class="bb-aux-btn" id="btn-zoom-in" aria-label="Zoom in" style="width:24px;height:24px;">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="7" cy="7" r="4.5"/>
-            <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
-            <line x1="7" y1="4.5" x2="7" y2="9.5"/>
-            <line x1="4.5" y1="7" x2="9.5" y2="7"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Autorotate -->
-      <button class="bb-aux-btn" id="btn-autorotate" aria-label="Rotação automática" aria-pressed="false">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M13 8A5 5 0 1 1 8 3"/>
-          <polyline points="11,1 8,3 11,5"/>
-        </svg>
-      </button>
-
-      <!-- Tela cheia -->
-      <button class="bb-aux-btn" id="btn-fullscreen" aria-label="Tela cheia">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/>
+          <rect x="3" y="3" width="8" height="8" rx="1" stroke-width="1.2"/>
+          <rect x="13" y="3" width="8" height="8" rx="1" stroke-width="1.2"/>
+          <rect x="3" y="13" width="8" height="8" rx="1" stroke-width="1.2"/>
+          <rect x="13" y="13" width="8" height="8" rx="1" stroke-width="1.2"/>
         </svg>
       </button>
 
       <!-- Theme toggle -->
       <button class="bb-aux-btn" id="btn-theme" aria-label="Alternar tema" title="Tema claro/escuro">
-        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
         </svg>
-        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <!-- Fullscreen -->
+      <button class="bb-aux-btn" id="btn-fullscreen" aria-label="Tela cheia">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/>
         </svg>
       </button>
 

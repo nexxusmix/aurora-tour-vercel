@@ -68,34 +68,57 @@ html, body {
 }
 
 /* ─── Depth of Field Overlay ─────────────────────────────────────────────── */
-.dof-overlay {
-  position: fixed; inset: 0;
-  pointer-events: none;
-  z-index: 4;
-  backdrop-filter: blur(6px) saturate(102%);
-  -webkit-backdrop-filter: blur(6px) saturate(102%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at center,
-    transparent 0%,
-    transparent 45%,
-    rgba(0,0,0,0.6) 75%,
-    rgba(0,0,0,1) 100%);
-          mask-image: radial-gradient(ellipse 70% 60% at center,
-    transparent 0%,
-    transparent 45%,
-    rgba(0,0,0,0.6) 75%,
-    rgba(0,0,0,1) 100%);
-  transition: opacity 400ms ease;
-}
-.dof-overlay.disabled { opacity: 0; }
+.dof-overlay { display: none; } /* desativado, futuro toggle no admin */
 
 /* ─── Vignette ───────────────────────────────────────────────────────────── */
-.vignette {
-  position: fixed; inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  background: radial-gradient(ellipse at center,
-    transparent 60%,
-    rgba(26,26,26,0.18) 100%);
+.vignette { display: none; }
+
+/* ─── Icon Micro-animations (BB Premium) ────────────────────────────────── */
+
+/* Home dot pulse */
+.home-dot { transform-origin: 12px 15px; animation: pulse-dot 2.4s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } }
+
+/* Hourglass sand */
+.sand-line { stroke-dasharray: 4; animation: sand-drop 1.6s linear infinite; }
+@keyframes sand-drop { 0% { stroke-dashoffset: -4; opacity: 0; } 30% { opacity: 1; } 100% { stroke-dashoffset: 4; opacity: 0; } }
+
+/* Pin ripple */
+.pin-ripple { transform-origin: 12px 9px; animation: ripple-pin 2s ease-out infinite; opacity: 0; }
+@keyframes ripple-pin { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
+
+/* Grid quadrant pulse on hover */
+.grid-icon rect { transition: stroke 200ms; }
+.bb-feat:hover .g-q1 { animation: q-pulse 1.6s 0s infinite; }
+.bb-feat:hover .g-q2 { animation: q-pulse 1.6s 0.4s infinite; }
+.bb-feat:hover .g-q4 { animation: q-pulse 1.6s 0.8s infinite; }
+.bb-feat:hover .g-q3 { animation: q-pulse 1.6s 1.2s infinite; }
+@keyframes q-pulse { 0%,100% { stroke: currentColor; } 50% { stroke: var(--aurora-gold); } }
+
+/* Map check draw */
+.check { stroke-dasharray: 12; stroke-dashoffset: 12; animation: check-draw 2.4s ease-in-out infinite; }
+@keyframes check-draw { 0%,30% { stroke-dashoffset: 12; } 50%,80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -12; } }
+
+/* Photo sun pulse */
+.photo-sun { transform-origin: 9px 11px; transform-box: fill-box; animation: sun-pulse 2.4s ease-in-out infinite; }
+@keyframes sun-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+
+/* Book pages on hover */
+.page-l, .page-r { transform-origin: 12px 4px; transform-box: fill-box; transition: transform 600ms cubic-bezier(0.25,0.1,0.25,1); }
+.bb-feat:hover .page-l { transform: rotateY(-12deg); }
+.bb-feat:hover .page-r { transform: rotateY(12deg); }
+
+/* Video scan line — use transform for animation (SVG attributes can't be CSS-animated) */
+.scan-line { transform-origin: 3px 12px; animation: scan-vid 2.4s linear infinite; opacity: 0; }
+@keyframes scan-vid { 0% { transform: scaleX(0); opacity: 0; } 15% { opacity: 1; } 80% { transform: scaleX(6); opacity: 1; } 100% { transform: scaleX(6); opacity: 0; } }
+
+/* Presentation ring rotation */
+.pres-ring { transform-origin: 12px 12px; transform-box: fill-box; animation: ring-rot 12s linear infinite; }
+@keyframes ring-rot { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
 }
 
 /* ─── Loading Screen ─────────────────────────────────────────────────────── */
@@ -219,7 +242,10 @@ html, body {
   z-index: 100;
   border-bottom: 1px solid rgba(201,168,76,0.3);
 }
-.admin-mode #admin-bar { display: flex; }
+#admin-bar:not([hidden]) { display: flex; }
+.admin-brand {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
 .admin-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -238,7 +264,7 @@ html, body {
   text-transform: uppercase;
   color: #FAFAFA;
 }
-.admin-action-btn {
+.admin-btn {
   font: 400 11px/1 "Britti Sans", system-ui, sans-serif;
   font-style: normal;
   letter-spacing: 0.1em;
@@ -249,21 +275,208 @@ html, body {
   cursor: pointer;
   transition: all 240ms;
 }
-.admin-action-btn:hover {
+.admin-btn:hover {
   color: #FAFAFA;
   border-color: rgba(201,168,76,0.6);
 }
-.admin-exit-btn {
+.admin-btn.is-active {
+  color: var(--aurora-gold);
+  border-color: rgba(201,168,76,0.6);
+}
+.admin-exit {
   margin-left: auto;
   color: rgba(255,59,48,0.8);
   border-color: rgba(255,59,48,0.3);
 }
-.admin-exit-btn:hover {
+.admin-exit:hover {
   color: #ff3b30;
   border-color: rgba(255,59,48,0.7);
 }
 .admin-mode #viewer { top: 48px; }
 .admin-mode #header { top: 48px; }
+
+/* ─── Admin Panel ────────────────────────────────────────────────────────── */
+.admin-panel {
+  position: fixed;
+  top: 48px; right: 0; bottom: 0;
+  width: 420px;
+  background: var(--modal-bg);
+  border-left: 1px solid var(--hairline);
+  z-index: 90;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 320ms cubic-bezier(0.4,0,0.15,1);
+}
+.admin-panel:not([hidden]) {
+  transform: translateX(0);
+  display: flex;
+}
+.admin-panel[hidden] {
+  display: flex !important;
+  transform: translateX(100%);
+  pointer-events: none;
+}
+.admin-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+.admin-panel-title {
+  font: 300 16px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  color: var(--ink);
+}
+.admin-panel-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; line-height: 1; color: var(--ink-muted);
+  padding: 4px; transition: color 200ms;
+}
+.admin-panel-close:hover { color: var(--aurora-gold); }
+.admin-panel-body {
+  flex: 1; overflow-y: auto; padding: 20px;
+  font: 400 13px/1.55 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  color: var(--ink);
+}
+@media (max-width: 768px) {
+  .admin-panel { width: 100vw; top: 48px; }
+}
+
+/* Admin panel inner components */
+.admin-section { margin-bottom: 20px; }
+.admin-section-title {
+  font: 400 10px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-muted); margin-bottom: 10px;
+}
+.admin-status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 400 11px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  padding: 4px 10px;
+  border: 1px solid var(--hairline);
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.admin-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ink-muted);
+}
+.admin-status-pill.active .admin-status-dot { background: #30d158; }
+.admin-status-pill.active { border-color: rgba(48,209,88,0.4); color: #30d158; }
+.admin-radio-group {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.admin-radio-btn {
+  font: 400 11px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  padding: 6px 12px;
+  border: 1px solid var(--hairline);
+  background: transparent;
+  cursor: pointer; transition: all 200ms;
+  color: var(--ink-soft);
+}
+.admin-radio-btn.selected {
+  border-color: var(--aurora-gold);
+  color: var(--aurora-gold);
+}
+.admin-input {
+  width: 100%;
+  font: 400 13px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  padding: 8px 12px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 200ms;
+  margin-bottom: 8px;
+}
+.admin-input:focus { border-color: var(--aurora-gold); }
+.admin-action {
+  font: 400 11px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  padding: 8px 16px;
+  border: 1px solid var(--hairline-strong);
+  background: transparent;
+  cursor: pointer; transition: all 200ms;
+  color: var(--ink);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.admin-action:hover { border-color: var(--aurora-gold); color: var(--aurora-gold); }
+.admin-action.primary {
+  background: var(--ink); color: var(--bg-main);
+  border-color: var(--ink);
+}
+.admin-action.primary:hover {
+  background: var(--aurora-gold); border-color: var(--aurora-gold); color: #1A1A1A;
+}
+.admin-action.danger { color: #ff3b30; border-color: rgba(255,59,48,0.3); }
+.admin-action.danger:hover { border-color: #ff3b30; }
+.admin-actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.admin-region-list { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+.admin-region-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border: 1px solid var(--hairline);
+}
+.admin-region-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.admin-region-name {
+  flex: 1;
+  font: 400 12px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  color: var(--ink);
+}
+.admin-region-meta {
+  font: 400 10px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  color: var(--ink-muted);
+}
+.admin-divider { height: 1px; background: var(--hairline); margin: 16px 0; }
+.admin-textarea {
+  width: 100%; min-height: 80px; resize: vertical;
+  font: 400 12px/1.5 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  padding: 8px 12px;
+  color: var(--ink);
+  outline: none; transition: border-color 200ms;
+  margin-bottom: 8px;
+}
+.admin-textarea:focus { border-color: var(--aurora-gold); }
+.admin-select {
+  width: 100%;
+  font: 400 12px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  background: var(--panel-solid);
+  border: 1px solid var(--hairline);
+  padding: 8px 12px;
+  color: var(--ink);
+  outline: none; cursor: pointer;
+  margin-bottom: 12px;
+}
+.admin-select:focus { border-color: var(--aurora-gold); }
+.admin-label-field {
+  font: 400 10px/1 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-muted); display: block; margin-bottom: 4px;
+}
+.admin-note {
+  font: 400 11px/1.5 "Britti Sans", system-ui, sans-serif;
+  font-style: normal;
+  color: var(--ink-muted);
+  padding: 10px; border: 1px solid var(--hairline);
+  background: rgba(201,168,76,0.04);
+  margin: 10px 0;
+}
+.drawing-mode { cursor: crosshair !important; }
+.drawing-mode * { cursor: crosshair !important; }
 
 /* ─── Bottom Bar ─────────────────────────────────────────────────────────── */
 #bottom-bar {
@@ -400,50 +613,16 @@ html, body {
 .bb-aux-btn .bb-icon-aux,
 .bb-aux-btn svg { width: 16px; height: 16px; stroke-width: 1.5; }
 
-/* Zoom group */
-.bb-zoom {
-  display: flex; align-items: center; gap: 6px;
-  padding: 0 8px;
-  border-left: 1px solid var(--hairline);
-  border-right: 1px solid var(--hairline);
-  height: 28px; margin: 0 4px;
-}
-#zoom-slider {
-  width: 80px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  height: 28px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-#zoom-slider::-webkit-slider-runnable-track {
-  background: var(--hairline-strong); height: 1px;
-}
-#zoom-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--aurora-gold);
-  margin-top: -4.5px;
-  cursor: pointer;
-  transition: transform var(--transition);
-}
-#zoom-slider::-webkit-slider-thumb:hover { transform: scale(1.4); }
-#zoom-slider::-moz-range-track { background: var(--hairline-strong); height: 1px; }
-#zoom-slider::-moz-range-thumb {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--aurora-gold);
-  border: none; cursor: pointer;
-}
+/* Zoom group — hidden (zoom via scroll/pinch) */
+.bb-zoom { display: none; }
+#zoom-slider { display: none; }
 
 /* Admin button */
 .bb-admin { opacity: 0.35; margin-left: 8px; }
 .bb-admin:hover { opacity: 1; }
 
-/* Autorotate button */
-#btn-autorotate { }
+/* Autorotate button — removed from UI, kept for JS */
+#btn-autorotate { display: none; }
 
 /* ─── Scene Picker (above bottom bar) ───────────────────────────────────── */
 .scene-picker {
