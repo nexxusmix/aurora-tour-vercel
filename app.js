@@ -141,20 +141,49 @@
   function locationContent() {
     return [
       '<div class="modal-section">',
-        '<div class="modal-mini">Endereço</div>',
-        '<div class="modal-line">Lago Corumbá IV</div>',
-        '<div class="modal-line">Abadiânia · Goiás · 72940-000</div>',
+        '<div class="section-num">Endereço</div>',
+        '<h3 class="section-title">Lago Corumbá IV</h3>',
+        '<p class="section-body">Aurora Oasis fica às margens do Lago Corumbá IV, em Abadiânia, no eixo entre Anápolis, Goiânia e Brasília. Posição estratégica para quem quer refúgio sem isolamento.</p>',
+        '<div class="loc-data">',
+          '<div class="loc-row"><div class="loc-mini">Município</div><div class="loc-val">Abadiânia · Goiás</div></div>',
+          '<div class="loc-row"><div class="loc-mini">CEP</div><div class="loc-val">72940-000</div></div>',
+          '<div class="loc-row"><div class="loc-mini">Coordenadas</div><div class="loc-val loc-mono">-16.274689 · -48.464529</div></div>',
+        '</div>',
       '</div>',
+
       '<div class="modal-section">',
-        '<div class="modal-mini">Coordenadas</div>',
-        '<div class="modal-line modal-mono">-16.274689 · -48.464529</div>',
+        '<div class="section-num">Distâncias</div>',
+        '<div class="distances-grid">',
+          '<article class="dist-card reveal" data-reveal>',
+            '<div class="dist-city">Anápolis</div>',
+            '<div class="dist-meta">GO</div>',
+            '<div class="dist-km">36 <span>km</span></div>',
+            '<div class="dist-time">≈ 40 min</div>',
+          '</article>',
+          '<article class="dist-card reveal" data-reveal>',
+            '<div class="dist-city">Brasília</div>',
+            '<div class="dist-meta">DF</div>',
+            '<div class="dist-km">112 <span>km</span></div>',
+            '<div class="dist-time">≈ 1h 30min</div>',
+          '</article>',
+          '<article class="dist-card reveal" data-reveal>',
+            '<div class="dist-city">Goiânia</div>',
+            '<div class="dist-meta">GO</div>',
+            '<div class="dist-km">96 <span>km</span></div>',
+            '<div class="dist-time">≈ 1h 20min</div>',
+          '</article>',
+        '</div>',
       '</div>',
+
       '<div class="modal-section">',
-        '<div id="map"></div>',
+        '<div class="section-num">Mapa</div>',
+        '<div id="map" style="height:420px;width:100%;border:1px solid var(--hairline);"></div>',
       '</div>',
+
       '<div class="modal-section modal-actions">',
         '<a href="https://www.google.com/maps/?q=-16.274689,-48.464529" target="_blank" rel="noopener" class="modal-link">Abrir no Google Maps</a>',
         '<a href="https://www.google.com/maps/dir/?api=1&destination=-16.274689,-48.464529" target="_blank" rel="noopener" class="modal-link">Como chegar</a>',
+        '<a href="https://www.waze.com/ul?ll=-16.274689,-48.464529&navigate=yes" target="_blank" rel="noopener" class="modal-link">Abrir no Waze</a>',
       '</div>'
     ].join('');
   }
@@ -207,6 +236,35 @@
         '<div class="metric"><div class="metric-num">24/7</div><div class="metric-label">Acessível do sofá às 23h, no celular</div></div>' +
         '<div class="metric"><div class="metric-num">~2.1</div><div class="metric-label">Lotes vendidos pagam a plataforma</div></div>' +
       '</div>' +
+    '</div>' +
+
+    '<div class="modal-section">' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Os quatro pilares</div>' +
+      '<h3 class="section-title">O tempo é o novo luxo.</h3>' +
+      '<p class="section-body">Aurora Oasis é um endereço para quem entendeu que viver bem deixou de ser sobre o que se acumula. É sobre o que se preserva: silêncio, presença, lentidão, profundidade. Cada pilar do projeto materializa essa filosofia.</p>' +
+      '<div class="pillars-grid">' +
+        '<article class="pillar reveal" data-reveal>' +
+          '<div class="pillar-num">01</div>' +
+          '<h4 class="pillar-title">Presença</h4>' +
+          '<p class="pillar-desc">O tempo desacelera para quem sabe vivê-lo. Cada construção é desenhada para favorecer a contemplação, sem pressa, sem ruído.</p>' +
+        '</article>' +
+        '<article class="pillar reveal" data-reveal>' +
+          '<div class="pillar-num">02</div>' +
+          '<h4 class="pillar-title">Exclusividade</h4>' +
+          '<p class="pillar-desc">Cada nome foi escolhido. O empreendimento se relaciona com seus moradores, não com massa. Um endereço que se recusa a ser apenas mais um.</p>' +
+        '</article>' +
+        '<article class="pillar reveal" data-reveal>' +
+          '<div class="pillar-num">03</div>' +
+          '<h4 class="pillar-title">Refúgio</h4>' +
+          '<p class="pillar-desc">Um refúgio silencioso onde o essencial reaparece. Distante o suficiente para acolher, próximo o suficiente para integrar.</p>' +
+        '</article>' +
+        '<article class="pillar reveal" data-reveal>' +
+          '<div class="pillar-num">04</div>' +
+          '<h4 class="pillar-title">O Primordial</h4>' +
+          '<p class="pillar-desc">Conexão com o cerrado nativo, o lago, a hora dourada e o céu. O luxo aqui é o que sempre existiu e está se perdendo.</p>' +
+        '</article>' +
+      '</div>' +
     '</div>';
   }
 
@@ -236,13 +294,42 @@
       '<div class="layer-card"><div class="layer-num">04</div><div><div class="layer-title">CTA de Reserva</div><div class="layer-desc">Botão embutido na cena do Lote Destaque que abre formulário de contato ou redireciona para WhatsApp do corretor. Rastreável por UTM.</div></div></div>' +
       '<div class="layer-card"><div class="layer-num">05</div><div><div class="layer-title">Identidade Visual AURORA</div><div class="layer-desc">Logotipo, paleta ouro + areia, tipografia Britti Sans e sistema de hairlines aplicados a todos os elementos de interface.</div></div></div>' +
       '<div class="layer-card"><div class="layer-num">06</div><div><div class="layer-title">Compartilhamento com Snapshot</div><div class="layer-desc">Botão de share que gera link com yaw/pitch atual — o receptor abre o tour no exato ângulo que o corretor recomendou.</div></div></div>' +
+    '</div>' +
+
+    '<div class="modal-section">' +
+      '<hr class="section-divider">' +
+      '<div class="section-num">Amenidades</div>' +
+      '<h3 class="section-title">Estrutura completa, sem ostentação.</h3>' +
+      '<p class="section-body">Programa arquitetônico assinado pela <strong>FAAU · Flávio Aleixo</strong>. Volumetria suave, materiais naturais, integração com o cerrado e vista privilegiada para o lago.</p>' +
+      '<div class="amenities-grid">' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9225;</span><div class="amenity-name">Wine Bar</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#8801;</span><div class="amenity-name">Academia</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9675;</span><div class="amenity-name">Piscina</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9645;</span><div class="amenity-name">Restaurante</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9671;</span><div class="amenity-name">Spa Completo</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9651;</span><div class="amenity-name">Track Arena</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#8766;</span><div class="amenity-name">Trilha Cerrado</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon">&#9680;</span><div class="amenity-name">Mirante Lago</div></div>' +
+      '</div>' +
     '</div>';
   }
 
   function disponibilidadesHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">Mapa de Lotes</div>' +
-      '<h3 class="section-title">Lote em destaque · 1ª Fase</h3>' +
+      '<div class="section-num">Visão Geral</div>' +
+      '<h3 class="section-title">241 lotes · 6 quadras · 3 categorias</h3>' +
+      '<p class="section-body">O empreendimento divide-se entre lotes premium frente-lago, lotes intermediários com vista parcial e lotes mata-cerrado. Status em tempo real disponível pelo Squad Hub conforme o lançamento avança.</p>' +
+      '<div class="metrics-row">' +
+        '<div class="metric"><div class="metric-num">241</div><div class="metric-label">Lotes totais</div></div>' +
+        '<div class="metric"><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
+        '<div class="metric"><div class="metric-num">~1.250</div><div class="metric-label">m² médio</div></div>' +
+        '<div class="metric"><div class="metric-num">R$ 235k</div><div class="metric-label">Ticket médio</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<hr class="section-divider">' +
+    '<div class="modal-section">' +
+      '<div class="section-num">Lote em destaque · 1ª Fase</div>' +
+      '<h3 class="section-title">Lote 137</h3>' +
       '<div class="metrics-row">' +
         '<div class="metric"><div class="metric-num">1.250</div><div class="metric-label">m² · Lote 137</div></div>' +
         '<div class="metric"><div class="metric-num">R$ 235k</div><div class="metric-label">Valor de referência</div></div>' +
@@ -256,34 +343,71 @@
   }
 
   function imagensHTML() {
+    var photos = [
+      { src: '/img/gallery/aurora-drone-01.jpg', label: 'Vista aérea · 30/09/2025',    cat: 'Drone' },
+      { src: '/img/gallery/aurora-drone-02.jpg', label: 'Lago Corumbá IV',              cat: 'Drone' },
+      { src: '/img/gallery/aurora-drone-03.jpg', label: 'Mata nativa · entrada',        cat: 'Drone' },
+      { src: '/img/gallery/aurora-drone-04.jpg', label: 'Sol da manhã sobre o lago',    cat: 'Drone' },
+      { src: '/img/gallery/aurora-drone-05.jpg', label: 'Amplitude · cerrado',          cat: 'Drone' },
+      { src: '/img/gallery/aurora-drone-06.jpg', label: 'Margem do lago',               cat: 'Drone' },
+      { src: '/img/faau/faau-01.jpg',            label: 'Volumetria suave',             cat: 'Arquitetura · FAAU' },
+      { src: '/img/faau/faau-02.jpg',            label: 'Materiais naturais',           cat: 'Arquitetura · FAAU' },
+      { src: '/img/faau/faau-03.jpg',            label: 'Integração interior-exterior', cat: 'Arquitetura · FAAU' },
+      { src: '/img/faau/faau-04.jpg',            label: 'Detalhe construtivo',          cat: 'Arquitetura · FAAU' }
+    ];
+    var items = photos.map(function(p, i) {
+      return '<figure class="g-item reveal" data-reveal style="--delay:' + (i * 60) + 'ms">' +
+        '<img loading="lazy" src="' + p.src + '" alt="' + p.label + '">' +
+        '<figcaption class="g-cap">' +
+          '<span class="g-cat">' + p.cat + '</span>' +
+          '<span class="g-label">' + p.label + '</span>' +
+        '</figcaption>' +
+      '</figure>';
+    }).join('');
     return '<div class="modal-section">' +
       '<div class="section-num">Galeria</div>' +
-      '<h3 class="section-title">Fotografia em alta resolução</h3>' +
-      '<p class="section-body">Galeria fotográfica completa em produção. Conteúdo disponível na semana 3 do cronograma de entrega.</p>' +
-      '<hr class="section-divider">' +
-      '<div class="section-num">Panoramas disponíveis</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;">' +
-        '<img src="/media/thumb_pano_01.webp" alt="Vista de Apresentação" style="width:100%;height:96px;object-fit:cover;border:1px solid rgba(26,26,26,0.12);">' +
-        '<img src="/media/thumb_pano_02.webp" alt="Drone Norte" style="width:100%;height:96px;object-fit:cover;border:1px solid rgba(26,26,26,0.12);">' +
-        '<img src="/media/thumb_pano_03.webp" alt="Drone Lago" style="width:100%;height:96px;object-fit:cover;border:1px solid rgba(26,26,26,0.12);">' +
-        '<img src="/media/thumb_pano_04.webp" alt="Drone Pôr do Sol" style="width:100%;height:96px;object-fit:cover;border:1px solid rgba(26,26,26,0.12);">' +
-      '</div>' +
-    '</div>';
+      '<h3 class="section-title">Aurora em detalhes.</h3>' +
+      '<p class="section-body">Imagens reais do empreendimento (drone, setembro 2025) e referências arquitetônicas do escritório FAAU, autor do projeto.</p>' +
+    '</div>' +
+    '<div class="gallery-grid">' + items + '</div>';
   }
 
   function fotolivroHTML() {
     return '<div class="modal-section">' +
       '<div class="section-num">Book Digital</div>' +
-      '<h3 class="section-title">Fotolivro · Edição Completa</h3>' +
-      '<p class="section-body">Book digital em produção. Lançamento previsto para a semana 4 do cronograma. O fotolivro reunirá as melhores imagens da campanha em formato editorial premium, otimizado para compartilhamento via link e leitura em dispositivos móveis.</p>' +
+      '<h3 class="section-title">Aurora · edição completa.</h3>' +
+      '<p class="section-body">Compilação editorial em formato fotolivro digital, navegável página a página. Lançamento previsto para a semana 4 do cronograma.</p>' +
+      '<div class="book-mockup reveal" data-reveal>' +
+        '<div class="book-cover">' +
+          '<img src="/img/oasis-logo-black-aa.png" class="book-logo brand-logo-dark" alt="OASIS">' +
+          '<img src="/img/oasis-logo-white-aa.png" class="book-logo brand-logo-light" alt="OASIS">' +
+          '<div class="book-title">Aurora · Lago Corumbá IV</div>' +
+          '<div class="book-mini">Book digital · 2026</div>' +
+        '</div>' +
+        '<div class="book-status">Em produção</div>' +
+      '</div>' +
     '</div>';
   }
 
   function videosHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">Audiovisual</div>' +
-      '<h3 class="section-title">Reels e versão estendida</h3>' +
-      '<p class="section-body">Reels para Instagram e versão estendida em pós-produção. Entrega prevista para a semana 5 do cronograma. O pacote inclui: Reel 30s para feed, Reel 60s para stories com CTA, versão estendida 3min para WhatsApp e landing page.</p>' +
+      '<div class="section-num">Vídeos</div>' +
+      '<h3 class="section-title">Movimento sobre o lago.</h3>' +
+      '<p class="section-body">Captação aérea drone setembro 2025. Versão estendida e teaser de 60 segundos em pós-produção.</p>' +
+    '</div>' +
+    '<div class="video-stack">' +
+      '<div class="v-item reveal" data-reveal>' +
+        '<video controls preload="metadata" poster="/img/gallery/aurora-drone-01.jpg" muted playsinline>' +
+          '<source src="/video/aurora-drone-01.mp4" type="video/mp4">' +
+        '</video>' +
+        '<div class="v-meta"><span class="v-cat">Drone aéreo</span><span class="v-label">Aurora · panorâmica norte</span></div>' +
+      '</div>' +
+      '<div class="v-item reveal" data-reveal>' +
+        '<video controls preload="metadata" poster="/img/gallery/aurora-drone-04.jpg" muted playsinline>' +
+          '<source src="/video/aurora-drone-02.mp4" type="video/mp4">' +
+        '</video>' +
+        '<div class="v-meta"><span class="v-cat">Drone aéreo</span><span class="v-label">Aurora · espelho d\'água</span></div>' +
+      '</div>' +
     '</div>';
   }
 
@@ -514,12 +638,52 @@
   }
 
   // ─── Feature Modal ────────────────────────────────────────────────────────
+  // ─── Scroll-reveal (IntersectionObserver) ────────────────────────────────
+  function initRevealObserver() {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-revealed');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('[data-reveal]').forEach(function(el) { io.observe(el); });
+  }
+
+  // ─── Card Parallax ────────────────────────────────────────────────────────
+  function bindCardParallax() {
+    document.querySelectorAll('.pillar,.dist-card,.amenity').forEach(function(card) {
+      if (card._parallaxBound) return;
+      card._parallaxBound = true;
+      card.addEventListener('mousemove', function(e) {
+        var r = card.getBoundingClientRect();
+        var px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        var py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        card.style.setProperty('--rx', (-py * 3) + 'deg');
+        card.style.setProperty('--ry', (px * 3) + 'deg');
+        card.style.setProperty('--tx', (px * 4) + 'px');
+        card.style.setProperty('--ty', (py * 4) + 'px');
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--tx', '0px');
+        card.style.setProperty('--ty', '0px');
+      });
+    });
+  }
+
   function openFeatModal(title, content, onOpen) {
     featModalTitle.textContent = title;
     featModalBody.innerHTML = content;
     featModal.hidden = false;
     featModalOpen = true;
     if (onOpen) onOpen();
+    setTimeout(function() {
+      initRevealObserver();
+      bindCardParallax();
+    }, 50);
   }
 
   function closeFeatModal() {
@@ -620,23 +784,54 @@
     var el = document.getElementById('map');
     if (!el || el._inited) return;
     el._inited = true;
-    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    var mapStyle = currentTheme === 'dark'
-      ? 'https://tiles.openfreemap.org/styles/dark'
-      : 'https://tiles.openfreemap.org/styles/positron';
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     var map = new maplibregl.Map({
       container: 'map',
-      style: mapStyle,
-      center: [-48.464529, -16.274689],
-      zoom: 13,
+      style: isDark
+        ? 'https://tiles.openfreemap.org/styles/dark'
+        : 'https://tiles.openfreemap.org/styles/positron',
+      center: [-48.46, -16.50],
+      zoom: 8,
       attributionControl: false
     });
+    window._mapInstance = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
-    var dot = document.createElement('div');
-    dot.style.cssText = 'width:14px;height:14px;border-radius:50%;background:#C9A84C;border:2px solid #1A1A1A;box-shadow:0 0 0 4px rgba(201,168,76,0.2);';
-    new maplibregl.Marker({ element: dot }).setLngLat([-48.464529, -16.274689]).addTo(map);
-    window._mapInstance = map;
+    var points = [
+      { id: 'aurora',   coord: [-48.464529, -16.274689], label: 'Aurora Oasis', mini: 'Abadiânia · GO', primary: true },
+      { id: 'anapolis', coord: [-48.953200, -16.328600], label: 'Anápolis',      mini: '36 km · 40 min' },
+      { id: 'goiania',  coord: [-49.253800, -16.686900], label: 'Goiânia',       mini: '96 km · 1h 20min' },
+      { id: 'brasilia', coord: [-47.929500, -15.793900], label: 'Brasília',      mini: '112 km · 1h 30min' }
+    ];
+
+    map.on('load', function() {
+      var features = points.slice(1).map(function(p) {
+        return {
+          type: 'Feature',
+          geometry: { type: 'LineString', coordinates: [points[0].coord, p.coord] }
+        };
+      });
+      map.addSource('connections', { type: 'geojson', data: { type: 'FeatureCollection', features: features } });
+      map.addLayer({
+        id: 'connections',
+        type: 'line',
+        source: 'connections',
+        paint: { 'line-color': '#C9A84C', 'line-width': 1, 'line-dasharray': [2, 2], 'line-opacity': 0.7 }
+      });
+    });
+
+    points.forEach(function(p) {
+      var markerEl = document.createElement('div');
+      markerEl.className = 'map-marker' + (p.primary ? ' is-primary' : '');
+      markerEl.innerHTML = '<div class="map-pin"></div><div class="map-tag"><span class="map-tag-label">' + p.label + '</span><span class="map-tag-mini">' + p.mini + '</span></div>';
+      new maplibregl.Marker({ element: markerEl, anchor: 'bottom' })
+        .setLngLat(p.coord)
+        .addTo(map);
+    });
+
+    var bounds = new maplibregl.LngLatBounds();
+    points.forEach(function(p) { bounds.extend(p.coord); });
+    map.fitBounds(bounds, { padding: 60, duration: 0 });
   }
 
   // ─── Theme Toggle ────────────────────────────────────────────────────────
