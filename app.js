@@ -1630,6 +1630,17 @@
     if (s) s.view.setFov(fovRad);
   }
 
+  function applyZoomStep(deltaRad) {
+    if (overviewMode) return;
+    var s = marzipanoScenes[currentSceneIdx];
+    if (!s) return;
+    var cur = s.view.fov();
+    var next = cur + deltaRad;
+    next = Math.max(FOV_MIN, Math.min(FOV_MAX, next));
+    s.view.setFov(next);
+    currentFov = next;
+  }
+
   function onViewChange() {
     var s = marzipanoScenes[currentSceneIdx];
     if (!s) return;
@@ -1654,6 +1665,26 @@
   document.addEventListener('fullscreenchange', function() {
     btnFullscreen.classList.toggle('is-active', !!document.fullscreenElement);
   });
+
+  // ─── Zoom Buttons ─────────────────────────────────────────────────────────
+  var btnZoomIn  = document.getElementById('btn-zoom-in');
+  var btnZoomOut = document.getElementById('btn-zoom-out');
+  if (btnZoomIn) {
+    btnZoomIn.addEventListener('click', function() { applyZoomStep(-FOV_STEP * 2); });
+  }
+  if (btnZoomOut) {
+    btnZoomOut.addEventListener('click', function() {
+      if (overviewMode) return;
+      var s = marzipanoScenes[currentSceneIdx];
+      if (!s) return;
+      var cur = s.view.fov();
+      if (cur >= FOV_MAX - 0.05) {
+        if (typeof toggleOverviewMode === 'function') toggleOverviewMode();
+        return;
+      }
+      applyZoomStep(+FOV_STEP * 2);
+    });
+  }
 
   // ─── Menu Modal ───────────────────────────────────────────────────────────
   mmCloseBtn.addEventListener('click', closeMenu);
