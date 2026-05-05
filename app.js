@@ -335,58 +335,216 @@
 
   // ─── Admin IA Panel ───────────────────────────────────────────────────────
   function renderIAPanel() {
-    var token = localStorage.getItem('aurora_replicate_token') || '';
-    var hasToken = !!token;
     return '<div class="admin-section">' +
         '<div class="admin-section-title">Detecção automática de áreas</div>' +
         '<p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;">A IA analisa a cena atual do tour e propõe demarcações de áreas distintas (lote, lago, mata, edificação).</p>' +
-        '<p style="font-size:11px;color:var(--ink-muted);line-height:1.5;">Stack: Replicate · Segment Anything Model 2</p>' +
+        '<p style="font-size:11px;color:var(--ink-muted);line-height:1.5;">Stack: Replicate · SAM 2 (meta/sam-2) via Vercel Serverless Function</p>' +
       '</div>' +
       '<div class="admin-divider"></div>' +
-      (hasToken
-        ? '<div class="admin-section"><button class="admin-action primary" id="btn-detect-ia">Detectar lotes na cena atual</button></div>'
-        : '<div class="admin-section">' +
-            '<div class="admin-note">Esta funcionalidade requer um token Replicate. Cole abaixo:</div>' +
-            '<label class="admin-label-field">REPLICATE_API_TOKEN</label>' +
-            '<input type="password" class="admin-input" id="replicate-token" placeholder="r8_...">' +
-            '<div class="admin-actions-row">' +
-              '<button class="admin-action primary" id="btn-save-token">Salvar token</button>' +
-            '</div>' +
-          '</div>') +
+      '<div class="admin-section">' +
+        '<button class="admin-action primary" id="btn-detect-ia">Detectar lotes na cena atual</button>' +
+        '<div id="admin-ia-status" style="margin-top:12px;font-size:11px;color:var(--ink-muted);line-height:1.5;"></div>' +
+      '</div>' +
       '<div class="admin-divider"></div>' +
-      '<div class="admin-note" style="font-size:10px;">Integração SAM via Replicate em desenvolvimento. Por ora, captura snapshot e inicia download local.</div>';
+      '<div class="admin-note" style="font-size:10px;">Requer REPLICATE_API_TOKEN configurado no Vercel: vercel.com → Settings → Environment Variables. Token gratuito em replicate.com/account/api-tokens.</div>';
   }
 
   function bindIAPanel() {
-    var saveTokenBtn = document.getElementById('btn-save-token');
-    if (saveTokenBtn) {
-      saveTokenBtn.addEventListener('click', function() {
-        var v = (document.getElementById('replicate-token') || {}).value || '';
-        if (!v) return;
-        localStorage.setItem('aurora_replicate_token', v);
-        openAdminPanel('ia');
-      });
-    }
     var detectBtn = document.getElementById('btn-detect-ia');
     if (detectBtn) {
       detectBtn.addEventListener('click', detectIA);
     }
   }
 
-  // TODO: integrar Replicate SAM via Vercel Serverless Function (api/segment.js) pra evitar CORS.
-  // Por enquanto, captura snapshot e baixa pro user processar manualmente.
+  // ─── detectIA — integração real Replicate SAM 2 via /api/segment + polling ─
   async function detectIA() {
+    var statusEl = document.getElementById('admin-ia-status');
+    var setStatus = function(msg) { if (statusEl) statusEl.textContent = msg; };
+
+    // 1. Captura snapshot da cena atual (canvas Marzipano ou face de cubemap)
+    setStatus('Capturando cena atual...');
+    var dataUrl = await captureSnapshot();
+    if (!dataUrl) { setStatus('Erro: nao foi possivel capturar snapshot da cena.'); return; }
+
+    // 2. POST /api/segment — cria prediction assíncrona no Replicate
+    setStatus('Enviando para IA (SAM 2 via Replicate)...');
+    var createRes;
     try {
-      var canvas = viewer && viewer.stage && viewer.stage().domElement ? viewer.stage().domElement() : null;
-      if (!canvas) { alert('Snapshot indisponível.'); return; }
-      var dataUrl = canvas.toDataURL('image/png');
-      var a = document.createElement('a');
-      a.href = dataUrl; a.download = 'aurora-snapshot-' + Date.now() + '.png';
-      a.click();
-      alert('Snapshot baixado. Integração SAM via Replicate em desenvolvimento.');
-    } catch(e) {
-      alert('Erro ao capturar snapshot: ' + e.message);
+      createRes = await fetch('/api/segment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl, prompt: 'lots, lake, vegetation, buildings' })
+      });
+    } catch (e) {
+      setStatus('Erro de rede ao chamar /api/segment: ' + e.message);
+      return;
     }
+
+    var createData = await createRes.json();
+    if (!createRes.ok) {
+      var errMsg = createData.error || ('HTTP ' + createRes.status);
+      var details = createData.details ? ' · ' + JSON.stringify(createData.details).slice(0, 180) : '';
+      var help = createData.help ? ' | ' + createData.help : '';
+      setStatus('Erro: ' + errMsg + details + help);
+      return;
+    }
+
+    var predId = createData.id;
+    setStatus('IA processando... (id ' + predId.slice(0, 8) + ')');
+
+    // 3. Polling /api/segment-status a cada 2s, máximo 120s
+    var maxPolls = 60;
+    for (var i = 0; i < maxPolls; i++) {
+      await new Promise(function(resolve) { setTimeout(resolve, 2000); });
+
+      var statusRes;
+      try {
+        statusRes = await fetch('/api/segment-status?id=' + encodeURIComponent(predId));
+      } catch (e) {
+        setStatus('Erro de rede ao consultar status: ' + e.message);
+        return;
+      }
+
+      var statusData = await statusRes.json();
+      setStatus('IA · ' + (statusData.status || 'processando') + ' (' + (i + 1) + '/' + maxPolls + ')');
+
+      if (statusData.status === 'succeeded') {
+        // 4. Importar resultados da predição
+        setStatus('IA concluida. Importando regioes...');
+        var output = statusData.output;
+        var importedCount = importIAResults(output);
+        setStatus('IA: ' + importedCount + ' regiao(oes) detectada(s) e adicionada(s) ao painel manual.');
+        if (typeof refreshRegionsList === 'function') refreshRegionsList();
+        if (typeof rebuildRegionsOverlay === 'function') rebuildRegionsOverlay();
+        return;
+      }
+
+      if (statusData.status === 'failed' || statusData.status === 'canceled') {
+        setStatus('IA falhou: ' + (statusData.error || statusData.status));
+        return;
+      }
+    }
+
+    setStatus('Timeout — predicao ainda em processamento. Tente novamente em instantes.');
+  }
+
+  // Captura snapshot do viewer Marzipano como data URL JPEG
+  async function captureSnapshot() {
+    try {
+      var stage = viewer && viewer.stage ? viewer.stage() : null;
+      var dom = stage && stage.domElement ? stage.domElement() : null;
+      var canvas = dom && dom.querySelector ? dom.querySelector('canvas') : null;
+      if (!canvas && dom && dom.tagName === 'CANVAS') canvas = dom;
+
+      if (canvas) {
+        return canvas.toDataURL('image/jpeg', 0.85);
+      }
+
+      // Fallback: busca face frontal do panorama atual via fetch
+      var s = SCENES[currentSceneIdx];
+      if (!s) return null;
+      var url = '/media/panorama_' + s.id + '_0/f/0/0_0.jpg';
+      var response = await fetch(url);
+      if (!response.ok) return null;
+      var blob = await response.blob();
+      return await blobToDataUrl(blob);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function blobToDataUrl(blob) {
+    return new Promise(function(resolve) {
+      var fr = new FileReader();
+      fr.onloadend = function() { resolve(fr.result); };
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  // Importa resultado da predição SAM como regiões no painel de demarcações
+  function importIAResults(output) {
+    // Output varia por modelo:
+    //   meta/sam-2                  → array de { url: PNG mask }
+    //   lucataco/grounded-sam-2     → { detections: [{ box, mask, label, score }] }
+    //   segment-anything-everything → [{ url }, ...]
+    // Por enquanto extraímos o que for array e salvamos como anotação raw.
+    // O user ajusta posições no painel manual após a detecção.
+    if (!output) {
+      console.warn('importIAResults: output vazio', output);
+      return 0;
+    }
+
+    var regions = (typeof loadRegions === 'function') ? loadRegions() : [];
+    var added = 0;
+
+    var polygons = null;
+    if (Array.isArray(output)) {
+      polygons = output;
+    } else if (output.detections && Array.isArray(output.detections)) {
+      polygons = output.detections;
+    } else if (output.masks && Array.isArray(output.masks)) {
+      polygons = output.masks;
+    } else if (output.polygons && Array.isArray(output.polygons)) {
+      polygons = output.polygons;
+    } else {
+      console.warn('importIAResults: formato desconhecido — inspecionar output:', output);
+      return 0;
+    }
+
+    polygons.forEach(function(p, i) {
+      regions.push({
+        id: 'ia_' + Date.now() + '_' + i,
+        label: p.label || ('IA · regiao ' + (i + 1)),
+        color: '#C9A84C',
+        vertices: convertIAPolyToYawPitch(p),
+        createdAt: new Date().toISOString(),
+        source: 'ai',
+        iaRaw: p        // guarda raw pra debug — pode remover depois
+      });
+      added++;
+    });
+
+    if (typeof saveRegions === 'function') saveRegions(regions);
+    return added;
+  }
+
+  // Converte bounding box ou polygon SAM para coordenadas yaw/pitch via Marzipano
+  function convertIAPolyToYawPitch(p) {
+    var s = marzipanoScenes[currentSceneIdx];
+
+    // Tenta converter box [x_min, y_min, x_max, y_max] via screenToCoordinates
+    if (p.box && Array.isArray(p.box) && p.box.length === 4 && s && s.view) {
+      var canvas = document.querySelector('#viewer canvas');
+      if (canvas) {
+        var w = canvas.clientWidth;
+        var h = canvas.clientHeight;
+        // SAM retorna box em pixels da imagem original (aprox 1024x512 equirect)
+        // Fazemos remap proporcional para o canvas atual
+        var pts = [
+          { x: p.box[0] * w / 1024, y: p.box[1] * h / 512 },
+          { x: p.box[2] * w / 1024, y: p.box[1] * h / 512 },
+          { x: p.box[2] * w / 1024, y: p.box[3] * h / 512 },
+          { x: p.box[0] * w / 1024, y: p.box[3] * h / 512 }
+        ];
+        var result = [];
+        pts.forEach(function(pt) {
+          try {
+            result.push(s.view.screenToCoordinates(pt));
+          } catch (e) {
+            result.push({ yaw: 0, pitch: 0 });
+          }
+        });
+        return result;
+      }
+    }
+
+    // Fallback: placeholder retangular central pra admin ajustar manualmente
+    return [
+      { yaw: -0.3, pitch:  0   },
+      { yaw:  0.3, pitch:  0   },
+      { yaw:  0.3, pitch:  0.2 },
+      { yaw: -0.3, pitch:  0.2 }
+    ];
   }
 
   // ─── Admin Content Panel ──────────────────────────────────────────────────
