@@ -911,7 +911,7 @@
       '<div class="layer-card"><div class="layer-num">02</div><div><div class="layer-title">Renderização · Marzipano.js + WebGL</div><div class="layer-desc">Engine open source do Google para tour 360 de alta performance. Suporte a cubemap 4K, transições suaves, gyroscópio nativo no iOS/Android e fullscreen API.</div></div></div>' +
       '<div class="layer-card"><div class="layer-num">03</div><div><div class="layer-title">Mapa · MapLibre GL + OpenFreeMap</div><div class="layer-desc">Mapa vetorial interativo sem custo por acesso. Estilo minimalista Positron, marcador personalizado com cor ouro do empreendimento.</div></div></div>' +
       '<div class="layer-card"><div class="layer-num">04</div><div><div class="layer-title">Deploy · Vercel Edge Network</div><div class="layer-desc">CDN global com latência sub-50ms no Brasil. Deploy contínuo por push no GitHub. Certificado SSL incluído. URL customizável.</div></div></div>' +
-      '<div class="layer-card"><div class="layer-num">05</div><div><div class="layer-title">CMS · Squad Hub (próxima sprint)</div><div class="layer-desc">Painel web para atualizar status dos lotes, preços, demarcações e conteúdo dos modais sem acessar código. Integração via API com o tour.</div></div></div>' +
+      '<div class="layer-card"><div class="layer-num">05</div><div><div class="layer-title">CMS · Squad Hub</div><div class="layer-desc">Painel web para atualizar status dos lotes, preços, demarcações e conteúdo dos modais sem acessar código. Integração via API com o tour.</div></div></div>' +
     '</div>' +
 
     '<hr class="section-divider">' +
