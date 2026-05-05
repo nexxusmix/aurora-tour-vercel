@@ -581,8 +581,8 @@
 
   // Zoom
   var FOV_MIN = 35 * Math.PI / 180;
-  var FOV_MAX = 145 * Math.PI / 180;
-  var FOV_DEFAULT = 130 * Math.PI / 180;
+  var FOV_MAX = 160 * Math.PI / 180;
+  var FOV_DEFAULT = 150 * Math.PI / 180;
   var FOV_STEP = 5 * Math.PI / 180;
   var currentFov = FOV_DEFAULT;
 
@@ -1147,10 +1147,10 @@
     var s = marzipanoScenes[currentSceneIdx];
     if (s) {
       s.view.setYaw(0);
-      s.view.setPitch(-0.18);
+      s.view.setPitch(-0.22);
       s.view.setFov(FOV_DEFAULT);
       basePose.yaw = 0;
-      basePose.pitch = -0.18;
+      basePose.pitch = -0.22;
       currentFov = FOV_DEFAULT;
       driftStart = performance.now();
     }
