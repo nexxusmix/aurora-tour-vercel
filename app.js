@@ -529,36 +529,7 @@
   ];
 
   // ─── Region Data ──────────────────────────────────────────────────────────
-  var REGIONS = [
-    {
-      id: 'aurora_oasis',
-      label: 'AURORA OASIS',
-      color: '#C9A84C',
-      fillColor: 'rgba(201,168,76,0.18)',
-      strokeColor: 'rgba(201,168,76,0.7)',
-      polygon: [
-        { yaw: -0.50, pitch:  0.10 },
-        { yaw: -0.10, pitch:  0.10 },
-        { yaw: -0.10, pitch:  0.30 },
-        { yaw: -0.50, pitch:  0.30 }
-      ],
-      appearsIn: ['pano_01', 'pano_02']
-    },
-    {
-      id: 'aurora_lago',
-      label: 'AURORA DO LAGO',
-      color: '#5B8A7A',
-      fillColor: 'rgba(91,138,122,0.18)',
-      strokeColor: 'rgba(91,138,122,0.7)',
-      polygon: [
-        { yaw:  0.20, pitch:  0.15 },
-        { yaw:  0.70, pitch:  0.15 },
-        { yaw:  0.70, pitch:  0.40 },
-        { yaw:  0.20, pitch:  0.40 }
-      ],
-      appearsIn: ['pano_01', 'pano_03']
-    }
-  ];
+  var REGIONS = [];
 
   // ─── State ────────────────────────────────────────────────────────────────
   var currentSceneIdx = 0;
@@ -576,7 +547,7 @@
   var DRIFT_PERIOD_YAW = 24000;
   var DRIFT_PERIOD_PITCH = 18000;
   var driftStart = performance.now();
-  var basePose = { yaw: 0, pitch: -0.18 };
+  var basePose = { yaw: 0, pitch: -0.22 };
   var userInteracting = false;
 
   // Zoom
@@ -839,7 +810,7 @@
       '</div>' +
       '<hr class="section-divider">' +
       '<div class="section-num">Status</div>' +
-      '<p class="section-body">Integração com Squad Hub em desenvolvimento — status em tempo real disponível na próxima sprint. A plataforma permitirá visualizar disponibilidade por lote, marcar interesse diretamente no mapa e notificar o corretor responsável em tempo real.</p>' +
+      '<p class="section-body">Status atualizado dos lotes disponíveis. Reservas confirmadas pela equipe Silva Investimentos.</p>' +
     '</div>';
   }
 
@@ -893,9 +864,9 @@
 
   function fotolivroHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">Book Digital</div>' +
+      '<div class="section-num">Book Apresentação</div>' +
       '<h3 class="section-title">Aurora · Onde o tempo mora.</h3>' +
-      '<p class="section-body">Edição editorial completa do empreendimento. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis em formato fotolivro.</p>' +
+      '<p class="section-body">Apresentação completa do empreendimento em formato editorial. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis para o investidor que sabe ler nas entrelinhas.</p>' +
     '</div>' +
     '<div class="modal-section">' +
       '<div class="pdf-viewer-wrap reveal" data-reveal>' +
@@ -1121,7 +1092,7 @@
       content: imagensHTML()
     },
     fotolivro: {
-      title: 'Fotolivro · Book Digital',
+      title: 'Book Apresentação',
       content: fotolivroHTML()
     },
     videos: {
@@ -1544,7 +1515,7 @@
       ]);
 
       var view = new Marzipano.RectilinearView(
-        { yaw: 0, pitch: -0.18, fov: FOV_DEFAULT },
+        { yaw: 0, pitch: -0.22, fov: FOV_DEFAULT },
         limiter
       );
       var scene = viewer.createScene({ source: source, geometry: geometry, view: view });
