@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurora Oasis · Tour Virtual · Lago Corumbá IV</title>
+  <meta name="description" content="Tour virtual 360° Aurora Oasis — Loteamento premium no Lago Corumbá IV, Goiás." />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <!-- Loading screen -->
+  <div id="loading-screen">
+    <div class="loading-inner">
+      <img src="/img/oasis-logo.png" alt="Aurora Oasis" class="loading-logo" />
+      <div class="loading-wordmark">
+        <span class="loading-aurora">Aurora</span>
+        <span class="loading-sub">Lago Corumbá IV · Goiás</span>
+      </div>
+      <div class="loading-bar-wrap">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+      <span class="loading-pct" id="loading-pct">0%</span>
+    </div>
+  </div>
+
+  <!-- Main viewer -->
+  <div id="viewer"></div>
+
+  <!-- Depth of field overlay (blur radial) -->
+  <div id="dof-overlay" class="dof-overlay" aria-hidden="true"></div>
+
+  <!-- Vignette -->
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- Region overlay SVG -->
+  <svg id="region-overlay" xmlns="http://www.w3.org/2000/svg" style="position:fixed;top:0;left:0;pointer-events:none;z-index:10;"></svg>
+
+  <!-- Minimal header (brand + current scene) -->
+  <header id="header">
+    <div class="header-brand">
+      <span class="brand-aurora">Aurora</span>
+      <span class="brand-oasis">Oasis</span>
+    </div>
+    <div class="header-scene-info" id="header-scene-info">
+      <span class="scene-number" id="hdr-number">01</span>
+      <span class="scene-hairline"></span>
+      <span class="scene-label" id="hdr-label">Vista de Apresentação</span>
+    </div>
+  </header>
+
+  <!-- Bottom Bar -->
+  <footer id="bottom-bar" role="contentinfo">
+    <div class="bb-left">
+      <div class="bb-brand">
+        <div class="bb-brand-name">
+          <span class="bb-aurora">Aurora</span>
+          <span class="bb-oasis">Oasis</span>
+        </div>
+        <div class="bb-loc">LAGO CORUMBÁ IV · GOIÁS</div>
+      </div>
+    </div>
+
+    <nav class="bb-scenes" id="bb-scenes" aria-label="Cenas">
+      <!-- built by JS -->
+    </nav>
+
+    <div class="bb-right">
+      <button class="bb-icon" id="btn-zoom-out" aria-label="Zoom out" title="Zoom out (-)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="7" cy="7" r="4.5"/>
+          <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
+          <line x1="4.5" y1="7" x2="9.5" y2="7"/>
+        </svg>
+      </button>
+      <input type="range" id="zoom-slider" min="20" max="120" value="90" step="1" aria-label="Zoom" />
+      <button class="bb-icon" id="btn-zoom-in" aria-label="Zoom in" title="Zoom in (+)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="7" cy="7" r="4.5"/>
+          <line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/>
+          <line x1="7" y1="4.5" x2="7" y2="9.5"/>
+          <line x1="4.5" y1="7" x2="9.5" y2="7"/>
+        </svg>
+      </button>
+      <span class="bb-divider"></span>
+      <button class="bb-icon" id="btn-autorotate" aria-label="Rotação automática" aria-pressed="false" title="Rotação automática (Espaço)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M13 8A5 5 0 1 1 8 3"/>
+          <polyline points="11,1 8,3 11,5"/>
+        </svg>
+      </button>
+      <button class="bb-icon" id="btn-info" aria-label="Sobre o projeto" title="Sobre o projeto">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="8" cy="8" r="6.5"/>
+          <line x1="8" y1="7" x2="8" y2="11.5"/>
+          <circle cx="8" cy="5" r="0.7" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <button class="bb-icon" id="btn-share" aria-label="Compartilhar" title="Compartilhar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="13" cy="3" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="13" cy="13" r="1.5"/>
+          <line x1="4.3" y1="7.3" x2="11.7" y2="3.7"/><line x1="4.3" y1="8.7" x2="11.7" y2="12.3"/>
+        </svg>
+      </button>
+      <button class="bb-icon" id="btn-fullscreen" aria-label="Tela cheia" title="Tela cheia (F)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/>
+        </svg>
+      </button>
+      <button class="bb-icon" id="btn-menu" aria-label="Mais opções" title="Menu">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="2" y1="4" x2="14" y2="4"/>
+          <line x1="2" y1="8" x2="14" y2="8"/>
+          <line x1="2" y1="12" x2="14" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Menu Modal (overflow options) -->
+  <div id="menu-modal" class="menu-modal" hidden role="dialog" aria-modal="true" aria-label="Opções">
+    <div class="mm-box">
+      <button class="mm-close" id="mm-close-btn" aria-label="Fechar">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <line x1="1" y1="1" x2="13" y2="13" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="13" y1="1" x2="1" y2="13" stroke="#1A1A1A" stroke-width="1.5"/>
+        </svg>
+      </button>
+
+      <p class="mm-title">Opções</p>
+
+      <div class="mm-toggle-row">
+        <span class="mm-label">Movimento 3D</span>
+        <button class="switch-btn active" data-toggle="parallax" role="switch" aria-checked="true">
+          <span class="switch-knob"></span>
+        </button>
+      </div>
+
+      <div class="mm-toggle-row">
+        <span class="mm-label">Profundidade de campo</span>
+        <button class="switch-btn active" data-toggle="dof" role="switch" aria-checked="true">
+          <span class="switch-knob"></span>
+        </button>
+      </div>
+
+      <div class="mm-divider"></div>
+
+      <div class="mm-toggle-row" id="toggle-regions-master">
+        <span class="mm-label">Áreas demarcadas</span>
+        <button class="switch-btn active" data-toggle="regions" role="switch" aria-checked="true">
+          <span class="switch-knob"></span>
+        </button>
+      </div>
+      <div class="mm-sub-group" id="region-sub-toggles">
+        <div class="mm-toggle-row sub">
+          <span class="mm-label sub">
+            <span class="region-dot" style="background:#C9A84C"></span>
+            Aurora Oasis
+          </span>
+          <button class="switch-btn active" data-toggle="aurora_oasis" role="switch" aria-checked="true">
+            <span class="switch-knob"></span>
+          </button>
+        </div>
+        <div class="mm-toggle-row sub">
+          <span class="mm-label sub">
+            <span class="region-dot" style="background:#5B8A7A"></span>
+            Aurora do Lago
+          </span>
+          <button class="switch-btn active" data-toggle="aurora_lago" role="switch" aria-checked="true">
+            <span class="switch-knob"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="mm-divider"></div>
+
+      <div class="mm-footer">
+        <p class="mm-credit">Tour produzido por <a href="https://squadfilm.com" target="_blank">Squad Film</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info modal -->
+  <div id="info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Sobre o projeto" hidden>
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close-btn" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <line x1="1" y1="1" x2="15" y2="15" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="15" y1="1" x2="1" y2="15" stroke="#1A1A1A" stroke-width="1.5"/>
+        </svg>
+      </button>
+      <img src="/img/oasis-logo-dark.png" alt="Aurora Oasis" class="modal-logo" />
+      <h2 class="modal-title">Aurora Oasis</h2>
+      <p class="modal-sub">LAGO CORUMBÁ IV · ABADIÂNIA · GOIÁS</p>
+      <div class="modal-divider"></div>
+      <p class="modal-body">Loteamento de alto padrão às margens do Lago Corumbá IV. 241 lotes com infraestrutura completa, área de lazer e segurança 24h. A 90 km de Brasília.</p>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <span class="stat-n">241</span>
+          <span class="stat-l">lotes</span>
+        </div>
+        <div class="modal-stat-sep"></div>
+        <div class="modal-stat">
+          <span class="stat-n">1ª</span>
+          <span class="stat-l">fase · 60 lotes</span>
+        </div>
+        <div class="modal-stat-sep"></div>
+        <div class="modal-stat">
+          <span class="stat-n">90 km</span>
+          <span class="stat-l">de Brasília</span>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <p class="modal-footer-note">Tour produzido por <a href="https://squadfilm.com" target="_blank">Squad Film</a> · Cinema de Performance</p>
+    </div>
+  </div>
+
+  <!-- Share toast -->
+  <div id="share-toast" class="share-toast" aria-live="polite">Link copiado</div>
+
+  <script src="/lib/marzipano.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
