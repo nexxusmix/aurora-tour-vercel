@@ -589,7 +589,7 @@
       '<div class="modal-section">',
         '<div class="section-num">Endereço</div>',
         '<h3 class="section-title">Lago Corumbá IV</h3>',
-        '<p class="section-body">Aurora Oasis fica às margens do Lago Corumbá IV, em Abadiânia, no eixo entre Anápolis, Goiânia e Brasília. Posição estratégica para quem quer refúgio sem isolamento.</p>',
+        '<p class="section-body">Aurora Oasis fica às margens do Lago Corumbá IV, em Abadiânia, Goiás. 10 minutos de estrada de chão do centro. Refúgio sem isolamento — perto o suficiente para integrar, distante o suficiente para acolher.</p>',
         '<div class="loc-data">',
           '<div class="loc-row"><div class="loc-mini">Município</div><div class="loc-val">Abadiânia · Goiás</div></div>',
           '<div class="loc-row"><div class="loc-mini">CEP</div><div class="loc-val">72940-000</div></div>',
@@ -603,20 +603,20 @@
           '<article class="dist-card reveal" data-reveal>',
             '<div class="dist-city">Anápolis</div>',
             '<div class="dist-meta">GO</div>',
-            '<div class="dist-km">36 <span>km</span></div>',
-            '<div class="dist-time">≈ 40 min</div>',
-          '</article>',
-          '<article class="dist-card reveal" data-reveal>',
-            '<div class="dist-city">Brasília</div>',
-            '<div class="dist-meta">DF</div>',
-            '<div class="dist-km">112 <span>km</span></div>',
-            '<div class="dist-time">≈ 1h 30min</div>',
+            '<div class="dist-km">1h</div>',
+            '<div class="dist-time">de Anápolis</div>',
           '</article>',
           '<article class="dist-card reveal" data-reveal>',
             '<div class="dist-city">Goiânia</div>',
             '<div class="dist-meta">GO</div>',
-            '<div class="dist-km">96 <span>km</span></div>',
-            '<div class="dist-time">≈ 1h 20min</div>',
+            '<div class="dist-km">1h40</div>',
+            '<div class="dist-time">de Goiânia</div>',
+          '</article>',
+          '<article class="dist-card reveal" data-reveal>',
+            '<div class="dist-city">Brasília</div>',
+            '<div class="dist-meta">DF</div>',
+            '<div class="dist-km">2h20</div>',
+            '<div class="dist-time">de Brasília</div>',
           '</article>',
         '</div>',
       '</div>',
@@ -654,14 +654,14 @@
   function conceitoHTML() {
     return '<div class="modal-section">' +
       '<div class="section-num">Manifesto</div>' +
-      '<p class="section-lead">Aurora Oasis — um endereço para quem entendeu que o tempo é o verdadeiro luxo.</p>' +
+      '<p class="section-lead" data-reveal-words>O luxo de viver no tempo certo.</p>' +
       '<hr class="section-divider">' +
     '</div>' +
 
     '<div class="modal-section">' +
       '<div class="section-num">A ideia</div>' +
-      '<h3 class="section-title">Um lugar feito para diminuir o ritmo.</h3>' +
-      '<p class="section-body">Às margens do Lago Corumbá IV, em Abadiânia, Goiás, Aurora Oasis nasce como refúgio premium: cerrado preservado, frente lago ininterrupta e arquitetura assinada para quem busca presença, não pressa. Distante o suficiente para acolher, próximo o suficiente para integrar — entre Anápolis, Goiânia e Brasília.</p>' +
+      '<h3 class="section-title">Um lugar convida a parar.</h3>' +
+      '<p class="section-body" data-reveal-words>Aqui o tempo não se mede em ponteiros, mas em pausas. Em silêncios. Aurora Oasis é um novo ritmo. Um convite ao que realmente importa.</p>' +
     '</div>' +
 
     '<div class="modal-section">' +
@@ -697,23 +697,22 @@
     return '<div class="modal-section">' +
       '<div class="section-num">Master Plan</div>' +
       '<h3 class="section-title">Um plano desenhado para o tempo.</h3>' +
-      '<p class="section-body">Volumetria suave, materiais naturais, integração com o cerrado nativo e vista privilegiada para o lago. Programa arquitetônico assinado pela <strong>FAAU · Flávio Aleixo</strong>.</p>' +
+      '<p class="section-body">Urbanismo de baixa densidade, natureza como protagonista e privacidade real com vistas abertas. Programa arquitetônico assinado pela <strong>FAAU · Flávio Aleixo</strong>.</p>' +
     '</div>' +
 
     '<div class="modal-section">' +
-      '<div class="section-num">Números</div>' +
+      '<div class="section-num">Lotes</div>' +
       '<div class="metrics-row">' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">241</div><div class="metric-label">Lotes</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">~1.250</div><div class="metric-label">m² médio por lote</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">30%</div><div class="metric-label">Cerrado preservado</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">500</div><div class="metric-label">m² — a partir de</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">FAAU</div><div class="metric-label">Projeto arquitetônico</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">4km</div><div class="metric-label">Calçadão à beira lago</div></div>' +
       '</div>' +
     '</div>' +
 
     '<div class="modal-section">' +
       '<hr class="section-divider">' +
-      '<div class="section-num">Estrutura</div>' +
-      '<h3 class="section-title">Vida completa, sem ostentação.</h3>' +
+      '<div class="section-num">Amenidades</div>' +
+      '<h3 class="section-title">Estrutura completa, sem ostentação.</h3>' +
       '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>' +
         '<linearGradient id="aurora-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
           '<stop offset="0%" stop-color="#E8C97A"/>' +
@@ -726,14 +725,14 @@
         '</linearGradient>' +
       '</defs></svg>' +
       '<div class="amenities-grid">' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-wine"><path d="M7 3h10c0 4.5-1.5 8-5 8s-5-3.5-5-8z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><line x1="12" y1="11" x2="12" y2="19" stroke="url(#aurora-gold-stroke)" stroke-width="1.4" stroke-linecap="round"/><line x1="8" y1="20.5" x2="16" y2="20.5" stroke="url(#aurora-gold-stroke)" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="10.5" cy="6" rx="1.2" ry="1.6" fill="rgba(255,255,255,0.45)"/></svg></span><div class="amenity-name">Wine Bar</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-gym"><rect x="2" y="9.5" width="3" height="5" rx="0.6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><rect x="19" y="9.5" width="3" height="5" rx="0.6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><rect x="5" y="10.5" width="2" height="3" fill="url(#aurora-gold-grad)"/><rect x="17" y="10.5" width="2" height="3" fill="url(#aurora-gold-grad)"/><rect x="7" y="11.3" width="10" height="1.4" rx="0.4" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><line x1="3" y1="10.4" x2="3" y2="13.6" stroke="rgba(255,255,255,0.4)" stroke-width="0.4"/><line x1="20" y1="10.4" x2="20" y2="13.6" stroke="rgba(255,255,255,0.4)" stroke-width="0.4"/></svg></span><div class="amenity-name">Academia</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-pool"><circle cx="17.5" cy="6" r="2.4" fill="url(#aurora-gold-grad)"/><path d="M2 14c2 0 2-1.6 4-1.6S8 14 10 14s2-1.6 4-1.6S16 14 18 14s2-1.6 4-1.6" stroke="url(#aurora-gold-stroke)" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M2 18c2 0 2-1.6 4-1.6S8 18 10 18s2-1.6 4-1.6S16 18 18 18s2-1.6 4-1.6" stroke="url(#aurora-gold-stroke)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7"/><circle cx="17.5" cy="6" r="1" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Piscina</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-rest"><circle cx="12" cy="13" r="6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/><path d="M5 3v6c0 0.8 0.5 1.4 1.2 1.4M7.6 3v6c0 0.8-0.5 1.4-1.2 1.4M6.4 10.4V18" stroke="url(#aurora-gold-stroke)" stroke-width="1.3" stroke-linecap="round" fill="none"/><path d="M17 3c1.5 0 2.5 1 2.5 3v3c0 1-0.5 1.6-1.2 1.8V18" stroke="url(#aurora-gold-stroke)" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span><div class="amenity-name">Restaurante</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-spa"><path d="M12 4c-2 3-2 5 0 7c2-2 2-4 0-7z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M5 9c0 3 2 4 5 4c0-2-1-4-5-4z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M19 9c0 3-2 4-5 4c0-2 1-4 5-4z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M3 13c2 4 6 5 9 5s7-1 9-5c-3 1-5 0-9 0s-6 1-9 0z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><ellipse cx="12" cy="6.5" rx="0.5" ry="0.8" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Spa Completo</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-track"><path d="M3 12a5 5 0 0 1 5-5h8a5 5 0 0 1 0 10H8a5 5 0 0 1-5-5z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.7"/><path d="M5.5 12a2.5 2.5 0 0 1 2.5-2.5h8a2.5 2.5 0 0 1 0 5H8a2.5 2.5 0 0 1-2.5-2.5z" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/><line x1="8" y1="7" x2="8" y2="17" stroke="rgba(255,255,255,0.45)" stroke-width="0.5"/><line x1="16" y1="7" x2="16" y2="17" stroke="rgba(255,255,255,0.45)" stroke-width="0.5"/></svg></span><div class="amenity-name">Track Arena</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-trail"><path d="M7 14L4.5 9 2 14h2v5h2v-5h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M14 12L11.5 6 9 12h2v7h2v-7h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M22 14L19.5 9 17 14h2v5h2v-5h1z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M5 19h14" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" stroke-dasharray="1 1.5"/></svg></span><div class="amenity-name">Trilha Cerrado</div></div>' +
-        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-mirante"><path d="M2 18l5-9 4 6 3-4 5 7H2z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><circle cx="18" cy="5.5" r="2.2" fill="url(#aurora-gold-grad)" opacity="0.9"/><line x1="2" y1="20" x2="22" y2="20" stroke="url(#aurora-gold-stroke)" stroke-width="1" stroke-linecap="round"/><line x1="2" y1="21.5" x2="22" y2="21.5" stroke="url(#aurora-gold-stroke)" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/><ellipse cx="6" cy="13" rx="0.8" ry="0.4" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Mirante Lago</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-marina"><path d="M3 17h18M12 3v10M6 13l6-4 6 4" stroke="url(#aurora-gold-stroke)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="2" y="17" width="20" height="2.5" rx="0.5" fill="url(#aurora-gold-grad)" opacity="0.4"/><path d="M5 13H3l3-6h12l3 6H5z" fill="url(#aurora-gold-grad)" opacity="0.3"/></svg></span><div class="amenity-name">Marina e praia particular</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-pool"><circle cx="17.5" cy="6" r="2.4" fill="url(#aurora-gold-grad)"/><path d="M2 14c2 0 2-1.6 4-1.6S8 14 10 14s2-1.6 4-1.6S16 14 18 14s2-1.6 4-1.6" stroke="url(#aurora-gold-stroke)" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M2 18c2 0 2-1.6 4-1.6S8 18 10 18s2-1.6 4-1.6S16 18 18 18s2-1.6 4-1.6" stroke="url(#aurora-gold-stroke)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7"/><circle cx="17.5" cy="6" r="1" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Piscina voltada para o lago</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-spa"><path d="M12 4c-2 3-2 5 0 7c2-2 2-4 0-7z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/><path d="M5 9c0 3 2 4 5 4c0-2-1-4-5-4z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M19 9c0 3-2 4-5 4c0-2 1-4 5-4z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5" opacity="0.85"/><path d="M3 13c2 4 6 5 9 5s7-1 9-5c-3 1-5 0-9 0s-6 1-9 0z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><ellipse cx="12" cy="6.5" rx="0.5" ry="0.8" fill="rgba(255,255,255,0.5)"/></svg></span><div class="amenity-name">Spa e fitness center</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-wine"><path d="M7 3h10c0 4.5-1.5 8-5 8s-5-3.5-5-8z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><line x1="12" y1="11" x2="12" y2="19" stroke="url(#aurora-gold-stroke)" stroke-width="1.4" stroke-linecap="round"/><line x1="8" y1="20.5" x2="16" y2="20.5" stroke="url(#aurora-gold-stroke)" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="10.5" cy="6" rx="1.2" ry="1.6" fill="rgba(255,255,255,0.45)"/></svg></span><div class="amenity-name">Wine bar</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-rest"><circle cx="12" cy="13" r="6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/><path d="M5 3v6c0 0.8 0.5 1.4 1.2 1.4M7.6 3v6c0 0.8-0.5 1.4-1.2 1.4M6.4 10.4V18" stroke="url(#aurora-gold-stroke)" stroke-width="1.3" stroke-linecap="round" fill="none"/><path d="M17 3c1.5 0 2.5 1 2.5 3v3c0 1-0.5 1.6-1.2 1.8V18" stroke="url(#aurora-gold-stroke)" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span><div class="amenity-name">Restaurante com vista</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-gym"><rect x="2" y="9.5" width="3" height="5" rx="0.6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><rect x="19" y="9.5" width="3" height="5" rx="0.6" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><rect x="5" y="10.5" width="2" height="3" fill="url(#aurora-gold-grad)"/><rect x="17" y="10.5" width="2" height="3" fill="url(#aurora-gold-grad)"/><rect x="7" y="11.3" width="10" height="1.4" rx="0.4" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.5"/></svg></span><div class="amenity-name">Academia com horizonte aberto</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-track"><path d="M3 12a5 5 0 0 1 5-5h8a5 5 0 0 1 0 10H8a5 5 0 0 1-5-5z" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.7"/><path d="M5.5 12a2.5 2.5 0 0 1 2.5-2.5h8a2.5 2.5 0 0 1 0 5H8a2.5 2.5 0 0 1-2.5-2.5z" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/></svg></span><div class="amenity-name">Calçadão de aproximadamente 4 km</div></div>' +
+        '<div class="amenity reveal" data-reveal><span class="amenity-icon"><svg viewBox="0 0 24 24" class="amen-icon ai-security"><rect x="5" y="3" width="14" height="14" rx="1.5" fill="url(#aurora-gold-grad)" stroke="url(#aurora-gold-stroke)" stroke-width="0.6"/><path d="M12 7v4M12 13v.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round"/><path d="M8 19h8M9 21h6" stroke="url(#aurora-gold-stroke)" stroke-width="1" stroke-linecap="round" opacity="0.6"/></svg></span><div class="amenity-name">Portaria e segurança 24h</div></div>' +
       '</div>' +
     '</div>' +
 
@@ -747,51 +746,65 @@
 
   function disponibilidadesHTML() {
     return '<div class="modal-section">' +
-      '<div class="section-num">Visão Geral</div>' +
-      '<h3 class="section-title">241 lotes. Cada um, um endereço.</h3>' +
-      '<p class="section-body">O empreendimento divide-se em três tipologias: lotes premium frente-lago, intermediários com vista parcial e mata-cerrado. Status atualizado dos lotes disponíveis — reservas confirmadas pela equipe Silva Investimentos.</p>' +
+      '<div class="section-num">Lotes</div>' +
+      '<h3 class="section-title">Lotes amplos a partir de 500 m².</h3>' +
+      '<p class="section-body" data-reveal-words>Tipologias com vista, frente lago e mata. Urbanismo de baixa densidade com estatuto e governança fortes para manter o conceito do empreendimento íntegro ao longo do tempo.</p>' +
       '<div class="metrics-row">' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">241</div><div class="metric-label">Lotes totais</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">6</div><div class="metric-label">Quadras</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">~1.250</div><div class="metric-label">m² médio</div></div>' +
-        '<div class="metric reveal" data-reveal><div class="metric-num">A partir de</div><div class="metric-label">R$ 235.000</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">500</div><div class="metric-label">m² — a partir de</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">Lago</div><div class="metric-label">Frente d\'água disponível</div></div>' +
+        '<div class="metric reveal" data-reveal><div class="metric-num">FAAU</div><div class="metric-label">Arquitetura assinada</div></div>' +
       '</div>' +
     '</div>' +
 
     '<div class="modal-section">' +
       '<hr class="section-divider">' +
-      '<div class="section-num">Tipologia em destaque</div>' +
+      '<div class="section-num">Disponibilidade</div>' +
       '<div class="lote-card reveal" data-reveal>' +
         '<div class="lote-header">' +
-          '<span class="lote-mini">Lote demonstrativo</span>' +
-          '<span class="lote-status">Disponível</span>' +
+          '<span class="lote-mini">Tipologias disponíveis</span>' +
+          '<span class="lote-status">Sob consulta</span>' +
         '</div>' +
-        '<h4 class="lote-title">Lote 137 · Frente-lago</h4>' +
+        '<h4 class="lote-title">Vista lago · Frente d\'água · Mata cerrado</h4>' +
         '<div class="lote-grid">' +
-          '<div><div class="lote-mini">Área</div><div class="lote-val">1.250 m²</div></div>' +
-          '<div><div class="lote-mini">Vista</div><div class="lote-val">Lago direta</div></div>' +
-          '<div><div class="lote-mini">Valor</div><div class="lote-val">R$ 235.000</div></div>' +
-          '<div><div class="lote-mini">Pagamento</div><div class="lote-val">Em até 60×</div></div>' +
+          '<div><div class="lote-mini">Área</div><div class="lote-val">A partir de 500 m²</div></div>' +
+          '<div><div class="lote-mini">Localização</div><div class="lote-val">Lago Corumbá IV</div></div>' +
+          '<div><div class="lote-mini">Valores</div><div class="lote-val">Sob consulta</div></div>' +
+          '<div><div class="lote-mini">Arquitetura</div><div class="lote-val">FAAU · Flávio Aleixo</div></div>' +
         '</div>' +
         '<div class="lote-actions">' +
-          '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20um%20lote%20no%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Falar com consultor</a>' +
+          '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20lotes%20do%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Consultar disponibilidade</a>' +
           '<a href="https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20visita%20ao%20Aurora%20Oasis" target="_blank" rel="noopener" class="modal-link">Agendar visita</a>' +
         '</div>' +
       '</div>' +
     '</div>';
   }
 
+  var GALLERY_PHOTOS = [
+    { src: 'img/gallery/oficial/aurora-01.jpg', cat: 'arquitetura', label: 'Portaria · Aurora Oasis',        tag: 'Arquitetura' },
+    { src: 'img/gallery/oficial/aurora-02.jpg', cat: 'lifestyle',   label: 'Piscina com deck',               tag: 'Lifestyle' },
+    { src: 'img/gallery/oficial/aurora-03.jpg', cat: 'lago',        label: 'Calçadão beira lago',            tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-04.jpg', cat: 'vista',       label: 'Marina e praia particular',      tag: 'Vistas' },
+    { src: 'img/gallery/oficial/aurora-05.jpg', cat: 'lifestyle',   label: 'Espaço aquático kids',           tag: 'Lifestyle' },
+    { src: 'img/gallery/oficial/aurora-06.jpg', cat: 'arquitetura', label: 'Escadaria e volumetria',         tag: 'Arquitetura' },
+    { src: 'img/gallery/oficial/aurora-07.jpg', cat: 'lago',        label: 'Playground frente lago',         tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-08.jpg', cat: 'lifestyle',   label: 'Praça e espelho d\'água',        tag: 'Lifestyle' },
+    { src: 'img/gallery/oficial/aurora-09.jpg', cat: 'arquitetura', label: 'Pórtico de entrada',             tag: 'Arquitetura' },
+    { src: 'img/gallery/oficial/aurora-10.jpg', cat: 'lifestyle',   label: 'Restaurante com vista ao lago',  tag: 'Lifestyle' },
+    { src: 'img/gallery/oficial/aurora-11.jpg', cat: 'lago',        label: 'Orla e palmeiras',               tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-12.jpg', cat: 'arquitetura', label: 'Render arquitetônico',           tag: 'Arquitetura' },
+    { src: 'img/gallery/oficial/aurora-13.jpg', cat: 'vista',       label: 'Arara sobre o cerrado',          tag: 'Vistas' },
+    { src: 'img/gallery/oficial/aurora-14.jpg', cat: 'lago',        label: 'Pôr do sol · Lago Corumbá IV',  tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-15.jpg', cat: 'lago',        label: 'Aurora · Onde o tempo mora',     tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-16.jpg', cat: 'lifestyle',   label: 'Quadra de tênis com vista lago', tag: 'Lifestyle' },
+    { src: 'img/gallery/oficial/aurora-17.jpg', cat: 'lago',        label: 'Piscina infinity · Vista lago',  tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-18.jpg', cat: 'vista',       label: 'Reflexo dourado no lago',        tag: 'Vistas' },
+    { src: 'img/gallery/oficial/aurora-19.jpg', cat: 'lago',        label: 'Entardecer · Lago Corumbá IV',  tag: 'Lago' },
+    { src: 'img/gallery/oficial/aurora-20.jpg', cat: 'lifestyle',   label: 'Club house e piscina',           tag: 'Lifestyle' }
+  ];
+
   function imagensHTML() {
-    var photos = [
-      { src: 'img/gallery/aurora-aerea-01.jpg', label: 'Vista aérea ampla', cat: 'aereo',   tag: 'Vista aérea' },
-      { src: 'img/gallery/aurora-aerea-02.jpg', label: 'Frente lago',       cat: 'lago',    tag: 'Frente lago' },
-      { src: 'img/gallery/aurora-aerea-03.jpg', label: 'Margem do lago',    cat: 'lago',    tag: 'Frente lago' },
-      { src: 'img/gallery/aurora-aerea-04.jpg', label: 'Cerrado nativo',    cat: 'cerrado', tag: 'Cerrado' },
-      { src: 'img/gallery/aurora-aerea-05.jpg', label: 'Hora dourada',      cat: 'aereo',   tag: 'Vista aérea' },
-      { src: 'img/gallery/aurora-aerea-06.jpg', label: 'Topografia natural', cat: 'cerrado', tag: 'Cerrado' }
-    ];
-    var items = photos.map(function(p, i) {
-      return '<figure class="g-item reveal" data-cat="' + p.cat + '" data-reveal style="--delay:' + (i * 60) + 'ms">' +
+    var items = GALLERY_PHOTOS.map(function(p, i) {
+      return '<figure class="g-item reveal" data-cat="' + p.cat + '" data-idx="' + i + '" data-reveal style="--delay:' + (i * 50) + 'ms">' +
         '<img loading="lazy" src="' + p.src + '" alt="' + p.label + '">' +
         '<figcaption class="g-cap">' +
           '<span class="g-cat">' + p.tag + '</span>' +
@@ -801,46 +814,270 @@
     }).join('');
     return '<div class="modal-section">' +
       '<div class="section-num">O Lugar</div>' +
-      '<h3 class="section-title">Aurora visto de cima.</h3>' +
-      '<p class="section-body">Imagens aéreas reais do empreendimento. Cerrado, lago e a luz do fim de tarde que dá nome ao projeto.</p>' +
+      '<h3 class="section-title">Aurora em imagens oficiais.</h3>' +
+      '<p class="section-body">Imagens do site oficial do empreendimento. Arquitetura, lago, lifestyle e vistas do Aurora Oasis.</p>' +
       '<div class="gallery-filters">' +
         '<button class="gf-btn is-active" data-cat="todos">Todos</button>' +
-        '<button class="gf-btn" data-cat="aereo">Vista aérea</button>' +
-        '<button class="gf-btn" data-cat="lago">Frente lago</button>' +
-        '<button class="gf-btn" data-cat="cerrado">Cerrado</button>' +
+        '<button class="gf-btn" data-cat="vista">Vistas</button>' +
+        '<button class="gf-btn" data-cat="arquitetura">Arquitetura</button>' +
+        '<button class="gf-btn" data-cat="lifestyle">Lifestyle</button>' +
       '</div>' +
     '</div>' +
     '<div class="gallery-grid" id="gallery-grid">' + items + '</div>';
   }
 
   function bindGalleryFilters() {
+    window.galleryFiltered = GALLERY_PHOTOS.slice();
     document.querySelectorAll('.gf-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.gf-btn').forEach(function(b) { b.classList.remove('is-active'); });
         btn.classList.add('is-active');
         var cat = btn.dataset.cat;
+        window.galleryFiltered = (cat === 'todos') ? GALLERY_PHOTOS.slice() : GALLERY_PHOTOS.filter(function(p) { return p.cat === cat; });
         document.querySelectorAll('.g-item').forEach(function(item) {
-          item.style.display = (cat === 'todos' || item.dataset.cat === cat) ? '' : 'none';
+          var match = cat === 'todos' || item.dataset.cat === cat;
+          item.style.display = match ? '' : 'none';
         });
       });
     });
   }
 
+  // ─── Lightbox ─────────────────────────────────────────────────────────────
+  var lightboxState = { open: false, idx: 0, photos: [] };
+
+  function openLightbox(photos, startIdx) {
+    lightboxState.open = true;
+    lightboxState.idx = startIdx || 0;
+    lightboxState.photos = photos;
+
+    var lb = document.getElementById('lightbox');
+    var track = document.getElementById('lb-track');
+    var thumbs = document.getElementById('lb-thumbs');
+
+    track.innerHTML = photos.map(function(p, i) {
+      return '<div class="lb-slide" data-idx="' + i + '"><img src="' + p.src + '" alt="' + p.label + '" loading="eager"></div>';
+    }).join('');
+
+    thumbs.innerHTML = photos.map(function(p, i) {
+      return '<button class="lb-thumb" data-idx="' + i + '" style="background-image:url(' + p.src + ')"></button>';
+    }).join('');
+
+    document.getElementById('lb-total').textContent = String(photos.length).padStart(2, '0');
+
+    lb.hidden = false;
+    requestAnimationFrame(function() { lb.classList.add('is-open'); });
+    setLightboxIdx(lightboxState.idx);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    var lb = document.getElementById('lightbox');
+    lb.classList.remove('is-open');
+    setTimeout(function() { lb.hidden = true; }, 480);
+    lightboxState.open = false;
+    document.body.style.overflow = '';
+  }
+
+  function setLightboxIdx(i) {
+    if (i < 0) i = lightboxState.photos.length - 1;
+    if (i >= lightboxState.photos.length) i = 0;
+    lightboxState.idx = i;
+    var p = lightboxState.photos[i];
+    document.getElementById('lb-cat').textContent = (p.tag || p.cat || '').toString();
+    document.getElementById('lb-label').textContent = p.label;
+    document.getElementById('lb-pos').textContent = String(i + 1).padStart(2, '0');
+    document.querySelectorAll('.lb-slide').forEach(function(s) {
+      var idx = parseInt(s.dataset.idx, 10);
+      s.classList.remove('is-active', 'is-prev', 'is-next');
+      if (idx === i) s.classList.add('is-active');
+      else if (idx === i - 1 || (i === 0 && idx === lightboxState.photos.length - 1)) s.classList.add('is-prev');
+      else if (idx === i + 1 || (i === lightboxState.photos.length - 1 && idx === 0)) s.classList.add('is-next');
+    });
+    document.querySelectorAll('.lb-thumb').forEach(function(t) {
+      t.classList.toggle('is-active', parseInt(t.dataset.idx, 10) === i);
+    });
+    var activeThumb = document.querySelector('.lb-thumb.is-active');
+    if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  // Lightbox click delegation (gallery items + controls)
+  document.addEventListener('click', function(e) {
+    var item = e.target.closest('.g-item');
+    if (item && item.dataset.idx !== undefined) {
+      var visiblePhotos = (window.galleryFiltered || GALLERY_PHOTOS);
+      var idx = parseInt(item.dataset.idx, 10);
+      // Find the position within visiblePhotos
+      var posInVisible = visiblePhotos.findIndex(function(p) { return p.src === GALLERY_PHOTOS[idx].src; });
+      if (posInVisible < 0) posInVisible = 0;
+      openLightbox(visiblePhotos, posInVisible);
+    }
+    if (e.target.closest('#lb-close, .lb-backdrop')) closeLightbox();
+    if (e.target.closest('.lb-prev')) setLightboxIdx(lightboxState.idx - 1);
+    if (e.target.closest('.lb-next')) setLightboxIdx(lightboxState.idx + 1);
+    var thumbBtn = e.target.closest('.lb-thumb');
+    if (thumbBtn) setLightboxIdx(parseInt(thumbBtn.dataset.idx, 10));
+  });
+
+  window.addEventListener('keydown', function(e) {
+    if (!lightboxState.open) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') setLightboxIdx(lightboxState.idx - 1);
+    if (e.key === 'ArrowRight') setLightboxIdx(lightboxState.idx + 1);
+  });
+
+  (function() {
+    var lb = document.getElementById('lightbox');
+    if (!lb) return;
+    var startX = 0, startY = 0, dragging = false;
+    lb.addEventListener('pointerdown', function(e) {
+      if (!e.target.closest('.lb-slide.is-active')) return;
+      startX = e.clientX; startY = e.clientY; dragging = true;
+    });
+    lb.addEventListener('pointerup', function(e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+        setLightboxIdx(lightboxState.idx + (dx < 0 ? 1 : -1));
+      }
+      dragging = false;
+    });
+  })();
+
   function fotolivroHTML() {
+    var pages = [
+      {
+        bg: 'img/gallery/oficial/aurora-15.jpg',
+        mini: 'Aurora Oasis · Book Apresentação',
+        title: 'Onde o tempo mora.',
+        sub: 'Lago Corumbá IV · Abadiânia, Goiás',
+        tone: 'cover'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-14.jpg',
+        mini: 'Capítulo 01',
+        title: 'O luxo de viver no tempo certo.',
+        body: 'Um lugar convida a parar. Aqui o tempo não se mede em ponteiros, mas em pausas. Em silêncios. Aurora Oasis é um novo ritmo. Um convite ao que realmente importa.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-03.jpg',
+        mini: 'Capítulo 02',
+        title: 'A natureza como protagonista.',
+        body: 'Cerrado nativo preservado, frente para o Lago Corumbá IV e céu aberto. Urbanismo de baixa densidade, em que cada lote respira. Privacidade real com vistas amplas — o oposto do adensamento que se vê em condomínios convencionais.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-19.jpg',
+        mini: 'Capítulo 03',
+        title: 'Localização que liberta.',
+        body: 'A apenas 1 hora de Anápolis, 1h40 de Goiânia e 2h20 de Brasília. 10 minutos de estrada de chão do centro de Abadiânia. Refúgio sem isolamento — perto o suficiente para integrar, distante o suficiente para acolher.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-04.jpg',
+        mini: 'Capítulo 04',
+        title: 'Estrutura completa, sem ostentação.',
+        body: 'Marina e praia particular. Piscina voltada para o lago. Espaços gourmet e lounge contemplativo. Spa, fitness center e academia com horizonte aberto. Wine bar e restaurante com vista. Calçadão de aproximadamente 4 km. Portaria e segurança 24h.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-06.jpg',
+        mini: 'Capítulo 05',
+        title: 'Arquitetura que respeita o entorno.',
+        body: 'Projeto urbanístico e arquitetônico assinado pela FAAU · Flávio Aleixo. Volumetria suave, materiais naturais e integração com a topografia do cerrado. O luxo aqui é a coerência entre construção e paisagem.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-17.jpg',
+        mini: 'Capítulo 06',
+        title: 'Lotes amplos a partir de 500 m².',
+        body: 'Cada lote é um endereço. Tipologias que privilegiam vista, topografia e privacidade. Estatuto e governança fortes garantem que o conceito do empreendimento se mantenha íntegro ao longo do tempo.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/gallery/oficial/aurora-16.jpg',
+        mini: 'Próximo passo',
+        title: 'Conheça Aurora pessoalmente.',
+        body: 'Reserve sua visita ao empreendimento.',
+        cta: { wpp: 'https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20visita%20ao%20Aurora%20Oasis', site: 'https://auroraoasis.com.br' },
+        tone: 'closing'
+      }
+    ];
+
+    var pagesHTML = pages.map(function(p, i) {
+      return '<article class="book-page tone-' + p.tone + '" data-page="' + i + '"' + (i === 0 ? ' data-active="true"' : '') + '>' +
+        '<div class="book-bg" style="background-image:url(\'' + p.bg + '\');"></div>' +
+        '<div class="book-tint"></div>' +
+        '<div class="book-content">' +
+          '<div class="book-mini">' + p.mini + '</div>' +
+          '<h2 class="book-title">' + p.title + '</h2>' +
+          (p.sub ? '<div class="book-sub">' + p.sub + '</div>' : '') +
+          (p.body ? '<p class="book-body">' + p.body + '</p>' : '') +
+          (p.cta ? '<div class="book-cta">' +
+            '<a href="' + p.cta.wpp + '" target="_blank" rel="noopener" class="modal-link">Agendar visita por WhatsApp</a>' +
+            '<a href="' + p.cta.site + '" target="_blank" rel="noopener" class="modal-link">Acessar site oficial</a>' +
+          '</div>' : '') +
+        '</div>' +
+      '</article>';
+    }).join('');
+
+    var dotsHTML = pages.map(function(_, i) {
+      return '<button class="book-dot' + (i === 0 ? ' is-active' : '') + '" data-page="' + i + '" aria-label="Página ' + (i + 1) + '"></button>';
+    }).join('');
+
     return '<div class="modal-section">' +
       '<div class="section-num">Book Apresentação</div>' +
       '<h3 class="section-title">Aurora · Onde o tempo mora.</h3>' +
-      '<p class="section-body">Edição editorial completa do empreendimento. Conceito, arquitetura, paisagem e visão estratégica do Aurora Oasis em formato fotolivro.</p>' +
+      '<p class="section-body">8 capítulos editoriais com imagens oficiais do empreendimento. Use as setas ou deslize para navegar.</p>' +
     '</div>' +
-    '<div class="modal-section">' +
-      '<div class="pdf-viewer-wrap reveal" data-reveal>' +
-        '<iframe class="pdf-viewer" src="pdf/aurora-oasis-fotolivro.pdf#view=FitH&toolbar=0" title="Fotolivro Aurora Oasis"></iframe>' +
-      '</div>' +
-      '<div class="pdf-actions">' +
-        '<a href="pdf/aurora-oasis-fotolivro.pdf" download class="modal-link pdf-action">Baixar PDF</a>' +
-        '<a href="pdf/aurora-oasis-fotolivro.pdf" target="_blank" rel="noopener" class="modal-link pdf-action">Abrir em tela cheia</a>' +
-      '</div>' +
+    '<div class="book-viewer" id="book-viewer">' +
+      '<div class="book-stage">' + pagesHTML + '</div>' +
+      '<nav class="book-nav">' +
+        '<button class="book-prev" id="book-prev" aria-label="Página anterior">' +
+          '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+        '</button>' +
+        '<div class="book-dots" id="book-dots">' + dotsHTML + '</div>' +
+        '<button class="book-next" id="book-next" aria-label="Próxima página">' +
+          '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</button>' +
+      '</nav>' +
     '</div>';
+  }
+
+  function bindBookViewer() {
+    var stage = document.querySelector('#book-viewer .book-stage');
+    if (!stage) return;
+    var pages = stage.querySelectorAll('.book-page');
+    var dots = document.querySelectorAll('#book-dots .book-dot');
+    var idx = 0;
+    function setIdx(i) {
+      if (i < 0) i = pages.length - 1;
+      if (i >= pages.length) i = 0;
+      pages.forEach(function(p, n) {
+        p.removeAttribute('data-active');
+        p.classList.remove('is-prev');
+        if (n === i) p.setAttribute('data-active', 'true');
+        else if (n === i - 1 || (i === 0 && n === pages.length - 1)) p.classList.add('is-prev');
+      });
+      dots.forEach(function(d, n) { d.classList.toggle('is-active', n === i); });
+      idx = i;
+    }
+    document.getElementById('book-prev').addEventListener('click', function() { setIdx(idx - 1); });
+    document.getElementById('book-next').addEventListener('click', function() { setIdx(idx + 1); });
+    dots.forEach(function(d, n) { d.addEventListener('click', function() { setIdx(n); }); });
+    var sx = 0;
+    stage.addEventListener('pointerdown', function(e) { sx = e.clientX; });
+    stage.addEventListener('pointerup', function(e) {
+      var dx = e.clientX - sx;
+      if (Math.abs(dx) > 60) setIdx(idx + (dx < 0 ? 1 : -1));
+    });
+    function onKey(e) {
+      if (!stage.isConnected) { document.removeEventListener('keydown', onKey); return; }
+      if (e.key === 'ArrowLeft') setIdx(idx - 1);
+      if (e.key === 'ArrowRight') setIdx(idx + 1);
+    }
+    document.addEventListener('keydown', onKey);
   }
 
   function videosHTML() {
@@ -871,7 +1108,7 @@
       '<div class="section-num">Sobre o Aurora</div>' +
       '<h3 class="section-title">Aurora Oasis.</h3>' +
       '<p class="section-lead">Um endereço para quem entendeu que o tempo é o verdadeiro luxo.</p>' +
-      '<p class="section-body">Lago Corumbá IV · Abadiânia · Goiás. 241 lotes premium em meio ao cerrado nativo, com frente para o lago e arquitetura assinada pela FAAU. Posição estratégica entre Anápolis, Goiânia e Brasília.</p>' +
+      '<p class="section-body">Lago Corumbá IV · Abadiânia · Goiás. Lotes amplos a partir de 500 m² em meio ao cerrado nativo, com frente para o lago e arquitetura assinada pela FAAU. 1h de Anápolis · 1h40 de Goiânia · 2h20 de Brasília.</p>' +
     '</div>' +
 
     '<div class="modal-section">' +
@@ -925,8 +1162,8 @@
     { sceneId: 'pano_02', duration: 6000, action: null,                    caption: 'Vista do Lago' },
     { sceneId: 'pano_02', duration: 9000, action: 'modal:conceito',        caption: 'Conceito · O tempo é o novo luxo' },
     { sceneId: 'pano_03', duration: 7000, action: 'modal:localizacao',     caption: 'Localização · Lago Corumbá IV' },
-    { sceneId: 'pano_01', duration: 8000, action: 'modal:implantacao',     caption: 'Implantação · 241 lotes' },
-    { sceneId: 'pano_04', duration: 8000, action: 'modal:disponibilidades', caption: 'Disponibilidade · A partir de R$ 235k' },
+    { sceneId: 'pano_01', duration: 8000, action: 'modal:implantacao',     caption: 'Implantação · Lotes a partir de 500 m²' },
+    { sceneId: 'pano_04', duration: 8000, action: 'modal:disponibilidades', caption: 'Disponibilidade · Lago Corumbá IV' },
     { sceneId: 'pano_02', duration: 6000, action: null,                    caption: 'Aurora · Raro como o tempo' }
   ];
 
@@ -1113,11 +1350,37 @@
       entries.forEach(function(e) {
         if (e.isIntersecting) {
           e.target.classList.add('is-revealed');
+          if (e.target.matches('[data-reveal-words]')) {
+            var spans = e.target.querySelectorAll('span');
+            spans.forEach(function(s, i) { s.style.transitionDelay = (i * 22) + 'ms'; });
+          }
           io.unobserve(e.target);
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
-    document.querySelectorAll('[data-reveal]').forEach(function(el) { io.observe(el); });
+    document.querySelectorAll('[data-reveal], [data-reveal-x], [data-reveal-scale], [data-reveal-words]').forEach(function(el) { io.observe(el); });
+  }
+
+  function splitWords(selector) {
+    document.querySelectorAll(selector).forEach(function(el) {
+      if (el.dataset.split === '1') return;
+      el.dataset.split = '1';
+      var html = el.textContent.split(/(\s+)/).map(function(w) {
+        return /\s+/.test(w) ? w : '<span>' + w + '</span>';
+      }).join('');
+      el.innerHTML = html;
+    });
+  }
+
+  function bindModalScrollProgress() {
+    var panel = document.querySelector('.modal-panel');
+    var bar = document.getElementById('modal-progress');
+    if (!panel || !bar) return;
+    panel.addEventListener('scroll', function() {
+      var max = panel.scrollHeight - panel.clientHeight;
+      var pct = max > 0 ? (panel.scrollTop / max) * 100 : 0;
+      bar.style.width = pct + '%';
+    });
   }
 
   // ─── Card Parallax ────────────────────────────────────────────────────────
@@ -1150,9 +1413,12 @@
     featModalOpen = true;
     if (onOpen) onOpen();
     setTimeout(function() {
+      splitWords('[data-reveal-words]');
       initRevealObserver();
       bindCardParallax();
+      bindModalScrollProgress();
       if (title === 'Galeria de Imagens') bindGalleryFilters();
+      if (title === 'Book Apresentação') bindBookViewer();
     }, 50);
   }
 
