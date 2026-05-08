@@ -2359,23 +2359,10 @@
   var hotspotsVisible = true;
 
   function buildHotspotsForScene(sceneId, mzScene) {
-    if (!mzScene || !SCENE_HOTSPOTS[sceneId]) return;
+    if (!mzScene) return;
     var container = mzScene.hotspotContainer();
     container.listHotspots().forEach(function(h) { container.destroyHotspot(h); });
-    if (!hotspotsVisible) return;
-
-    SCENE_HOTSPOTS[sceneId].forEach(function(h) {
-      var el = document.createElement('div');
-      el.className = 'pano-hotspot';
-      el.innerHTML =
-        '<div class="ph-dot"></div>' +
-        '<div class="ph-card">' +
-          '<div class="ph-cat">Ponto de interesse</div>' +
-          '<div class="ph-label">' + h.label + '</div>' +
-          '<div class="ph-desc">' + h.desc + '</div>' +
-        '</div>';
-      container.createHotspot(el, { yaw: h.yaw, pitch: h.pitch });
-    });
+    // Hotspots individuais desabilitados; região poligonal cobre o empreendimento
   }
 
   // ─── Touch Gestures ───────────────────────────────────────────────────────
