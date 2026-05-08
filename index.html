@@ -40,6 +40,9 @@
   <!-- Loading screen -->
   <div id="loading-screen">
     <div class="loading-inner">
+      <div class="hourglass-loader" aria-hidden="true">
+        <div class="hourglass-sprite" id="hourglass-loader-sprite"></div>
+      </div>
       <svg class="loading-logo brand-svg" viewBox="0 0 360 80" xmlns="http://www.w3.org/2000/svg" aria-label="OASIS"><text x="50%" y="62" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="500" font-size="60" letter-spacing="8" fill="currentColor">OASIS</text></svg>
       <div class="loading-sub">Lago Corumbá IV · Goiás</div>
       <div class="loading-bar-wrap">
@@ -48,6 +51,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Floating brand mark · ampulheta dourada (o tempo é o novo luxo) -->
+  <button id="hourglass-mark" class="hourglass-mark" aria-label="O tempo é o novo luxo · Aurora Oasis" type="button">
+    <div class="hourglass-mark-sprite"></div>
+    <div class="hourglass-mark-tooltip">o tempo é o novo luxo</div>
+  </button>
 
   <!-- Main viewer -->
   <div id="viewer"></div>
