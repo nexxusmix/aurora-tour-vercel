@@ -643,18 +643,17 @@
     fillColor: 'rgba(201,168,76,0.28)',
     strokeColor: '#C9A84C',
     vertices: [
-      { yaw: -0.22, pitch: +0.20 },
-      { yaw: -0.05, pitch: +0.16 },
-      { yaw: +0.10, pitch: +0.15 },
-      { yaw: +0.28, pitch: +0.18 },
-      { yaw: +0.40, pitch: +0.28 },
-      { yaw: +0.42, pitch: +0.40 },
-      { yaw: +0.32, pitch: +0.50 },
-      { yaw: +0.15, pitch: +0.56 },
-      { yaw: -0.05, pitch: +0.58 },
-      { yaw: -0.20, pitch: +0.54 },
-      { yaw: -0.30, pitch: +0.42 },
-      { yaw: -0.28, pitch: +0.28 }
+      { yaw: -0.10, pitch: +0.40 },
+      { yaw: +0.00, pitch: +0.38 },
+      { yaw: +0.10, pitch: +0.40 },
+      { yaw: +0.16, pitch: +0.45 },
+      { yaw: +0.18, pitch: +0.52 },
+      { yaw: +0.13, pitch: +0.58 },
+      { yaw: +0.05, pitch: +0.60 },
+      { yaw: -0.04, pitch: +0.59 },
+      { yaw: -0.11, pitch: +0.55 },
+      { yaw: -0.13, pitch: +0.48 },
+      { yaw: -0.12, pitch: +0.43 }
     ]
   }];
 
