@@ -634,7 +634,29 @@
   ];
 
   // ─── Region Data ──────────────────────────────────────────────────────────
-  var REGIONS = [];
+  // Polígono do empreendimento Aurora Oasis na cena 02 (península)
+  // Vértices em (yaw, pitch) · ancorado no hotspot validado yaw=+0.03, pitch=+0.15
+  var REGIONS = [{
+    id: 'aurora_oasis_pano02',
+    label: 'AURORA OASIS',
+    appearsIn: ['pano_02'],
+    fillColor: 'rgba(201,168,76,0.28)',
+    strokeColor: '#C9A84C',
+    vertices: [
+      { yaw: -0.22, pitch: +0.20 },
+      { yaw: -0.05, pitch: +0.16 },
+      { yaw: +0.10, pitch: +0.15 },
+      { yaw: +0.28, pitch: +0.18 },
+      { yaw: +0.40, pitch: +0.28 },
+      { yaw: +0.42, pitch: +0.40 },
+      { yaw: +0.32, pitch: +0.50 },
+      { yaw: +0.15, pitch: +0.56 },
+      { yaw: -0.05, pitch: +0.58 },
+      { yaw: -0.20, pitch: +0.54 },
+      { yaw: -0.30, pitch: +0.42 },
+      { yaw: -0.28, pitch: +0.28 }
+    ]
+  }];
 
   // ─── State ────────────────────────────────────────────────────────────────
   var currentSceneIdx = 1;
@@ -644,7 +666,7 @@
   var overviewMode = false;
   var autorotating = false;
   var autorotateCtrl = null;
-  var regionVisibility = { regions: true, aurora_oasis: true, aurora_lago: true };
+  var regionVisibility = { regions: true, aurora_oasis: true, aurora_lago: true, aurora_oasis_pano02: true };
   var menuOpen = false;
   var scenePkrOpen = false;
   var featModalOpen = false;
@@ -2178,42 +2200,54 @@
 
       var ptsStr = validPts.map(function(p) { return p.x + ',' + p.y; }).join(' ');
 
+      // Group with reveal + hover. Animate first time we see this region in this scene.
+      var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'region-group region-' + region.id);
+      g.setAttribute('data-region', region.id);
+
       var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('class', 'region-poly');
       poly.setAttribute('points', ptsStr);
       poly.setAttribute('fill', region.fillColor || 'rgba(201,168,76,0.18)');
       poly.setAttribute('stroke', region.strokeColor || region.color || '#C9A84C');
-      poly.setAttribute('stroke-width', '1.5');
-      svg.appendChild(poly);
+      poly.setAttribute('stroke-width', '2.4');
+      poly.setAttribute('stroke-linejoin', 'round');
+      g.appendChild(poly);
 
       var cx = 0, cy = 0;
       validPts.forEach(function(p) { cx += p.x; cy += p.y; });
       cx /= validPts.length; cy /= validPts.length;
 
-      var labelPad = 10;
-      var labelH = 22;
-      var labelW = region.label.length * 6.5 + labelPad * 2;
+      var labelPad = 12;
+      var labelH = 26;
+      var labelW = region.label.length * 8.5 + labelPad * 2;
 
       var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('class', 'region-label-bg');
       rect.setAttribute('x', cx - labelW / 2);
       rect.setAttribute('y', cy - labelH / 2);
       rect.setAttribute('width', labelW);
       rect.setAttribute('height', labelH);
-      rect.setAttribute('fill', 'rgba(239,237,226,0.92)');
-      rect.setAttribute('stroke', 'rgba(26,26,26,0.2)');
+      rect.setAttribute('rx', '2');
+      rect.setAttribute('fill', 'rgba(239,237,226,0.96)');
+      rect.setAttribute('stroke', '#C9A84C');
       rect.setAttribute('stroke-width', '1');
-      svg.appendChild(rect);
+      g.appendChild(rect);
 
       var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('class', 'region-label-text');
       text.setAttribute('x', cx);
       text.setAttribute('y', cy + 4);
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('font-family', "'Britti Sans', sans-serif");
-      text.setAttribute('font-weight', '400');
-      text.setAttribute('font-size', '9');
-      text.setAttribute('letter-spacing', '0.15em');
+      text.setAttribute('font-weight', '500');
+      text.setAttribute('font-size', '11');
+      text.setAttribute('letter-spacing', '0.22em');
       text.setAttribute('fill', '#1A1A1A');
       text.textContent = region.label;
-      svg.appendChild(text);
+      g.appendChild(text);
+
+      svg.appendChild(g);
     });
   }
 
@@ -2285,9 +2319,9 @@
   });
 
   // ─── Panorama Hotspots ────────────────────────────────────────────────────
-  // POIs calibrados manualmente. Convenção: pitch+ = baixo, pitch- = cima.
-  // Referência: pano_02 'Loteamento Aurora' pitch +0.15 caiu sobre o empreendimento.
-  var SCENE_HOTSPOTS = {
+  // Hotspots individuais desativados — uso da região poligonal Aurora Oasis em pano_02
+  // como demarcação principal. POIs ponto-a-ponto serão recalibrados em iteração futura.
+  var SCENE_HOTSPOTS_DISABLED = {
     pano_01: [
       { yaw:  0.0000, pitch: +0.05, label: 'Lago Corumbá IV',     desc: 'Espelho d\'água principal · barragem CELG · 700 km².' },
       { yaw: -0.2500, pitch: +0.40, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · ruas pavimentadas e lotes demarcados.' },
