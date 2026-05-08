@@ -2213,6 +2213,9 @@
     svg.setAttribute('height', h);
     svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
 
+    // Force regions visible (bypass any toggle that might have disabled it)
+    regionVisibility.regions = true;
+    regionVisibility.aurora_oasis_pano02 = true;
     if (!regionVisibility.regions) return;
 
     var scene = marzipanoScenes[currentSceneIdx];
