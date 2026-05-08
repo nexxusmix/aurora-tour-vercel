@@ -2239,17 +2239,23 @@
 
       var ptsStr = validPts.map(function(p) { return p.x + ',' + p.y; }).join(' ');
 
-      // Group with reveal + hover. Animate first time we see this region in this scene.
+      // Group with reveal + hover. Animate ONLY first time we see this region in this scene.
+      // Subsequent updateRegionOverlay calls (view drift) just update points, no reset.
       var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.setAttribute('class', 'region-group region-' + region.id);
+      var revealKey = region.id + '@' + SCENES[currentSceneIdx].id;
+      var alreadyRevealed = window._regionRevealed && window._regionRevealed[revealKey];
+      g.setAttribute('class', 'region-group region-' + region.id + (alreadyRevealed ? '' : ' is-revealing'));
       g.setAttribute('data-region', region.id);
+      if (!alreadyRevealed) {
+        window._regionRevealed = window._regionRevealed || {};
+        window._regionRevealed[revealKey] = true;
+      }
 
       var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       poly.setAttribute('class', 'region-poly');
       poly.setAttribute('points', ptsStr);
       poly.setAttribute('fill', region.fillColor || 'rgba(201,168,76,0.18)');
       poly.setAttribute('stroke', region.strokeColor || region.color || '#C9A84C');
-      poly.setAttribute('stroke-width', '2.4');
       poly.setAttribute('stroke-linejoin', 'round');
       g.appendChild(poly);
 

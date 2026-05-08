@@ -1947,30 +1947,31 @@ body.dragging * { user-select: none; -webkit-user-select: none; }
 #region-overlay { pointer-events: none; }
 #region-overlay .region-group { pointer-events: auto; cursor: pointer; }
 #region-overlay .region-poly {
-  fill-opacity: 0;
-  stroke-dasharray: 1800;
-  stroke-dashoffset: 1800;
-  filter: drop-shadow(0 0 0 rgba(201,168,76,0));
-  transition: filter 0.45s ease, fill-opacity 0.4s ease;
-  animation: regionReveal 1800ms cubic-bezier(0.16, 1, 0.3, 1) 250ms forwards;
+  fill-opacity: 0.30;
+  stroke-opacity: 1;
+  stroke-width: 2.4;
   vector-effect: non-scaling-stroke;
+  transition: filter 0.4s ease, fill-opacity 0.4s ease, stroke-width 0.4s ease;
+}
+#region-overlay .region-group.is-revealing .region-poly {
+  animation: regionReveal 1600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes regionReveal {
-  0%   { stroke-dashoffset: 1800; fill-opacity: 0;    stroke-opacity: 0; }
-  20%  {                          fill-opacity: 0;    stroke-opacity: 1; }
-  70%  { stroke-dashoffset: 0;    fill-opacity: 0.18; }
-  100% { stroke-dashoffset: 0;    fill-opacity: 0.30; }
+  0%   { fill-opacity: 0;    stroke-opacity: 0; transform: scale(0.94); }
+  35%  { fill-opacity: 0;    stroke-opacity: 1; }
+  100% { fill-opacity: 0.30; stroke-opacity: 1; transform: scale(1); }
 }
-#region-overlay .region-label-bg,
-#region-overlay .region-label-text {
-  opacity: 0;
-  animation: regionLabelFade 700ms ease-out 1500ms forwards;
+#region-overlay .region-group.is-revealing .region-label-bg,
+#region-overlay .region-group.is-revealing .region-label-text {
+  animation: regionLabelFade 700ms ease-out 900ms both;
 }
 @keyframes regionLabelFade {
-  to { opacity: 1; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 #region-overlay .region-group:hover .region-poly {
   fill-opacity: 0.55;
+  stroke-width: 3.4;
   filter: drop-shadow(0 0 18px rgba(201,168,76,0.65));
 }
 #region-overlay .region-group:hover .region-label-bg {
@@ -1979,13 +1980,4 @@ body.dragging * { user-select: none; -webkit-user-select: none; }
 }
 #region-overlay .region-group:hover .region-label-text {
   fill: #1A1A1A;
-}
-/* Pulse subtle do polígono em idle pra chamar atenção */
-#region-overlay .region-poly {
-  animation: regionReveal 1800ms cubic-bezier(0.16, 1, 0.3, 1) 250ms forwards,
-             regionPulse 4200ms ease-in-out 2200ms infinite;
-}
-@keyframes regionPulse {
-  0%, 100% { stroke-width: 2.4; }
-  50%      { stroke-width: 3.4; }
 }
