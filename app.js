@@ -228,46 +228,6 @@
     }
   }
 
-  // ─── Polygon Calibration Mode ─────────────────────────────────────────────
-  // SHIFT+CLICK em qualquer ponto pra capturar {yaw, pitch}. Acumula em window.calPoints
-  // e copia pra clipboard a cada clique. Limpa com ALT+CLICK.
-  window.calPoints = [];
-  window.addEventListener('click', function(e) {
-    if (!e.shiftKey && !e.altKey) return;
-    var s = marzipanoScenes[currentSceneIdx];
-    if (!s) return;
-    var pano = document.getElementById('pano') || document.getElementById('viewer');
-    var rect = pano.getBoundingClientRect();
-    var screen = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    if (e.altKey) {
-      window.calPoints = [];
-      console.log('[CAL] cleared');
-      showCalToast('Pontos limpos');
-      return;
-    }
-    var c = s.view.screenToCoordinates(screen);
-    if (!c) return;
-    window.calPoints.push({ yaw: +c.yaw.toFixed(4), pitch: +c.pitch.toFixed(4) });
-    var json = JSON.stringify(window.calPoints, null, 2);
-    if (navigator.clipboard) navigator.clipboard.writeText(json).catch(function(){});
-    console.log('[CAL] +1 ponto · total ' + window.calPoints.length);
-    console.log(json);
-    showCalToast('Ponto ' + window.calPoints.length + ' · yaw ' + c.yaw.toFixed(3) + ' / pitch ' + c.pitch.toFixed(3) + ' · copiado');
-  }, true);
-  function showCalToast(msg) {
-    var t = document.getElementById('cal-toast');
-    if (!t) {
-      t = document.createElement('div');
-      t.id = 'cal-toast';
-      t.style.cssText = 'position:fixed;top:90px;left:50%;transform:translateX(-50%);background:#0A0A0A;color:#C9A84C;padding:10px 18px;border:1px solid #C9A84C;font:400 12px/1.3 monospace;letter-spacing:0.05em;z-index:99999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
-      document.body.appendChild(t);
-    }
-    t.textContent = msg;
-    t.style.opacity = '1';
-    clearTimeout(t._tm);
-    t._tm = setTimeout(function() { t.style.transition = 'opacity 0.4s'; t.style.opacity = '0'; }, 2200);
-  }
-
   function onDrawClick(e) {
     if (!drawingState.active) return;
     if (e.detail >= 2) return; // skip single-click on dblclick
@@ -2006,8 +1966,13 @@
     }
     driftStart = performance.now();
     userInteracting = false;
-    // Reveal animation reset for region — re-trigger on every scene entry
-    if (window._regionRevealed) window._regionRevealed = {};
+    // Reset reveal animation only for region(s) NOT in this scene
+    if (window._regionRevealed) {
+      var sid = SCENES[idx] && SCENES[idx].id;
+      Object.keys(window._regionRevealed).forEach(function(k) {
+        if (k.indexOf('@' + sid) < 0) delete window._regionRevealed[k];
+      });
+    }
     // Stagger UI reveal (header + scene picker + minimap)
     triggerUIReveal();
 
@@ -2134,8 +2099,18 @@
     requestAnimationFrame(driftTick);
   }
 
+  // Pause drift when tab hidden — saves battery + prevents jump on visibility return
+  var tabVisible = !document.hidden;
+  document.addEventListener('visibilitychange', function() {
+    tabVisible = !document.hidden;
+    if (tabVisible) driftStart = performance.now();
+  });
+
+  // Respect user motion preferences
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function driftTick() {
-    if (!userInteracting && viewer && marzipanoScenes.length > 0) {
+    if (tabVisible && !reduceMotion && !userInteracting && viewer && marzipanoScenes.length > 0) {
       var t = performance.now() - driftStart;
       // Yaw: dual-harmonic Lissajous-like for organic motion (not pure sinusoid)
       var dy = Math.sin(t / DRIFT_PERIOD_YAW * Math.PI * 2) * DRIFT_AMPLITUDE
@@ -2471,9 +2446,10 @@
   });
 
   // ─── Panorama Hotspots ────────────────────────────────────────────────────
-  // Hotspots individuais desativados — uso da região poligonal Aurora Oasis em pano_02
-  // como demarcação principal. POIs ponto-a-ponto serão recalibrados em iteração futura.
-  var SCENE_HOTSPOTS_DISABLED = {
+  // Hotspots individuais desativados — região poligonal Aurora Oasis em pano_02 cobre o empreendimento.
+  // Mantido como referência futura; não é renderizado.
+  // eslint-disable-next-line no-unused-vars
+  var _SCENE_HOTSPOTS_REFERENCE = {
     pano_01: [
       { yaw:  0.0000, pitch: +0.05, label: 'Lago Corumbá IV',     desc: 'Espelho d\'água principal · barragem CELG · 700 km².' },
       { yaw: -0.2500, pitch: +0.40, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · ruas pavimentadas e lotes demarcados.' },
