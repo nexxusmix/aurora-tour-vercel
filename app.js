@@ -710,12 +710,15 @@
   var scenePkrOpen = false;
   var featModalOpen = false;
 
-  // Drift loop state (replaces mouse parallax)
-  var DRIFT_AMPLITUDE = 0.012;
-  var DRIFT_PERIOD_YAW = 24000;
-  var DRIFT_PERIOD_PITCH = 18000;
+  // Drift loop state — cinematic 3D parallax (yaw, pitch, FOV breathing)
+  var DRIFT_AMPLITUDE = 0.022;          // ~1.3° yaw drift
+  var DRIFT_PERIOD_YAW = 32000;         // 32s base period (slow)
+  var DRIFT_PERIOD_YAW_2 = 11000;       // 2nd harmonic for organic feel
+  var DRIFT_PERIOD_PITCH = 22000;
+  var DRIFT_PERIOD_FOV = 16000;         // FOV breathing — sense of breathing/depth
+  var DRIFT_FOV_AMPLITUDE = 0.018;      // ±1.0° FOV
   var driftStart = performance.now();
-  var basePose = { yaw: 0, pitch: -0.05 };
+  var basePose = { yaw: 0, pitch: -0.05, fov: null };
   var userInteracting = false;
 
   // Zoom
@@ -1958,7 +1961,9 @@
     if (immediate) {
       s.scene.switchTo({ transitionDuration: 0 });
     } else {
-      s.scene.switchTo({ transitionDuration: 800 });
+      // Cinematic transition: DOF blur + 3D zoom + fade overlay sequence
+      runSceneTransitionFX();
+      s.scene.switchTo({ transitionDuration: 1400 });
     }
 
     var s_data = SCENES[idx];
@@ -2017,6 +2022,31 @@
   tickLoad();
 
   // ─── Drift Loop (replaces mouse parallax) ────────────────────────────────
+  // ─── Scene Transition FX (DOF + 3D zoom + fade overlay) ────────────────────
+  function runSceneTransitionFX() {
+    var pano = document.getElementById('pano') || viewerEl;
+    if (!pano) return;
+    // Phase 1 — exit (defocus + zoom-in + brightness drop): 0–520ms
+    pano.classList.add('scene-fx-exit');
+    // Phase 2 — black flash bridge: 280–660ms
+    var flash = document.getElementById('scene-fx-flash');
+    if (!flash) {
+      flash = document.createElement('div');
+      flash.id = 'scene-fx-flash';
+      document.body.appendChild(flash);
+    }
+    flash.classList.add('is-flashing');
+    setTimeout(function() {
+      // Phase 3 — enter (defocus from blur, zoom-out from 1.06→1, brightness back): 660–1400ms
+      pano.classList.remove('scene-fx-exit');
+      pano.classList.add('scene-fx-enter');
+      flash.classList.remove('is-flashing');
+    }, 620);
+    setTimeout(function() {
+      pano.classList.remove('scene-fx-enter');
+    }, 1700);
+  }
+
   function initDriftLoop() {
     var container = viewerEl;
     ['pointerdown', 'wheel', 'touchstart'].forEach(function(ev) {
@@ -2041,13 +2071,21 @@
   function driftTick() {
     if (!userInteracting && viewer && marzipanoScenes.length > 0) {
       var t = performance.now() - driftStart;
-      var dy = Math.sin(t / DRIFT_PERIOD_YAW * Math.PI * 2) * DRIFT_AMPLITUDE;
-      var dp = Math.sin(t / DRIFT_PERIOD_PITCH * Math.PI * 2 + Math.PI / 3) * DRIFT_AMPLITUDE * 0.6;
+      // Yaw: dual-harmonic Lissajous-like for organic motion (not pure sinusoid)
+      var dy = Math.sin(t / DRIFT_PERIOD_YAW * Math.PI * 2) * DRIFT_AMPLITUDE
+             + Math.sin(t / DRIFT_PERIOD_YAW_2 * Math.PI * 2 + 1.3) * DRIFT_AMPLITUDE * 0.35;
+      // Pitch: out of phase, smaller amplitude
+      var dp = Math.sin(t / DRIFT_PERIOD_PITCH * Math.PI * 2 + Math.PI / 3) * DRIFT_AMPLITUDE * 0.55;
+      // FOV breathing — depth-of-field illusion (zoom subtly in/out)
+      var df = Math.sin(t / DRIFT_PERIOD_FOV * Math.PI * 2 + Math.PI / 5) * DRIFT_FOV_AMPLITUDE;
       var s = marzipanoScenes[currentSceneIdx];
       if (s && !autorotating) {
         try {
           s.view.setYaw(basePose.yaw + dy);
           s.view.setPitch(basePose.pitch + dp);
+          if (basePose.fov !== null && typeof s.view.setFov === 'function') {
+            s.view.setFov(basePose.fov + df);
+          }
         } catch(e) {}
       }
     }
