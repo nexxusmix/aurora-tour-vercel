@@ -2065,18 +2065,19 @@ body.dragging * { user-select: none; -webkit-user-select: none; }
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* ─── Hourglass Brand (ampulheta dourada Aurora Oasis) ────────────────────── */
+/* ─── Hourglass Brand (ampulheta Aurora Oasis) ────────────────────────────── */
 /* Sprite sheet 5760x720 = 8 frames @ 720x720 */
+/* Loader: ampulheta PRETA sobre fundo transparente (intro editorial) */
 .hourglass-sprite {
-  width: 200px;
-  height: 200px;
-  background: url('/img/hourglass/hourglass-sprite-720.webp') 0 0 / 1600px 200px no-repeat;
+  width: 220px;
+  height: 220px;
+  background: url('/img/hourglass/hourglass-sprite-720-black.webp') 0 0 / 1760px 220px no-repeat;
   animation: hourglassTurn 11s steps(8) infinite;
-  filter: drop-shadow(0 8px 32px rgba(201,168,76,0.5)) drop-shadow(0 0 18px rgba(201,168,76,0.25));
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.12));
 }
 @keyframes hourglassTurn {
   0%   { background-position: 0 0; }
-  100% { background-position: -1600px 0; }
+  100% { background-position: -1760px 0; }
 }
 
 /* Loader hero — large, slow turntable */
@@ -2177,7 +2178,13 @@ body.dragging * { user-select: none; -webkit-user-select: none; }
     100% { background-position: -304px 0; }
   }
   .hourglass-mark-tooltip { display: none; }
-  .hourglass-sprite { width: 140px; height: 140px; background-size: 1120px 140px; }
+  .hourglass-sprite { width: 160px; height: 160px; background-size: 1280px 160px; }
+}
+@media (max-width: 768px) {
+  @keyframes hourglassTurn {
+    0%   { background-position: 0 0; }
+    100% { background-position: -1280px 0; }
+  }
 }
 
 /* ─── Accessibility: reduced motion ───────────────────────────────────────── */
