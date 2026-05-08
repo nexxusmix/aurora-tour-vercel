@@ -1977,12 +1977,18 @@
       }
       basePose.yaw = 0;
       basePose.pitch = -0.55;
+      basePose.fov = 95 * Math.PI / 180;
     } else {
       basePose.yaw = 0;
       basePose.pitch = -0.30;
+      basePose.fov = FOV_DEFAULT;
     }
     driftStart = performance.now();
     userInteracting = false;
+    // Reveal animation reset for region — re-trigger on every scene entry
+    if (window._regionRevealed) window._regionRevealed = {};
+    // Stagger UI reveal (header + scene picker + minimap)
+    triggerUIReveal();
 
     var mzS = marzipanoScenes[idx];
     hdrNumber.textContent = mzS ? mzS.data.number : '';
@@ -2022,6 +2028,26 @@
   tickLoad();
 
   // ─── Drift Loop (replaces mouse parallax) ────────────────────────────────
+  // ─── Staggered UI reveal on scene change ──────────────────────────────────
+  function triggerUIReveal() {
+    var targets = [
+      { sel: '#header', delay: 0 },
+      { sel: '#bottom-bar, .bottom-bar, #footer', delay: 80 },
+      { sel: '#scene-picker, .scene-picker', delay: 140 },
+      { sel: '#scene-minimap, .scene-minimap', delay: 200 },
+      { sel: '.pano-hotspot', delay: 380 }
+    ];
+    targets.forEach(function(t) {
+      document.querySelectorAll(t.sel).forEach(function(el) {
+        el.classList.remove('ui-reveal');
+        // re-flow then add class to retrigger animation
+        // eslint-disable-next-line no-unused-expressions
+        void el.offsetWidth;
+        setTimeout(function() { el.classList.add('ui-reveal'); }, t.delay);
+      });
+    });
+  }
+
   // ─── Scene Transition FX (DOF + 3D zoom + fade overlay) ────────────────────
   function runSceneTransitionFX() {
     var pano = document.getElementById('pano') || viewerEl;
