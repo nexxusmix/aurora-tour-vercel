@@ -2008,9 +2008,28 @@
     setLoadProgress(100);
     setTimeout(function() {
       loadScreen.classList.add('fade-out');
-      setTimeout(function() { loadScreen.style.display = 'none'; }, 700);
+      setTimeout(function() {
+        loadScreen.style.display = 'none';
+        // Reveal floating hourglass brand mark with overshoot delay
+        var mark = document.getElementById('hourglass-mark');
+        if (mark) setTimeout(function() { mark.classList.add('is-visible'); }, 250);
+      }, 700);
     }, 400);
   }
+
+  // Hourglass brand mark click → open Conceito modal (o tempo é o novo luxo)
+  (function() {
+    var mark = document.getElementById('hourglass-mark');
+    if (!mark) return;
+    mark.addEventListener('click', function() {
+      // Try existing menu/conceito triggers
+      var btn = document.querySelector('[data-feat-key="conceito"], [data-action="conceito"], .nav-conceito');
+      if (btn) { btn.click(); return; }
+      // Fallback: open menu modal
+      var menuBtn = document.getElementById('menu-btn') || document.querySelector('.menu-trigger');
+      if (menuBtn) menuBtn.click();
+    });
+  })();
 
   function setLoadProgress(pct) {
     loadBar.style.width = pct + '%';
