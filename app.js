@@ -2285,39 +2285,40 @@
   });
 
   // ─── Panorama Hotspots ────────────────────────────────────────────────────
-  // Vision-detected POIs (Opus 4.7) · pixel coords on front cube face → yaw/pitch
+  // POIs calibrados manualmente. Convenção: pitch+ = baixo, pitch- = cima.
+  // Referência: pano_02 'Loteamento Aurora' pitch +0.15 caiu sobre o empreendimento.
   var SCENE_HOTSPOTS = {
     pano_01: [
-      { yaw: +0.1244, pitch:  -0.3832, label: 'Lago Corumbá IV',     desc: 'Espelho d\'água principal · barragem CELG · 700 km².' },
-      { yaw: -0.2742, pitch:  +0.5846, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · ruas pavimentadas e lotes demarcados.' },
-      { yaw: +0.2742, pitch:  -0.3196, label: 'Ilha do Lago',        desc: 'Ilhota natural no espelho d\'água · paisagem preservada.' },
-      { yaw: -0.7009, pitch:  -0.2003, label: 'Abadiânia',           desc: 'Núcleo urbano vizinho · acesso pela GO-437.' },
-      { yaw: +0.6023, pitch:  -0.1281, label: 'Mata cerrado',        desc: 'Reserva nativa · vegetação preservada do bioma cerrado.' },
-      { yaw: -0.2742, pitch:  +0.1786, label: 'Frente d\'água',      desc: 'Margem do empreendimento com vista direta ao lago.' }
+      { yaw:  0.0000, pitch: +0.05, label: 'Lago Corumbá IV',     desc: 'Espelho d\'água principal · barragem CELG · 700 km².' },
+      { yaw: -0.2500, pitch: +0.40, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · ruas pavimentadas e lotes demarcados.' },
+      { yaw: +0.3500, pitch: +0.10, label: 'Ilha do Lago',        desc: 'Ilhota natural no espelho d\'água · paisagem preservada.' },
+      { yaw: -0.7000, pitch: +0.05, label: 'Abadiânia',           desc: 'Núcleo urbano vizinho · acesso pela GO-437.' },
+      { yaw: +0.7000, pitch: +0.05, label: 'Mata cerrado',        desc: 'Reserva nativa · vegetação preservada do bioma cerrado.' },
+      { yaw: -0.0500, pitch: +0.25, label: 'Frente d\'água',      desc: 'Margem do empreendimento com vista direta ao lago.' }
     ],
     pano_02: [
-      { yaw: +0.0312, pitch:  -0.1549, label: 'Loteamento Aurora',   desc: 'Aurora Oasis · 241 lotes · ruas e quadras demarcadas.' },
-      { yaw:  0.0000, pitch:  +0.3588, label: 'Lago Corumbá IV',     desc: 'Água em primeiro plano · frente exclusiva do empreendimento.' },
-      { yaw: -0.5124, pitch:  +0.1085, label: 'Península de mata',   desc: 'Cinturão verde de cerrado preservado · barreira natural.' },
-      { yaw: -0.5808, pitch:  -0.1299, label: 'Abadiânia',           desc: 'Centro urbano · 18 km do empreendimento.' },
-      { yaw: +0.1244, pitch:  +0.0310, label: 'Frente lago Aurora',  desc: 'Linha d\'água permanente · 1,2 km de margem.' },
-      { yaw: +0.6023, pitch:  -0.2277, label: 'Cerrado distante',    desc: 'Horizonte cerrado · vegetação típica goiana.' }
+      { yaw: +0.0312, pitch: +0.15, label: 'Loteamento Aurora',   desc: 'Aurora Oasis · 241 lotes · ruas e quadras demarcadas.' },
+      { yaw: -0.0500, pitch: +0.55, label: 'Lago Corumbá IV',     desc: 'Água em primeiro plano · frente exclusiva do empreendimento.' },
+      { yaw: -0.5500, pitch: +0.10, label: 'Península de mata',   desc: 'Cinturão verde de cerrado preservado · barreira natural.' },
+      { yaw: -0.6500, pitch: +0.20, label: 'Abadiânia',           desc: 'Centro urbano · 18 km do empreendimento.' },
+      { yaw: +0.2000, pitch: +0.45, label: 'Frente lago Aurora',  desc: 'Linha d\'água permanente · 1,2 km de margem.' },
+      { yaw: +0.7000, pitch: +0.05, label: 'Cerrado distante',    desc: 'Horizonte cerrado · vegetação típica goiana.' }
     ],
     pano_03: [
-      { yaw: -0.3029, pitch:  +0.0892, label: 'Lago Corumbá IV',     desc: 'Água doce · profundidade média 18 m.' },
-      { yaw: -0.5808, pitch:  +0.3038, label: 'Ilha das chácaras',   desc: 'Ilha vizinha com edificações · paisagem viva.' },
-      { yaw: +0.2450, pitch:  -0.1504, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · vista lateral do empreendimento.' },
-      { yaw:  0.0000, pitch:  -0.1550, label: 'Margem habitada',     desc: 'Pequenas edificações · ocupação consolidada.' },
-      { yaw: +0.6232, pitch:  -0.0760, label: 'Mata ciliar',         desc: 'Vegetação ciliar protegida · APP da barragem.' },
-      { yaw:  0.0000, pitch:  -0.3859, label: 'Horizonte cerrado',   desc: 'Linha de horizonte · biombo natural distante.' }
+      { yaw: -0.3000, pitch: +0.30, label: 'Lago Corumbá IV',     desc: 'Água doce · profundidade média 18 m.' },
+      { yaw: -0.6000, pitch: +0.55, label: 'Ilha das chácaras',   desc: 'Ilha vizinha com edificações · paisagem viva.' },
+      { yaw: +0.3500, pitch: +0.20, label: 'Loteamento Aurora',   desc: 'Quadras Aurora Oasis · vista lateral do empreendimento.' },
+      { yaw:  0.0000, pitch: +0.15, label: 'Margem habitada',     desc: 'Pequenas edificações · ocupação consolidada.' },
+      { yaw: +0.7500, pitch: +0.10, label: 'Mata ciliar',         desc: 'Vegetação ciliar protegida · APP da barragem.' },
+      { yaw:  0.0000, pitch: -0.05, label: 'Horizonte cerrado',   desc: 'Linha de horizonte · biombo natural distante.' }
     ],
     pano_04: [
-      { yaw: +0.3859, pitch:  +0.1153, label: 'Aurora Oasis',        desc: 'Empreendimento · ruas e lotes demarcados.' },
-      { yaw: -0.6232, pitch:  +0.0760, label: 'Lago Corumbá IV',     desc: 'Água em primeiro plano · frente lago Aurora.' },
-      { yaw: -0.3859, pitch:  -0.1438, label: 'Abadiânia',           desc: 'Núcleo urbano · acessos asfaltados.' },
-      { yaw: -0.5808, pitch:  -0.4396, label: 'Pôr do sol oeste',    desc: 'Hora dourada · luz característica do cerrado.' },
-      { yaw: +0.5124, pitch:  +0.2145, label: 'Quadras Aurora',      desc: 'Lotes residenciais · pé na grama, vista ao lago.' },
-      { yaw: +0.2450, pitch:  -0.3754, label: 'Horizonte cerrado',   desc: 'Linha de horizonte · vegetação típica goiana.' }
+      { yaw: +0.4500, pitch: +0.25, label: 'Aurora Oasis',        desc: 'Empreendimento · ruas e lotes demarcados.' },
+      { yaw: -0.6500, pitch: +0.30, label: 'Lago Corumbá IV',     desc: 'Água em primeiro plano · frente lago Aurora.' },
+      { yaw: -0.3500, pitch: +0.10, label: 'Abadiânia',           desc: 'Núcleo urbano · acessos asfaltados.' },
+      { yaw: -0.6500, pitch: -0.20, label: 'Pôr do sol oeste',    desc: 'Hora dourada · luz característica do cerrado.' },
+      { yaw: +0.5500, pitch: +0.40, label: 'Quadras Aurora',      desc: 'Lotes residenciais · pé na grama, vista ao lago.' },
+      { yaw: +0.2500, pitch: -0.05, label: 'Horizonte cerrado',   desc: 'Linha de horizonte · vegetação típica goiana.' }
     ]
   };
 
