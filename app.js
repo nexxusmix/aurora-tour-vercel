@@ -1116,59 +1116,80 @@
   function fotolivroHTML() {
     var pages = [
       {
-        bg: 'img/gallery/oficial/aurora-15.jpg',
+        bg: 'img/capas/02-aurora.webp',
         mini: 'Aurora Oasis · Book Apresentação',
         title: 'Onde o tempo mora.',
         sub: 'Lago Corumbá IV · Abadiânia, Goiás',
         tone: 'cover'
       },
       {
-        bg: 'img/gallery/oficial/aurora-14.jpg',
+        bg: 'img/capas/01-silva.webp',
+        mini: 'Silva Investimentos',
+        title: 'Quem assina o projeto.',
+        body: 'Silva Investimentos conduz o Aurora Oasis com curadoria e visão de longo prazo. Empreendimentos que respeitam o entorno e mantêm valor ao longo do tempo. O cuidado com a marca começa antes do primeiro lote.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/capas/03-jornada.webp',
         mini: 'Capítulo 01',
-        title: 'O luxo de viver no tempo certo.',
-        body: 'Um lugar convida a parar. Aqui o tempo não se mede em ponteiros, mas em pausas. Em silêncios. Aurora Oasis é um novo ritmo. Um convite ao que realmente importa.',
+        title: 'Minha jornada criando meu Oasis.',
+        body: 'Aurora não é um produto pronto. É uma jornada que começa pela escolha do lote, segue pelo projeto da casa e culmina no momento em que você senta no deck e o lago fica parado. Aqui o tempo não se mede em ponteiros, mas em pausas.',
         tone: 'editorial'
       },
       {
-        bg: 'img/gallery/oficial/aurora-03.jpg',
+        bg: 'img/capas/04-tour.webp',
         mini: 'Capítulo 02',
-        title: 'A natureza como protagonista.',
-        body: 'Cerrado nativo preservado, frente para o Lago Corumbá IV e céu aberto. Urbanismo de baixa densidade, em que cada lote respira. Privacidade real com vistas amplas — o oposto do adensamento que se vê em condomínios convencionais.',
+        title: 'Tour virtual 360°.',
+        body: 'Quatro pontos de vista, capturados em alta resolução, te colocam dentro do empreendimento antes da primeira visita. Frente lago, vista panorâmica, margem e hora dourada. O Aurora à sua frente, antes de você chegar.',
         tone: 'editorial'
       },
       {
-        bg: 'img/gallery/oficial/aurora-19.jpg',
+        bg: 'img/capas/08-lago.webp',
         mini: 'Capítulo 03',
+        title: 'Lago Corumbá IV.',
+        body: 'Espelho d\'água de aproximadamente 700 km², barragem CELG. Frente d\'água ininterrupta de 1,2 km pertencente ao empreendimento. O lago como vizinho permanente — paisagem que define o ritmo do dia.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/capas/11-localizacao.webp',
+        mini: 'Capítulo 04',
         title: 'Localização que liberta.',
         body: 'A apenas 1 hora de Anápolis, 1h40 de Goiânia e 2h20 de Brasília. 10 minutos de estrada de chão do centro de Abadiânia. Refúgio sem isolamento — perto o suficiente para integrar, distante o suficiente para acolher.',
         tone: 'editorial'
       },
       {
-        bg: 'img/gallery/oficial/aurora-04.jpg',
-        mini: 'Capítulo 04',
-        title: 'Estrutura completa, sem ostentação.',
+        bg: 'img/capas/07-estilo.webp',
+        mini: 'Capítulo 05',
+        title: 'Estilo de vida Aurora.',
         body: 'Marina e praia particular. Piscina voltada para o lago. Espaços gourmet e lounge contemplativo. Spa, fitness center e academia com horizonte aberto. Wine bar e restaurante com vista. Calçadão de aproximadamente 4 km. Portaria e segurança 24h.',
         tone: 'editorial'
       },
       {
-        bg: 'img/gallery/oficial/aurora-06.jpg',
-        mini: 'Capítulo 05',
-        title: 'Arquitetura que respeita o entorno.',
-        body: 'Projeto urbanístico e arquitetônico assinado pela FAAU · Flávio Aleixo. Volumetria suave, materiais naturais e integração com a topografia do cerrado. O luxo aqui é a coerência entre construção e paisagem.',
-        tone: 'editorial'
-      },
-      {
-        bg: 'img/gallery/oficial/aurora-17.jpg',
+        bg: 'img/capas/06-disponibilidade.webp',
         mini: 'Capítulo 06',
-        title: 'Lotes amplos a partir de 500 m².',
-        body: 'Cada lote é um endereço. Tipologias que privilegiam vista, topografia e privacidade. Estatuto e governança fortes garantem que o conceito do empreendimento se mantenha íntegro ao longo do tempo.',
+        title: 'Disponibilidade, lotes e condições.',
+        body: '241 lotes a partir de 500 m². Tipologias que privilegiam vista, topografia e privacidade. Estatuto e governança fortes garantem que o conceito do empreendimento se mantenha íntegro ao longo do tempo. Disponibilidade atualizada em tempo real.',
         tone: 'editorial'
       },
       {
-        bg: 'img/gallery/oficial/aurora-16.jpg',
+        bg: 'img/capas/09-imagens.webp',
+        mini: 'Capítulo 07',
+        title: 'Aurora em imagens oficiais.',
+        body: 'Fotografia de arquitetura, lifestyle e paisagem. Cerrado preservado, lago, marina, deck, calçadão, piscinas e infraestrutura. Cada quadro é um pedaço da experiência Aurora.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/capas/10-videos.webp',
+        mini: 'Capítulo 08',
+        title: 'Aurora em movimento.',
+        body: 'Vídeos institucionais, drone aéreo, depoimentos e entregas. A força da paisagem mostrada pelo lente cinematográfica. O luxo aqui também é o tempo que se dedica a contar bem cada história.',
+        tone: 'editorial'
+      },
+      {
+        bg: 'img/capas/05-investimento.webp',
         mini: 'Próximo passo',
-        title: 'Conheça Aurora pessoalmente.',
-        body: 'Reserve sua visita ao empreendimento.',
+        title: 'Investimento e rentabilidade.',
+        body: 'Aurora Oasis é endereço e ativo. Localização escassa, governança forte e curadoria de longo prazo sustentam o valor do lote ao longo do tempo. Reserve sua visita e conheça as condições.',
         cta: { wpp: 'https://wa.me/5562995661461?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20visita%20ao%20Aurora%20Oasis', site: 'https://auroraoasis.com.br' },
         tone: 'closing'
       }
