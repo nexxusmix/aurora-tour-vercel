@@ -1981,3 +1981,86 @@ body.dragging * { user-select: none; -webkit-user-select: none; }
 #region-overlay .region-group:hover .region-label-text {
   fill: #1A1A1A;
 }
+
+/* ─── Cinematic Scene Transition FX ────────────────────────────────────────── */
+#pano, #viewer {
+  transform-origin: 50% 50%;
+  transition: filter 600ms cubic-bezier(0.6, 0, 0.4, 1),
+              transform 1100ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 600ms ease;
+  will-change: filter, transform;
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+}
+#pano.scene-fx-exit, #viewer.scene-fx-exit {
+  filter: blur(22px) brightness(0.45) contrast(1.08) saturate(0.85);
+  transform: scale(1.085) rotateZ(-0.4deg);
+  opacity: 0.78;
+}
+#pano.scene-fx-enter, #viewer.scene-fx-enter {
+  animation: sceneEnterFx 1500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes sceneEnterFx {
+  0%   { filter: blur(28px) brightness(0.4) saturate(0.7); transform: scale(1.12) rotateZ(0.6deg); opacity: 0.4; }
+  35%  { filter: blur(8px)  brightness(0.85) saturate(1);  transform: scale(1.04) rotateZ(0.18deg); opacity: 0.92; }
+  100% { filter: blur(0)    brightness(1)   saturate(1);  transform: scale(1)    rotateZ(0);     opacity: 1; }
+}
+#scene-fx-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 55%, rgba(10,10,10,0) 0%, rgba(10,10,10,0.9) 75%, #050505 100%);
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 380ms cubic-bezier(0.6, 0, 0.4, 1);
+  will-change: opacity;
+}
+#scene-fx-flash.is-flashing {
+  opacity: 1;
+}
+
+/* ─── UI Reveal stagger (per element) ──────────────────────────────────────── */
+.ui-reveal {
+  animation: uiReveal 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes uiReveal {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(8px); }
+  60%  { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ─── Region polygon reveal — refined hyper-fluid bezier ───────────────────── */
+#region-overlay .region-group.is-revealing .region-poly {
+  animation: regionRevealHyper 2200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+}
+@keyframes regionRevealHyper {
+  0%   { fill-opacity: 0;    stroke-opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 0; transform: scale(0.92) rotate(-0.6deg); filter: blur(6px); }
+  20%  { stroke-opacity: 1; }
+  55%  { fill-opacity: 0.10; stroke-opacity: 1; transform: scale(1.012) rotate(0.18deg); filter: blur(0); }
+  100% { fill-opacity: 0.30; stroke-opacity: 1; transform: scale(1)     rotate(0);      filter: blur(0); }
+}
+#region-overlay .region-group .region-poly {
+  filter: drop-shadow(0 6px 16px rgba(201,168,76,0.25));
+}
+#region-overlay .region-group:hover .region-poly {
+  filter: drop-shadow(0 0 24px rgba(201,168,76,0.85)) drop-shadow(0 4px 12px rgba(201,168,76,0.4));
+  transform: scale(1.008);
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  transition: filter 420ms cubic-bezier(0.16, 1, 0.3, 1),
+              fill-opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+              stroke-width 420ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Hotspot pop-in (when scene loads) ────────────────────────────────────── */
+.pano-hotspot.ui-reveal .ph-dot {
+  animation: hotspotPop 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes hotspotPop {
+  0%   { opacity: 0; transform: scale(0.2); filter: blur(4px); }
+  60%  { opacity: 1; transform: scale(1.15); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
